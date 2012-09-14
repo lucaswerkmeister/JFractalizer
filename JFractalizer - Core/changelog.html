@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Changelog - JFractalizer</title>
+</head>
+<body>
+	Full changelog for the JFractalizer:
+	<ul>
+		<li>v0.5:
+			<ul>
+				<li>Removed the split of the core into two packages</li>
+				<li>New core feature: "Core" class for access to all core
+					funcionality from plugins</li>
+				<li>Fixed a core bug where the ClassChooserDialog would crash
+					if no implementation was found</li>
+					<li>New core feature: FractalProviders have to provide a zoom method</li>
+			</ul>
+		</li>
+		<li>v0.4 (28.07.2012):
+			<ul>
+				<li>Changed the internal Fast Storage Lists of SimplePalette
+					and NodePalette to ArrayLists, should improve performance</li>
+				<li>New core feature: FractalProviders and ColorPalettes can
+					now customize their menus</li>
+				<li>New Mandelbrot feature: Added "Edit Boundaries..." option</li>
+				<li>Fixed a core bug where closing the ClassChooserDialog with
+					the OS "X" button would crash the JFractalizer</li>
+				<li>New Mandelbrot feature: Added "Recalculate" option</li>
+				<li>New SimplePalette feature: "Edit Palette" Menu option and
+					dialog</li>
+				<li>New Mandelbrot feature: Added "Edit additional
+					parameters..." option</li>
+				<li>New NodePalette feature: "Edit Palette" Menu option and
+					dialog</li>
+				<li>Fixed a Mandelbrot bug where zooming in could make the
+					depth <i>de</i>crease, reworked the algorithm that adapts the depth
+				</li>
+				<li>New core feature: Global JColorChooser</li>
+			</ul>
+		</li>
+		<li>v0.3 (06.07.2012):
+			<ul>
+				<li>Added a "Choose implementation" dialog to choose between
+					implementations of interfaces</li>
+				<li>Reorganized the code into the core (plugin loader, GUI) and
+					the default plugin (Mandelbrot, SimplePalette, NodePalette)</li>
+				<li>Program will now at startup ask for Fractal and
+					ColorPalette to use</li>
+			</ul>
+		</li>
+		<li>v0.2 (01.07.2012):
+			<ul>
+				<li>Changed the window title to "JFractalizer"</li>
+				<li>Added license text to all files; added license to project</li>
+				<li>Mandelbrot now utilizes <i>a</i>×<i>b</i> processor cores
+					instead of <i>n</i>×<i>n</i> cores.
+				</li>
+				<li>Moved all packages into the superpackage <code>de.lucaswerkmeister.code.jfractalizer</code></li>
+				<li>New Feature: Can navigate the Mandelbrot Set with the
+					mouse. Drag to choose new area. Selected area is drawn inverted.</li>
+				<li>Bugfix: ColorPalettes would not be loaded properly</li>
+				<li>Several performance enhancements in the
+					MandelbrotImageMaker:
+					<ul>
+						<li>Removed unnecessary synchronization around
+							Palette.getColor()</li>
+						<li>Moved commands out of synchronized(Graphics) block</li>
+						<li>Moved calculations with constant results out of the pixel
+							loop</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>v0.1 (30.06.2012):
+			<ul>
+				<li>First published version.</li>
+				<li>Can render arbitrary regions of the Mandelbrot Set using a
+					custom color palette.</li>
+				<li>Supports anti-aliasing and multi-core calculation.</li>
+				<li>Can save the rendered image to a png-, gif- or jpg-image.</li>
+				<li>Can save and load fractal setups.</li>
+			</ul>
+		</li>
+	</ul>
+</body>
+</html>
