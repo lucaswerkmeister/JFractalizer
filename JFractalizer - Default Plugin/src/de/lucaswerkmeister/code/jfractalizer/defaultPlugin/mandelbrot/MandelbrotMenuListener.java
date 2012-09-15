@@ -96,7 +96,7 @@ public class MandelbrotMenuListener implements ActionListener
 					((MandelbrotCanvas) provider.getCanvas()).setMaxReal(Double.parseDouble(maxReal.getText()));
 					((MandelbrotCanvas) provider.getCanvas()).setSize(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
 					((Frame) provider.getCanvas().getParent()).pack();
-					provider.cancelCalculation();
+					provider.stopCalculation();
 					provider.startCalculation();
 				}
 				editBoundariesDialog = null;
@@ -151,12 +151,12 @@ public class MandelbrotMenuListener implements ActionListener
 																													// Integer to byte raises a
 																													// ClassCastException
 					((MandelbrotCanvas) provider.getCanvas()).setMaxPasses((int) maxPasses.getValue());
-					provider.cancelCalculation();
+					provider.stopCalculation();
 					provider.startCalculation();
 				}
 				break;
 			case "Recalculate":
-				provider.cancelCalculation();
+				provider.stopCalculation();
 				provider.startCalculation();
 				break;
 		}

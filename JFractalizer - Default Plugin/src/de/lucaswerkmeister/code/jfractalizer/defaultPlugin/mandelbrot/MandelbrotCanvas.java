@@ -79,10 +79,10 @@ public class MandelbrotCanvas extends Canvas
 
 	private void initDefaultValues()
 	{
-		minReal = -6.4;
-		maxReal = 6.4;
-		minImag = -3.6;
-		maxImag = 3.6;
+		minReal = -3.2;
+		maxReal = 3.2;
+		minImag = -1.8;
+		maxImag = 1.8;
 		palette = new SimplePalette();
 		superSamplingFactor = 1;
 		maxPasses = 1000;

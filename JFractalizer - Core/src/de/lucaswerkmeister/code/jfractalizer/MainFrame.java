@@ -11,12 +11,16 @@
  */
 package de.lucaswerkmeister.code.jfractalizer;
 
+import java.awt.Canvas;
 import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
+import java.awt.PopupMenu;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -31,6 +35,7 @@ public class MainFrame extends Frame
 	MenuBar							menuBar;
 	Menu							fileMenu, fractalMenu, colorPaletteMenu;
 	JColorChooser					colorChooser;
+	int								zoomMenuX, zoomMenuY;
 
 	private MainFrame()
 	{
@@ -59,6 +64,7 @@ public class MainFrame extends Frame
 			}
 		});
 		initMenu();
+		initContextMenu();
 		pack();
 		setVisible(true);
 		colorChooser = new JColorChooser();
@@ -82,6 +88,7 @@ public class MainFrame extends Frame
 		removeAll();
 		add(newProvider.getCanvas());
 		initMenu();
+		initContextMenu();
 		pack();
 	}
 
@@ -89,7 +96,7 @@ public class MainFrame extends Frame
 	{
 		currentColorPalette = newPalette;
 		initMenu();
-		currentProvider.cancelCalculation();
+		currentProvider.stopCalculation();
 		currentProvider.setColorPalette(newPalette);
 		currentProvider.startCalculation();
 	}
@@ -127,6 +134,72 @@ public class MainFrame extends Frame
 		currentColorPalette.initMenu(colorPaletteMenu, currentProvider, this);
 
 		setMenuBar(menuBar);
+	}
+
+	private void initContextMenu()
+	{
+		final PopupMenu menu = new PopupMenu();
+
+		final short[] zooms = new short[] { 1, 2, 5, 10, 25, 50, 100 };
+
+		Menu zoomIn = new Menu(ZoomMenuListener.ZOOM_IN);
+		Menu zoomOut = new Menu(ZoomMenuListener.ZOOM_OUT);
+		Menu zoomInCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
+		Menu zoomInCenter = new Menu(ZoomMenuListener.USE_CENTER);
+		Menu zoomOutCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
+		Menu zoomOutCenter = new Menu(ZoomMenuListener.USE_CENTER);
+		MenuItem m;
+		ZoomMenuListener listener = new ZoomMenuListener();
+		for (short s : zooms)
+		{
+			String t = s + "%";
+			m = new MenuItem(t);
+			m.addActionListener(listener);
+			zoomInCurrentPos.add(m);
+			m = new MenuItem(t);
+			m.addActionListener(listener);
+			zoomInCenter.add(m);
+			m = new MenuItem(t);
+			m.addActionListener(listener);
+			zoomOutCurrentPos.add(m);
+			m = new MenuItem(t);
+			m.addActionListener(listener);
+			zoomOutCenter.add(m);
+		}
+		zoomIn.add(zoomInCurrentPos);
+		zoomIn.add(zoomInCenter);
+		zoomOut.add(zoomOutCurrentPos);
+		zoomOut.add(zoomOutCenter);
+		menu.add(zoomIn);
+		menu.add(zoomOut);
+
+		MenuItem center = new MenuItem(ZoomMenuListener.CENTER_NO_ZOOM);
+		center.addActionListener(listener);
+		menu.add(center);
+
+		final Canvas c = currentProvider.getCanvas();
+		c.add(menu);
+		c.addMouseListener(new MouseAdapter()
+		{
+			public void mousePressed(MouseEvent e)
+			{
+				if (e.isPopupTrigger())
+					showMenu(e.getX(), e.getY());
+			}
+
+			public void mouseReleased(MouseEvent e)
+			{
+				if (e.isPopupTrigger())
+					showMenu(e.getX(), e.getY());
+			}
+
+			private void showMenu(int x, int y)
+			{
+				menu.show(c, x, y);
+				zoomMenuX = x;
+				zoomMenuY = y;
+			}
+		});
 	}
 
 	public static void main(final String[] args)

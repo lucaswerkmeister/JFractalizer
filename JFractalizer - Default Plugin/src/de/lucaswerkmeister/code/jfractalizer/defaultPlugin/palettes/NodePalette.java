@@ -182,7 +182,7 @@ public class NodePalette implements ColorPalette
 			if (!start.equals(newPalette))
 			{
 				start = newPalette;
-				provider.cancelCalculation();
+				provider.stopCalculation();
 				provider.setColorPalette(start);
 				provider.startCalculation();
 			}

@@ -29,7 +29,7 @@ public interface FractalProvider extends SelectableService
 
 	public FractXmlLoader getFractXmlLoader();
 
-	public void cancelCalculation();
+	public void stopCalculation();
 
 	public void setColorPalette(ColorPalette newPalette);
 

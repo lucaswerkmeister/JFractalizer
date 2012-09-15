@@ -122,7 +122,7 @@ public class MandelbrotProvider implements FractalProvider
 	}
 
 	@Override
-	public void cancelCalculation()
+	public void stopCalculation()
 	{
 		canvas.stopCalculation();
 	}
@@ -158,8 +158,8 @@ public class MandelbrotProvider implements FractalProvider
 	{
 		double currentWidth = (canvas.getMaxReal() - canvas.getMinReal());
 		double currentHeight = (canvas.getMaxImag() - canvas.getMinImag());
-		double centerR = canvas.getMinReal() + currentWidth * (x / canvas.getWidth());
-		double centerI = canvas.getMinImag() + currentHeight * (y / canvas.getHeight());
+		double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getWidth());
+		double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getHeight()));
 		double halfSizeR = currentWidth * factor / 2;
 		double halfSizeI = currentHeight * factor / 2;
 		canvas.setMinReal(centerR - halfSizeR);
