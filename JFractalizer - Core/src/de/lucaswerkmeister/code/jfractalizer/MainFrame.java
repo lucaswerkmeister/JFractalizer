@@ -126,12 +126,14 @@ public class MainFrame extends Frame
 		final MenuItem chooseFractal = new MenuItem("Choose Fractal...", new MenuShortcut(KeyEvent.VK_C));
 		chooseFractal.addActionListener(listener);
 		fractalMenu.add(chooseFractal);
+		fractalMenu.addSeparator();
 		menuBar.add(fractalMenu);
 
 		colorPaletteMenu = new Menu("Color Palette");
 		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C, true));
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
+		colorPaletteMenu.addSeparator();
 		menuBar.add(colorPaletteMenu);
 
 		currentProvider.initMenu(fractalMenu);

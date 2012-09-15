@@ -146,15 +146,23 @@ public class MandelbrotProvider implements FractalProvider
 	@Override
 	public void initMenu(Menu fractalMenu)
 	{
+		MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
+		recalculate.addActionListener(menuListener);
+		fractalMenu.add(recalculate);
+		fractalMenu.addSeparator();
 		MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
 		editBoundaries.addActionListener(menuListener);
 		fractalMenu.add(editBoundaries);
 		MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));
 		additionalParams.addActionListener(menuListener);
 		fractalMenu.add(additionalParams);
-		MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
-		recalculate.addActionListener(menuListener);
-		fractalMenu.add(recalculate);
+		fractalMenu.addSeparator();
+		MenuItem undo = new MenuItem("Undo", new MenuShortcut(KeyEvent.VK_Z));
+		undo.addActionListener(menuListener);
+		fractalMenu.add(undo);
+		MenuItem redo = new MenuItem("Redo", new MenuShortcut(KeyEvent.VK_Y));
+		redo.addActionListener(menuListener);
+		fractalMenu.add(redo);
 	}
 
 	@Override

@@ -159,6 +159,14 @@ public class MandelbrotMenuListener implements ActionListener
 				provider.stopCalculation();
 				provider.startCalculation();
 				break;
+			case "Undo":
+				// TODO
+				break;
+			default:
+				System.out
+						.println("Action \""
+								+ e.getActionCommand()
+								+ "\" not yet implemented. If you see this in a published version, punch the developer in the face. (No, seriously, don't do that. Just write me an e-mail.)");
 		}
 	}
 }
