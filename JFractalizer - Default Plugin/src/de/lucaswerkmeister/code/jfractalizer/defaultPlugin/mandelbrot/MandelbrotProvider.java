@@ -146,7 +146,7 @@ public class MandelbrotProvider implements FractalProvider
 	@Override
 	public void initMenu(Menu fractalMenu)
 	{
-		MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_B));
+		MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
 		editBoundaries.addActionListener(menuListener);
 		fractalMenu.add(editBoundaries);
 		MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));

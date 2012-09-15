@@ -150,7 +150,7 @@ public class SimplePalette implements ColorPalette
 	@Override
 	public void initMenu(Menu colorPaletteMenu, FractalProvider provider, Frame owner)
 	{
-		MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E));
+		MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
 		edit.addActionListener(new SimplePaletteMenuListener(provider, owner, this));
 		colorPaletteMenu.add(edit);
 	}

@@ -145,7 +145,7 @@ public class NodePalette implements ColorPalette
 	@Override
 	public void initMenu(Menu colorPaletteMenu, FractalProvider provider, Frame owner)
 	{
-		MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E));
+		MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
 		edit.addActionListener(new NodePaletteMenuListener(provider, owner, this));
 		colorPaletteMenu.add(edit);
 	}

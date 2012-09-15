@@ -116,16 +116,20 @@ public class MainFrame extends Frame
 		final MenuItem saveImage = new MenuItem("Save Image", new MenuShortcut(KeyEvent.VK_P));
 		saveImage.addActionListener(listener);
 		fileMenu.add(saveImage);
+		fileMenu.addSeparator();
+		final MenuItem exit = new MenuItem("Exit");
+		exit.addActionListener(listener);
+		fileMenu.add(exit);
 		menuBar.add(fileMenu);
 
 		fractalMenu = new Menu("Fractal");
-		final MenuItem chooseFractal = new MenuItem("Choose Fractal...", new MenuShortcut(KeyEvent.VK_F));
+		final MenuItem chooseFractal = new MenuItem("Choose Fractal...", new MenuShortcut(KeyEvent.VK_C));
 		chooseFractal.addActionListener(listener);
 		fractalMenu.add(chooseFractal);
 		menuBar.add(fractalMenu);
 
 		colorPaletteMenu = new Menu("Color Palette");
-		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C));
+		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C, true));
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
 		menuBar.add(colorPaletteMenu);

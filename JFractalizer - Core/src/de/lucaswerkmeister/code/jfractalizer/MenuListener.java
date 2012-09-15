@@ -165,6 +165,8 @@ public class MenuListener implements ActionListener
 				colorPaletteDialog.setVisible(true);
 				MainFrame.getInstance().setCurrentColorPalette(colorPaletteDialog.getSelectedService());
 				break;
+			case "Exit":
+				System.exit(0);
 			default:
 				System.out
 						.println("Action \""
