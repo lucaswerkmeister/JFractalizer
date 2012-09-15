@@ -200,6 +200,12 @@ public class MainFrame extends Frame
 				zoomMenuY = y;
 			}
 		});
+
+		menu.addSeparator();
+		currentProvider.initContextMenu(menu);
+		if (!menu.getItem(menu.getItemCount() - 2).equals(center)) // if the last item before the separator is the "center" MenuItem, then the
+			menu.addSeparator(); // FractalProvider didn't add any MenuItems, and we don't need the second separator.
+		menu.add("Cancel");
 	}
 
 	public static void main(final String[] args)

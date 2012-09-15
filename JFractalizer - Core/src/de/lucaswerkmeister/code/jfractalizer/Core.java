@@ -26,7 +26,7 @@ public abstract class Core
 	/**
 	 * Gets the image currently displayed by the main window, whether it is completely calculated or not.
 	 * 
-	 * @return
+	 * @return The image currently displayed by the main window.
 	 */
 	public static RenderedImage getImage()
 	{
@@ -41,5 +41,21 @@ public abstract class Core
 	public static JColorChooser getGlobalColorChooser()
 	{
 		return MainFrame.getInstance().colorChooser;
+	}
+
+	/**
+	 * Stops the currently running calculation.
+	 */
+	public static void stopCalculation()
+	{
+		MainFrame.getInstance().getCurrentProvider().stopCalculation();
+	}
+
+	/**
+	 * Starts calculation of the current fractal image.
+	 */
+	public static void startCalculation()
+	{
+		MainFrame.getInstance().getCurrentProvider().startCalculation();
 	}
 }

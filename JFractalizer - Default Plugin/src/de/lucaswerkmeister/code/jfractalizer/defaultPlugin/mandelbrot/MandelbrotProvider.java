@@ -15,6 +15,9 @@ import java.awt.Canvas;
 import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
+import java.awt.PopupMenu;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.RenderedImage;
 
@@ -25,6 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
+import de.lucaswerkmeister.code.jfractalizer.Core;
 import de.lucaswerkmeister.code.jfractalizer.FractXmlLoader;
 import de.lucaswerkmeister.code.jfractalizer.FractalProvider;
 
@@ -151,6 +155,24 @@ public class MandelbrotProvider implements FractalProvider
 		MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
 		recalculate.addActionListener(menuListener);
 		fractalMenu.add(recalculate);
+	}
+
+	@Override
+	public void initContextMenu(PopupMenu contextMenu)
+	{
+		MenuItem goToStart = new MenuItem("Show start image");
+		final MandelbrotCanvas c = canvas;
+		goToStart.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				Core.stopCalculation();
+				c.initDefaultValues();
+				Core.startCalculation();
+			}
+		});
+		contextMenu.add(goToStart);
 	}
 
 	@Override

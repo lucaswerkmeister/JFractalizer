@@ -32,7 +32,7 @@ public class MandelbrotCanvas extends Canvas
 	private WaitForCalcThreads		waiterThread;
 	private int						maxPasses;
 	private BufferedImage			tempImg;
-	long							startTime, stopTime;
+	private long					startTime, stopTime;
 	MandelbrotMouseListener			mouseListener;
 	private Rectangle				selectedArea;
 
@@ -77,7 +77,7 @@ public class MandelbrotCanvas extends Canvas
 		return tempImg;
 	}
 
-	private void initDefaultValues()
+	void initDefaultValues()
 	{
 		minReal = -3.2;
 		maxReal = 3.2;

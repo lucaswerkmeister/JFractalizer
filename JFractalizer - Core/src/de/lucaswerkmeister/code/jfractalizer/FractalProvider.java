@@ -13,6 +13,7 @@ package de.lucaswerkmeister.code.jfractalizer;
 
 import java.awt.Canvas;
 import java.awt.Menu;
+import java.awt.PopupMenu;
 import java.awt.image.RenderedImage;
 
 import javax.xml.transform.sax.TransformerHandler;
@@ -36,6 +37,8 @@ public interface FractalProvider extends SelectableService
 	public void startCalculation();
 
 	public void initMenu(Menu fractalMenu);
+
+	public void initContextMenu(PopupMenu contextMenu);
 
 	/**
 	 * Zooms the fractal to the specified center with the specified zoom factor.
