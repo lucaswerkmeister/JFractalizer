@@ -66,8 +66,8 @@ public class MandelbrotMouseListener extends MouseAdapter
 	@Override
 	public void mouseDragged(final MouseEvent e)
 	{
-		if (e.getButton() == MouseEvent.BUTTON1)
-			canvas.setSelectedArea(makeArea(e.getX(), e.getY()));
+		// if (e.getButton() == MouseEvent.BUTTON1) //for some odd reason e.getButton() returns 0 and not 1
+		canvas.setSelectedArea(makeArea(e.getX(), e.getY()));
 	}
 
 	private Rectangle makeArea(final int mouseX, final int mouseY)
