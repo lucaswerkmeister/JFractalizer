@@ -19,6 +19,7 @@ import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
+import de.lucaswerkmeister.code.jfractalizer.Core;
 import de.lucaswerkmeister.code.jfractalizer.defaultPlugin.palettes.SimplePalette;
 
 public class MandelbrotCanvas extends Canvas
@@ -107,7 +108,65 @@ public class MandelbrotCanvas extends Canvas
 		if (!waiterThread.isAlive() && stopTime == 0 && startTime != 0)
 		{
 			stopTime = System.currentTimeMillis();
-			System.out.println("Calculation took " + (stopTime - startTime) + "ms.");
+			long interval = stopTime - startTime;
+			short milliseconds = (short) (interval % 1000);
+			interval -= milliseconds;
+			interval /= 1000;
+			byte seconds = (byte) (interval % 60);
+			interval -= seconds;
+			interval /= 60;
+			byte minutes = (byte) (interval % 60);
+			interval -= minutes;
+			interval /= 60;
+			byte hours = (byte) (interval % 24);
+			interval -= hours;
+			interval /= 24;
+			long days = interval;
+			StringBuilder status = new StringBuilder("Calculation took ");
+			if (days != 0)
+			{
+				status.append(days);
+				status.append(" day");
+				if (days != 1)
+					status.append('s');
+				status.append(' ');
+			}
+			if (hours != 0)
+			{
+				status.append(hours);
+				status.append(" hour");
+				if (hours != 1)
+					status.append('s');
+				status.append(' ');
+			}
+			if (minutes != 0)
+			{
+				status.append(minutes);
+				status.append(" minute");
+				if (minutes != 1)
+					status.append('s');
+				status.append(' ');
+			}
+			if (seconds != 0)
+			{
+				status.append(seconds);
+				status.append(" second");
+				if (seconds != 1)
+					status.append('s');
+				status.append(' ');
+			}
+			if (milliseconds != 0)
+			{
+				status.append(milliseconds);
+				status.append(" millisecond");
+				if (milliseconds != 1)
+					status.append('s');
+				status.append(' ');
+			}
+			status.append('(');
+			status.append(stopTime - startTime);
+			status.append(" ms).");
+			Core.setStatus(status.toString());
 		}
 	}
 
@@ -121,6 +180,7 @@ public class MandelbrotCanvas extends Canvas
 	{
 		if (checkValues())
 		{
+			Core.setStatus("Calculating...");
 			stopTime = 0;
 			startTime = System.currentTimeMillis();
 			final int cpuCount = Runtime.getRuntime().availableProcessors();

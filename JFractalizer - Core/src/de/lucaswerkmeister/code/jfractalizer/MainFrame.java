@@ -11,8 +11,11 @@
  */
 package de.lucaswerkmeister.code.jfractalizer;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Label;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
@@ -36,10 +39,13 @@ public class MainFrame extends Frame
 	Menu							fileMenu, fractalMenu, colorPaletteMenu;
 	JColorChooser					colorChooser;
 	int								zoomMenuX, zoomMenuY;
+	private final Label				statusBar;
 
 	private MainFrame()
 	{
 		super("JFractalizer");
+		statusBar = new Label("Calculating...");
+		setLayout(new BorderLayout());
 		// Let the user choose the fractal
 		final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this, "Choose Fractal", FractalProvider.class);
 		fractalChooserDialog.setVisible(true);
@@ -86,7 +92,8 @@ public class MainFrame extends Frame
 	{
 		currentProvider = newProvider;
 		removeAll();
-		add(newProvider.getCanvas());
+		add(newProvider.getCanvas(), BorderLayout.CENTER);
+		add(statusBar, BorderLayout.SOUTH);
 		initMenu();
 		initContextMenu();
 		pack();
@@ -222,5 +229,13 @@ public class MainFrame extends Frame
 	static MainFrame getInstance()
 	{
 		return instance;
+	}
+
+	void setStatus(String status, Color color)
+	{
+		statusBar.setText(status);
+		statusBar.setForeground(color);
+		pack();
+		repaint();
 	}
 }

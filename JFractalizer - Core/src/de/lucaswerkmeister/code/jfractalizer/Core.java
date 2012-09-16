@@ -11,6 +11,7 @@
  */
 package de.lucaswerkmeister.code.jfractalizer;
 
+import java.awt.Color;
 import java.awt.image.RenderedImage;
 
 import javax.swing.JColorChooser;
@@ -30,6 +31,8 @@ public abstract class Core
 	 */
 	public static RenderedImage getImage()
 	{
+		if (MainFrame.getInstance() == null)
+			return null;
 		return MainFrame.getInstance().getCurrentProvider().getImage();
 	}
 
@@ -40,6 +43,8 @@ public abstract class Core
 	 */
 	public static JColorChooser getGlobalColorChooser()
 	{
+		if (MainFrame.getInstance() == null)
+			return null;
 		return MainFrame.getInstance().colorChooser;
 	}
 
@@ -48,6 +53,8 @@ public abstract class Core
 	 */
 	public static void stopCalculation()
 	{
+		if (MainFrame.getInstance() == null)
+			return;
 		MainFrame.getInstance().getCurrentProvider().stopCalculation();
 	}
 
@@ -56,6 +63,36 @@ public abstract class Core
 	 */
 	public static void startCalculation()
 	{
+		if (MainFrame.getInstance() == null)
+			return;
 		MainFrame.getInstance().getCurrentProvider().startCalculation();
+	}
+
+	/**
+	 * Sets the text displayed by the status bar of the JFractalizer.
+	 * 
+	 * @param status
+	 *            The new status.
+	 */
+	public static void setStatus(String status)
+	{
+		if (MainFrame.getInstance() == null)
+			return;
+		MainFrame.getInstance().setStatus(status, Color.black);
+	}
+
+	/**
+	 * Sets the text displayed by the status bar of the JFractalizer and its color.
+	 * 
+	 * @param status
+	 *            The new status.
+	 * @param color
+	 *            The color of the new status.
+	 */
+	public static void setStatus(String status, Color color)
+	{
+		if (MainFrame.getInstance() == null)
+			return;
+		MainFrame.getInstance().setStatus(status, color);
 	}
 }
