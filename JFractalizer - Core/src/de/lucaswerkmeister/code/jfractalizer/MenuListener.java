@@ -142,11 +142,13 @@ public class MenuListener implements ActionListener
 				if (result == JFileChooser.APPROVE_OPTION)
 					try
 					{
-						final SAXParserFactory factory = SAXParserFactory.newInstance();
-						final SAXParser saxParser = factory.newSAXParser();
-						final FractXmlLoader loader = MainFrame.getInstance().getCurrentProvider().getFractXmlLoader();
+						final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+						final FractXmlLoader loader = new FractalClassReader();
 						saxParser.parse(fileChooser.getSelectedFile(), loader);
 						MainFrame.getInstance().setCurrentProvider(loader.getProvider());
+						final FractXmlPaletteLoader colorPaletteLoader = new PaletteClassReader();
+						saxParser.parse(fileChooser.getSelectedFile(), colorPaletteLoader);
+						MainFrame.getInstance().setCurrentColorPalette(colorPaletteLoader.getPalette());
 					}
 					catch (SAXException | IOException | ParserConfigurationException e)
 					{

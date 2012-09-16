@@ -27,6 +27,18 @@ public class FractXmlNodePaletteLoader extends FractXmlPaletteLoader
 	int					currentLength		= 0;
 	NodePalette			palette				= new NodePalette();
 
+	@Override
+	public void startDocument() throws SAXException
+	{
+		palette.nodes.clear();
+	}
+
+	@Override
+	public void endDocument() throws SAXException
+	{
+		palette.makeFastStorage();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

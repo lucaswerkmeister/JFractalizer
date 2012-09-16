@@ -35,6 +35,7 @@ public class MainFrame extends Frame
 	private static final MainFrame	instance			= new MainFrame();
 	private FractalProvider			currentProvider;
 	private ColorPalette			currentColorPalette;
+
 	MenuBar							menuBar;
 	Menu							fileMenu, fractalMenu, colorPaletteMenu;
 	JColorChooser					colorChooser;
@@ -97,6 +98,14 @@ public class MainFrame extends Frame
 		initMenu();
 		initContextMenu();
 		pack();
+	}
+
+	/**
+	 * @return the currentColorPalette
+	 */
+	public ColorPalette getCurrentColorPalette()
+	{
+		return currentColorPalette;
 	}
 
 	void setCurrentColorPalette(final ColorPalette newPalette)
