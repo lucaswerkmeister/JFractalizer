@@ -35,7 +35,7 @@ public class MandelbrotFractXmlLoader extends FractXmlLoader
 	public MandelbrotFractXmlLoader()
 	{
 		provider = new MandelbrotProvider();
-		newCanvas = new MandelbrotCanvas();
+		newCanvas = new MandelbrotCanvas(provider);
 	}
 
 	@Override

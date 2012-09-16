@@ -36,11 +36,12 @@ public class MandelbrotProvider implements FractalProvider
 {
 	private MandelbrotCanvas		canvas;
 	private MandelbrotMenuListener	menuListener;
+	MenuItem						undoMenuItem, redoMenuItem;
 
 	public MandelbrotProvider()
 	{
-		canvas = new MandelbrotCanvas();
-		menuListener = new MandelbrotMenuListener(this);
+		canvas = new MandelbrotCanvas(this);
+		menuListener = new MandelbrotMenuListener(this, canvas);
 	}
 
 	@Override
@@ -157,12 +158,14 @@ public class MandelbrotProvider implements FractalProvider
 		additionalParams.addActionListener(menuListener);
 		fractalMenu.add(additionalParams);
 		fractalMenu.addSeparator();
-		MenuItem undo = new MenuItem("Undo", new MenuShortcut(KeyEvent.VK_Z));
-		undo.addActionListener(menuListener);
-		fractalMenu.add(undo);
-		MenuItem redo = new MenuItem("Redo", new MenuShortcut(KeyEvent.VK_Y));
-		redo.addActionListener(menuListener);
-		fractalMenu.add(redo);
+		undoMenuItem = new MenuItem("Undo", new MenuShortcut(KeyEvent.VK_Z));
+		undoMenuItem.addActionListener(menuListener);
+		undoMenuItem.setEnabled(canvas.history.canUndo());
+		fractalMenu.add(undoMenuItem);
+		redoMenuItem = new MenuItem("Redo", new MenuShortcut(KeyEvent.VK_Y));
+		redoMenuItem.addActionListener(menuListener);
+		redoMenuItem.setEnabled(canvas.history.canRedo());
+		fractalMenu.add(redoMenuItem);
 	}
 
 	@Override

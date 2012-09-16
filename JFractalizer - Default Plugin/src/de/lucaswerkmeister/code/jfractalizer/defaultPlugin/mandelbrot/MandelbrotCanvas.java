@@ -23,23 +23,25 @@ import de.lucaswerkmeister.code.jfractalizer.defaultPlugin.palettes.SimplePalett
 
 public class MandelbrotCanvas extends Canvas
 {
-	private static final long		serialVersionUID	= -7909101981418946071L;
-	public static final int			START_WIDTH			= 1280;
-	public static final int			START_HEIGHT		= 720;
-	private double					minReal, maxReal, minImag, maxImag;
-	ColorPalette					palette;
-	private byte					superSamplingFactor;
-	private WaitForCalcThreads		waiterThread;
-	private int						maxPasses;
-	private BufferedImage			tempImg;
-	private long					startTime, stopTime;
-	MandelbrotMouseListener			mouseListener;
-	private Rectangle				selectedArea;
+	private static final long			serialVersionUID	= -7909101981418946071L;
+	private final MandelbrotProvider	provider;
+	public static final int				START_WIDTH			= 1280;
+	public static final int				START_HEIGHT		= 720;
+	private double						minReal, maxReal, minImag, maxImag;
+	ColorPalette						palette;
+	private byte						superSamplingFactor;
+	private WaitForCalcThreads			waiterThread;
+	private int							maxPasses;
+	private BufferedImage				tempImg;
+	private long						startTime, stopTime;
+	MandelbrotMouseListener				mouseListener;
+	private Rectangle					selectedArea;
+	History<MandelbrotParams>			history;
 
-	private static final LookupOp	inverter;
+	private static final LookupOp		inverter;
 	// this defines how fast the maxPasses will grow with increasing zoom. Higher number leads to slower growth.
 	// TODO Check whether this value is ok; maybe make it configurable.
-	static final double				maxPassesFactor		= 40;
+	static final double					maxPassesFactor		= 40;
 
 	static
 	{
@@ -49,13 +51,16 @@ public class MandelbrotCanvas extends Canvas
 		inverter = new LookupOp(new ShortLookupTable(0, invertTable), null);
 	}
 
-	public MandelbrotCanvas()
+	public MandelbrotCanvas(MandelbrotProvider provider)
 	{
 		setSize(START_WIDTH, START_HEIGHT);
+		this.provider = provider;
 		mouseListener = new MandelbrotMouseListener(this);
 		addMouseListener(mouseListener);
 		addMouseMotionListener(mouseListener);
 		initDefaultValues();
+		history = new History<>(256);
+		history.add(getParams());
 	}
 
 	public void start()
@@ -175,13 +180,10 @@ public class MandelbrotCanvas extends Canvas
 		final double newHeight = currentHeight * ((double) selectedArea.height / getHeight());
 		final double newMaxImag = maxImag - ((double) selectedArea.y / getHeight()) * currentHeight;
 		final double newMinImag = newMaxImag - newHeight;
-		minReal = newMinReal;
-		maxReal = newMaxReal;
-		minImag = newMinImag;
-		maxImag = newMaxImag;
 		double maxPassesF = Math.max((double) getWidth() / selectedArea.width, (double) getHeight() / selectedArea.height);
 		maxPassesF = ((maxPassesF - 1) / maxPassesFactor) + 1;
 		maxPasses *= maxPassesF;
+		setParams(new MandelbrotParams(newMinReal, newMaxReal, newMinImag, newMaxImag, maxPasses, superSamplingFactor));
 		start();
 	}
 
@@ -315,5 +317,29 @@ public class MandelbrotCanvas extends Canvas
 		else
 			this.selectedArea = selectedArea.intersection(getBounds());
 		repaint();
+	}
+
+	MandelbrotParams getParams()
+	{
+		return new MandelbrotParams(minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor);
+	}
+
+	void setParams(MandelbrotParams params)
+	{
+		setParams(params, true);
+	}
+
+	void setParams(MandelbrotParams params, boolean addToHistory)
+	{
+		minReal = params.minReal;
+		maxReal = params.maxReal;
+		minImag = params.minImag;
+		maxImag = params.maxImag;
+		maxPasses = params.maxPasses;
+		superSamplingFactor = params.superSamplingFactor;
+		if (addToHistory)
+			history.add(params);
+		provider.undoMenuItem.setEnabled(history.canUndo());
+		provider.redoMenuItem.setEnabled(history.canRedo());
 	}
 }

@@ -30,13 +30,15 @@ import javax.swing.SpinnerNumberModel;
 public class MandelbrotMenuListener implements ActionListener
 {
 	private MandelbrotProvider	provider;
+	private MandelbrotCanvas	canvas;
 	private boolean				okClicked	= false;
 	Dialog						editBoundariesDialog	= null, additionalParamsDialog = null;	// initialize variable so the compiler doesn't
 																								// complain
 
-	MandelbrotMenuListener(MandelbrotProvider provider)
+	MandelbrotMenuListener(MandelbrotProvider provider, MandelbrotCanvas canvas)
 	{
 		this.provider = provider;
+		this.canvas = canvas;
 	}
 
 	@Override
@@ -48,19 +50,19 @@ public class MandelbrotMenuListener implements ActionListener
 				editBoundariesDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
 				editBoundariesDialog.setLayout(new BorderLayout());
 				Panel interval = new Panel(new BorderLayout());
-				TextField maxImag = new TextField(((Double) ((MandelbrotCanvas) provider.getCanvas()).getMaxImag()).toString());
+				TextField maxImag = new TextField(((Double) canvas.getMaxImag()).toString());
 				Panel p = new Panel(new GridBagLayout());
 				p.add(maxImag);
 				interval.add(p, BorderLayout.NORTH);
-				TextField minImag = new TextField(((Double) ((MandelbrotCanvas) provider.getCanvas()).getMinImag()).toString());
+				TextField minImag = new TextField(((Double) canvas.getMinImag()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(minImag);
 				interval.add(p, BorderLayout.SOUTH);
-				TextField maxReal = new TextField(((Double) ((MandelbrotCanvas) provider.getCanvas()).getMaxReal()).toString());
+				TextField maxReal = new TextField(((Double) canvas.getMaxReal()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(maxReal);
 				interval.add(p, BorderLayout.EAST);
-				TextField minReal = new TextField(((Double) ((MandelbrotCanvas) provider.getCanvas()).getMinReal()).toString());
+				TextField minReal = new TextField(((Double) canvas.getMinReal()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(minReal);
 				interval.add(p, BorderLayout.WEST);
@@ -71,10 +73,10 @@ public class MandelbrotMenuListener implements ActionListener
 				interval.add(centerText, BorderLayout.CENTER);
 				editBoundariesDialog.add(interval, BorderLayout.NORTH);
 				Panel resolution = new Panel(new FlowLayout());
-				TextField width = new TextField(((Integer) ((MandelbrotCanvas) provider.getCanvas()).getWidth()).toString());
+				TextField width = new TextField(((Integer) canvas.getWidth()).toString());
 				resolution.add(width);
 				resolution.add(new Label("x"));
-				TextField height = new TextField(((Integer) ((MandelbrotCanvas) provider.getCanvas()).getHeight()).toString());
+				TextField height = new TextField(((Integer) canvas.getHeight()).toString());
 				resolution.add(height);
 				resolution.add(new Label("pixels"));
 				editBoundariesDialog.add(resolution, BorderLayout.CENTER);
@@ -90,12 +92,12 @@ public class MandelbrotMenuListener implements ActionListener
 				editBoundariesDialog.setVisible(true);
 				if (okClicked)
 				{
-					((MandelbrotCanvas) provider.getCanvas()).setMinImag(Double.parseDouble(minImag.getText()));
-					((MandelbrotCanvas) provider.getCanvas()).setMaxImag(Double.parseDouble(maxImag.getText()));
-					((MandelbrotCanvas) provider.getCanvas()).setMinReal(Double.parseDouble(minReal.getText()));
-					((MandelbrotCanvas) provider.getCanvas()).setMaxReal(Double.parseDouble(maxReal.getText()));
-					((MandelbrotCanvas) provider.getCanvas()).setSize(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
-					((Frame) provider.getCanvas().getParent()).pack();
+					canvas.setMinImag(Double.parseDouble(minImag.getText()));
+					canvas.setMaxImag(Double.parseDouble(maxImag.getText()));
+					canvas.setMinReal(Double.parseDouble(minReal.getText()));
+					canvas.setMaxReal(Double.parseDouble(maxReal.getText()));
+					canvas.setSize(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
+					((Frame) canvas.getParent()).pack();
 					provider.stopCalculation();
 					provider.startCalculation();
 				}
@@ -129,12 +131,10 @@ public class MandelbrotMenuListener implements ActionListener
 				additionalParamsDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
 				additionalParamsDialog.setLayout(new GridLayout(3, 2));
 				additionalParamsDialog.add(new Label("SuperSampling Factor", Label.RIGHT));
-				JSpinner ssf = new JSpinner(new SpinnerNumberModel(((MandelbrotCanvas) provider.getCanvas()).getSuperSamplingFactor(), 1,
-						Byte.MAX_VALUE, 1));
+				JSpinner ssf = new JSpinner(new SpinnerNumberModel(canvas.getSuperSamplingFactor(), 1, Byte.MAX_VALUE, 1));
 				additionalParamsDialog.add(ssf);
 				additionalParamsDialog.add(new Label("Calculation depth", Label.RIGHT));
-				JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(((MandelbrotCanvas) provider.getCanvas()).getMaxPasses(), 1,
-						Integer.MAX_VALUE, 1));
+				JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(canvas.getMaxPasses(), 1, Integer.MAX_VALUE, 1));
 				additionalParamsDialog.add(maxPasses);
 				ok = new Button("OK");
 				ok.addActionListener(this);
@@ -146,11 +146,11 @@ public class MandelbrotMenuListener implements ActionListener
 				additionalParamsDialog.setVisible(true);
 				if (okClicked)
 				{
-					((MandelbrotCanvas) provider.getCanvas()).setSuperSamplingFactor((byte) (int) ssf.getValue()); // the additional (int) cast is
-																													// necessary because casting from
-																													// Integer to byte raises a
-																													// ClassCastException
-					((MandelbrotCanvas) provider.getCanvas()).setMaxPasses((int) maxPasses.getValue());
+					canvas.setSuperSamplingFactor((byte) (int) ssf.getValue()); // the additional (int) cast is
+																				// necessary because casting from
+																				// Integer to byte raises a
+																				// ClassCastException
+					canvas.setMaxPasses((int) maxPasses.getValue());
 					provider.stopCalculation();
 					provider.startCalculation();
 				}
@@ -160,7 +160,24 @@ public class MandelbrotMenuListener implements ActionListener
 				provider.startCalculation();
 				break;
 			case "Undo":
-				// TODO
+				if (canvas.history.canUndo())
+				{
+					provider.stopCalculation();
+					canvas.setParams(canvas.history.undo(), false);
+					provider.startCalculation();
+				}
+				provider.undoMenuItem.setEnabled(canvas.history.canUndo());
+				provider.redoMenuItem.setEnabled(canvas.history.canRedo());
+				break;
+			case "Redo":
+				if (canvas.history.canRedo())
+				{
+					provider.stopCalculation();
+					canvas.setParams(canvas.history.redo(), false);
+					provider.startCalculation();
+				}
+				provider.undoMenuItem.setEnabled(canvas.history.canUndo());
+				provider.redoMenuItem.setEnabled(canvas.history.canRedo());
 				break;
 			default:
 				System.out

@@ -130,7 +130,7 @@ public class History<T>
 	 */
 	public boolean canRedo()
 	{
-		return currentState <= lastState;
+		return currentState < lastState;
 	}
 
 	@Override
