@@ -25,24 +25,24 @@ public class ZoomMenuListener implements ActionListener
 	public static final String	CENTER_NO_ZOOM	= "Center on mouse location";
 
 	@Override
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed(final ActionEvent e)
 	{
-		String actionCommand = e.getActionCommand();
-		MainFrame i = MainFrame.getInstance();
-		FractalProvider p = i.getCurrentProvider();
-		Canvas c = p.getCanvas();
+		final String actionCommand = e.getActionCommand();
+		final MainFrame i = MainFrame.getInstance();
+		final FractalProvider p = i.getCurrentProvider();
+		final Canvas c = p.getCanvas();
 		p.stopCalculation();
 		if (actionCommand.equals(CENTER_NO_ZOOM))
 			p.zoom(i.zoomMenuX, i.zoomMenuY, 1.0);
 		else
 		{
-			short factorPercent = Short.parseShort(actionCommand.substring(0, actionCommand.length() - 1));
-			boolean useCoordinates = i.zoomMenuX >= 0 && i.zoomMenuY >= 0
+			final short factorPercent = Short.parseShort(actionCommand.substring(0, actionCommand.length() - 1));
+			final boolean useCoordinates = i.zoomMenuX >= 0 && i.zoomMenuY >= 0
 					&& ((MenuItem) ((MenuItem) e.getSource()).getParent()).getLabel().equals(USE_COORDINATES);
-			boolean zoomIn = ((MenuItem) ((MenuItem) ((MenuItem) e.getSource()).getParent()).getParent()).getLabel().equals(ZOOM_IN);
-			double factor = zoomIn ? 1 - factorPercent / 200.0 : 1 + factorPercent / 100.0;
-			int x = useCoordinates ? i.zoomMenuX : c.getWidth() / 2;
-			int y = useCoordinates ? i.zoomMenuY : c.getHeight() / 2;
+			final boolean zoomIn = ((MenuItem) ((MenuItem) ((MenuItem) e.getSource()).getParent()).getParent()).getLabel().equals(ZOOM_IN);
+			final double factor = zoomIn ? 1 - factorPercent / 200.0 : 1 + factorPercent / 100.0;
+			final int x = useCoordinates ? i.zoomMenuX : c.getWidth() / 2;
+			final int y = useCoordinates ? i.zoomMenuY : c.getHeight() / 2;
 			p.zoom(x, y, factor);
 		}
 		p.startCalculation();

@@ -148,14 +148,14 @@ public class SimplePalette implements ColorPalette
 	}
 
 	@Override
-	public void initMenu(Menu colorPaletteMenu, FractalProvider provider, Frame owner)
+	public void initMenu(final Menu colorPaletteMenu, final FractalProvider provider, final Frame owner)
 	{
-		MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
+		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
 		edit.addActionListener(new SimplePaletteMenuListener(provider, owner, this));
 		colorPaletteMenu.add(edit);
 	}
 
-	public boolean equals(SimplePalette otherPalette)
+	public boolean equals(final SimplePalette otherPalette)
 	{
 		return colorSteps == otherPalette.colorSteps && startColor.equals(otherPalette.startColor) && endColor.equals(otherPalette.endColor)
 				&& coreColor.equals(otherPalette.coreColor);
@@ -163,11 +163,11 @@ public class SimplePalette implements ColorPalette
 
 	class SimplePaletteMenuListener implements ActionListener
 	{
-		private FractalProvider	provider;
-		private Frame			owner;
-		private SimplePalette	start;
+		private final FractalProvider	provider;
+		private final Frame				owner;
+		private SimplePalette			start;
 
-		public SimplePaletteMenuListener(FractalProvider provider, Frame owner, SimplePalette start)
+		public SimplePaletteMenuListener(final FractalProvider provider, final Frame owner, final SimplePalette start)
 		{
 			this.provider = provider;
 			this.owner = owner;
@@ -175,11 +175,11 @@ public class SimplePalette implements ColorPalette
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e)
+		public void actionPerformed(final ActionEvent e)
 		{
-			SimplePaletteEditDialog d = new SimplePaletteEditDialog(owner, start);
+			final SimplePaletteEditDialog d = new SimplePaletteEditDialog(owner, start);
 			d.setVisible(true);
-			SimplePalette newPalette = d.getPalette();
+			final SimplePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette))
 			{
 				start = newPalette;

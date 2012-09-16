@@ -74,7 +74,7 @@ public abstract class Core
 	 * @param status
 	 *            The new status.
 	 */
-	public static void setStatus(String status)
+	public static void setStatus(final String status)
 	{
 		if (MainFrame.getInstance() == null)
 			return;
@@ -89,7 +89,7 @@ public abstract class Core
 	 * @param color
 	 *            The color of the new status.
 	 */
-	public static void setStatus(String status, Color color)
+	public static void setStatus(final String status, final Color color)
 	{
 		if (MainFrame.getInstance() == null)
 			return;

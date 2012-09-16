@@ -32,29 +32,29 @@ import javax.swing.event.ChangeListener;
 
 public class NodePaletteEditDialog extends Dialog implements ActionListener, ChangeListener
 {
-	private static final long	serialVersionUID	= -4994844391708814135L;
-	private final NodePalette	original;
-	private Panel				nodesPanel;
-	private List<ColorNode>		nodes;
-	private Panel				otherPaletteStuff;
-	private JSpinner			nodesCount;
-	private SelectableColor		coreColor;
-	private Panel				buttonsPanel;
-	private boolean				okClicked;
+	private static final long		serialVersionUID	= -4994844391708814135L;
+	private final NodePalette		original;
+	private final Panel				nodesPanel;
+	private final List<ColorNode>	nodes;
+	private final Panel				otherPaletteStuff;
+	private final JSpinner			nodesCount;
+	private final SelectableColor	coreColor;
+	private final Panel				buttonsPanel;
+	private boolean					okClicked;
 
-	public NodePaletteEditDialog(Frame owner, NodePalette start)
+	public NodePaletteEditDialog(final Frame owner, final NodePalette start)
 	{
 		super(owner, "Edit Color Palette", true);
 		original = start;
 		setLayout(new BorderLayout());
-		ScrollPane nodesPanelParent = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
+		final ScrollPane nodesPanelParent = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
 		nodesPanel = new Panel(new FlowLayout());
 		nodesPanelParent.add(nodesPanel);
 		nodes = new ArrayList<>(start.nodes.size());
 		ColorNode lastNode = null;
-		for (ColorNode n : start.nodes)
+		for (final ColorNode n : start.nodes)
 		{
-			ColorNode newNode = n.copy();
+			final ColorNode newNode = n.copy();
 			nodes.add(newNode);
 			if (lastNode != null)
 				lastNode.link(newNode);
@@ -72,15 +72,15 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 		otherPaletteStuff.add(nodesCount);
 		otherPaletteStuff.add(new Label("Core color"));
 		otherPaletteStuff.add(coreColor);
-		Panel centerPanel = new Panel(new GridLayout(2, 1));
+		final Panel centerPanel = new Panel(new GridLayout(2, 1));
 		centerPanel.add(otherPaletteStuff);
 		centerPanel.add(nodesPanelParent);
 		add(centerPanel, BorderLayout.CENTER);
 		buttonsPanel = new Panel(new FlowLayout(FlowLayout.RIGHT));
-		Button ok = new Button("OK");
+		final Button ok = new Button("OK");
 		ok.addActionListener(this);
 		buttonsPanel.add(ok);
-		Button cancel = new Button("Cancel");
+		final Button cancel = new Button("Cancel");
 		cancel.addActionListener(this);
 		buttonsPanel.add(cancel);
 		add(buttonsPanel, BorderLayout.SOUTH);
@@ -88,7 +88,8 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 		setVisible(true);
 	}
 
-	public void actionPerformed(ActionEvent e)
+	@Override
+	public void actionPerformed(final ActionEvent e)
 	{
 		switch (e.getActionCommand())
 		{
@@ -99,7 +100,7 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 				okClicked = false;
 				break;
 		}
-		for (ColorNode n : nodes)
+		for (final ColorNode n : nodes)
 			n.prepare();
 		setVisible(false);
 	}
@@ -113,15 +114,15 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 	}
 
 	@Override
-	public void stateChanged(ChangeEvent e)
+	public void stateChanged(final ChangeEvent e)
 	{
-		int newSize = (int) nodesCount.getValue();
+		final int newSize = (int) nodesCount.getValue();
 		while (nodes.size() > newSize)
 			nodes.remove(nodes.size() - 1);
 		while (nodes.size() < newSize)
 		{
-			ColorNode newNode = new ColorNode(nodes.get(nodes.size() - 1).getEndColor(), nodes.get(0).getStartColor(), nodes.get(nodes.size() - 1)
-					.getLength());
+			final ColorNode newNode = new ColorNode(nodes.get(nodes.size() - 1).getEndColor(), nodes.get(0).getStartColor(), nodes.get(
+					nodes.size() - 1).getLength());
 			nodes.get(nodes.size() - 1).unlink();
 			nodes.get(nodes.size() - 1).link(newNode);
 			nodes.add(newNode);
@@ -129,7 +130,7 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 		if (nodes.size() > 1)
 			nodes.get(nodes.size() - 1).link(nodes.get(0));
 		nodesPanel.removeAll();
-		for (ColorNode n : nodes)
+		for (final ColorNode n : nodes)
 			nodesPanel.add(n);
 		validate();
 	}

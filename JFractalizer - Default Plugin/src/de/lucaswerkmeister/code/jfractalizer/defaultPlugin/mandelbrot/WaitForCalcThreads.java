@@ -11,7 +11,6 @@
  */
 package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
 
-
 public class WaitForCalcThreads extends Thread
 {
 	MandelbrotImageMaker[]	threads;

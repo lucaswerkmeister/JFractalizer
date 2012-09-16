@@ -27,21 +27,21 @@ public class PaletteClassReader extends FractXmlPaletteLoader
 	}
 
 	@Override
-	public void notationDecl(String name, String publicId, String systemId) throws SAXException
+	public void notationDecl(final String name, final String publicId, final String systemId) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.notationDecl(name, publicId, systemId);
 	}
 
 	@Override
-	public void unparsedEntityDecl(String name, String publicId, String systemId, String notationName) throws SAXException
+	public void unparsedEntityDecl(final String name, final String publicId, final String systemId, final String notationName) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.unparsedEntityDecl(name, publicId, systemId, notationName);
 	}
 
 	@Override
-	public void setDocumentLocator(Locator locator)
+	public void setDocumentLocator(final Locator locator)
 	{
 		if (innerLoader != null)
 			innerLoader.setDocumentLocator(locator);
@@ -62,21 +62,21 @@ public class PaletteClassReader extends FractXmlPaletteLoader
 	}
 
 	@Override
-	public void startPrefixMapping(String prefix, String uri) throws SAXException
+	public void startPrefixMapping(final String prefix, final String uri) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.startPrefixMapping(prefix, uri);
 	}
 
 	@Override
-	public void endPrefixMapping(String prefix) throws SAXException
+	public void endPrefixMapping(final String prefix) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.endPrefixMapping(prefix);
 	}
 
 	@Override
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
+	public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.startElement(uri, localName, qName, attributes);
@@ -93,56 +93,56 @@ public class PaletteClassReader extends FractXmlPaletteLoader
 	}
 
 	@Override
-	public void endElement(String uri, String localName, String qName) throws SAXException
+	public void endElement(final String uri, final String localName, final String qName) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.endElement(uri, localName, qName);
 	}
 
 	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException
+	public void characters(final char[] ch, final int start, final int length) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.characters(ch, start, length);
 	}
 
 	@Override
-	public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException
+	public void ignorableWhitespace(final char[] ch, final int start, final int length) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.ignorableWhitespace(ch, start, length);
 	}
 
 	@Override
-	public void processingInstruction(String target, String data) throws SAXException
+	public void processingInstruction(final String target, final String data) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.processingInstruction(target, data);
 	}
 
 	@Override
-	public void skippedEntity(String name) throws SAXException
+	public void skippedEntity(final String name) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.skippedEntity(name);
 	}
 
 	@Override
-	public void warning(SAXParseException e) throws SAXException
+	public void warning(final SAXParseException e) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.warning(e);
 	}
 
 	@Override
-	public void error(SAXParseException e) throws SAXException
+	public void error(final SAXParseException e) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.error(e);
 	}
 
 	@Override
-	public void fatalError(SAXParseException e) throws SAXException
+	public void fatalError(final SAXParseException e) throws SAXException
 	{
 		if (innerLoader != null)
 			innerLoader.fatalError(e);

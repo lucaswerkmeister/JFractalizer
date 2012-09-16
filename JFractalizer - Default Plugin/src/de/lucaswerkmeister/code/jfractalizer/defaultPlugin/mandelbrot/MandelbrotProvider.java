@@ -34,9 +34,9 @@ import de.lucaswerkmeister.code.jfractalizer.FractalProvider;
 
 public class MandelbrotProvider implements FractalProvider
 {
-	private MandelbrotCanvas		canvas;
-	private MandelbrotMenuListener	menuListener;
-	MenuItem						undoMenuItem, redoMenuItem;
+	private MandelbrotCanvas				canvas;
+	private final MandelbrotMenuListener	menuListener;
+	MenuItem								undoMenuItem, redoMenuItem;
 
 	public MandelbrotProvider()
 	{
@@ -145,16 +145,16 @@ public class MandelbrotProvider implements FractalProvider
 	}
 
 	@Override
-	public void initMenu(Menu fractalMenu)
+	public void initMenu(final Menu fractalMenu)
 	{
-		MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
+		final MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
 		recalculate.addActionListener(menuListener);
 		fractalMenu.add(recalculate);
 		fractalMenu.addSeparator();
-		MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
+		final MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
 		editBoundaries.addActionListener(menuListener);
 		fractalMenu.add(editBoundaries);
-		MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));
+		final MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));
 		additionalParams.addActionListener(menuListener);
 		fractalMenu.add(additionalParams);
 		fractalMenu.addSeparator();
@@ -169,14 +169,14 @@ public class MandelbrotProvider implements FractalProvider
 	}
 
 	@Override
-	public void initContextMenu(PopupMenu contextMenu)
+	public void initContextMenu(final PopupMenu contextMenu)
 	{
-		MenuItem goToStart = new MenuItem("Show start image");
+		final MenuItem goToStart = new MenuItem("Show start image");
 		final MandelbrotCanvas c = canvas;
 		goToStart.addActionListener(new ActionListener()
 		{
 			@Override
-			public void actionPerformed(ActionEvent e)
+			public void actionPerformed(final ActionEvent e)
 			{
 				Core.stopCalculation();
 				c.initDefaultValues();
@@ -187,14 +187,14 @@ public class MandelbrotProvider implements FractalProvider
 	}
 
 	@Override
-	public void zoom(int x, int y, double factor)
+	public void zoom(final int x, final int y, final double factor)
 	{
-		double currentWidth = (canvas.getMaxReal() - canvas.getMinReal());
-		double currentHeight = (canvas.getMaxImag() - canvas.getMinImag());
-		double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getWidth());
-		double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getHeight()));
-		double halfSizeR = currentWidth * factor / 2;
-		double halfSizeI = currentHeight * factor / 2;
+		final double currentWidth = (canvas.getMaxReal() - canvas.getMinReal());
+		final double currentHeight = (canvas.getMaxImag() - canvas.getMinImag());
+		final double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getWidth());
+		final double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getHeight()));
+		final double halfSizeR = currentWidth * factor / 2;
+		final double halfSizeI = currentHeight * factor / 2;
 		canvas.setMinReal(centerR - halfSizeR);
 		canvas.setMaxReal(centerR + halfSizeR);
 		canvas.setMinImag(centerI - halfSizeI);

@@ -35,12 +35,12 @@ import de.lucaswerkmeister.code.jfractalizer.Core;
 
 public class SelectableColor extends Component implements MouseListener
 {
-	private static final long		serialVersionUID	= -464835931994412419L;
-	private static final Dimension	size				= new Dimension(25, 25);
-	private Color					color				= Color.black;
-	private List<ActionListener>	listeners			= new LinkedList<>();
+	private static final long			serialVersionUID	= -464835931994412419L;
+	private static final Dimension		size				= new Dimension(25, 25);
+	private Color						color				= Color.black;
+	private final List<ActionListener>	listeners			= new LinkedList<>();
 
-	public SelectableColor(Color c)
+	public SelectableColor(final Color c)
 	{
 		color = c;
 		addMouseListener(this);
@@ -66,7 +66,7 @@ public class SelectableColor extends Component implements MouseListener
 	}
 
 	@Override
-	public void paint(Graphics g)
+	public void paint(final Graphics g)
 	{
 		g.setColor(Color.black);
 		g.drawRect(0, 0, size.width, size.height);
@@ -74,7 +74,7 @@ public class SelectableColor extends Component implements MouseListener
 		g.fillRect(1, 1, size.width - 1, size.height - 1);
 	}
 
-	public void setColor(Color c)
+	public void setColor(final Color c)
 	{
 		color = c;
 		repaint();
@@ -85,49 +85,49 @@ public class SelectableColor extends Component implements MouseListener
 		return color;
 	}
 
-	public void addActionListener(ActionListener listener)
+	public void addActionListener(final ActionListener listener)
 	{
 		listeners.add(listener);
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e)
+	public void mouseClicked(final MouseEvent e)
 	{
 		Container parent = getParent();
 		while (!(parent instanceof Frame))
 			parent = parent.getParent();
-		ColorDialog d = new ColorDialog((Frame) parent, color);
+		final ColorDialog d = new ColorDialog((Frame) parent, color);
 		d.setVisible(true);
 		color = d.getColor();
 		repaint();
 		if (!listeners.isEmpty())
 		{
-			ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Color changed");
-			for (ActionListener l : listeners)
+			final ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Color changed");
+			for (final ActionListener l : listeners)
 				l.actionPerformed(ae);
 		}
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e)
+	public void mousePressed(final MouseEvent e)
 	{
 
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e)
+	public void mouseReleased(final MouseEvent e)
 	{
 
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e)
+	public void mouseEntered(final MouseEvent e)
 	{
 
 	}
 
 	@Override
-	public void mouseExited(MouseEvent e)
+	public void mouseExited(final MouseEvent e)
 	{
 
 	}
@@ -137,10 +137,10 @@ class ColorDialog extends Dialog implements ActionListener
 {
 	private static final long	serialVersionUID	= 4347923773976010884L;
 	private boolean				okClicked			= false;
-	private Color				startColor;
-	private JColorChooser		chooser;
+	private final Color			startColor;
+	private final JColorChooser	chooser;
 
-	public ColorDialog(Frame owner, Color c)
+	public ColorDialog(final Frame owner, final Color c)
 	{
 		super(owner, "Choose color", true);
 		startColor = c;
@@ -148,11 +148,11 @@ class ColorDialog extends Dialog implements ActionListener
 		chooser = Core.getGlobalColorChooser();
 		chooser.setColor(c);
 		add(chooser, BorderLayout.CENTER);
-		Panel south = new Panel();
-		Button ok = new Button("OK");
+		final Panel south = new Panel();
+		final Button ok = new Button("OK");
 		ok.addActionListener(this);
 		south.add(ok);
-		Button cancel = new Button("Cancel");
+		final Button cancel = new Button("Cancel");
 		cancel.addActionListener(this);
 		south.add(cancel);
 		add(south, BorderLayout.SOUTH);
@@ -161,7 +161,7 @@ class ColorDialog extends Dialog implements ActionListener
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed(final ActionEvent e)
 	{
 		okClicked = e.getActionCommand().equals("OK");
 		dispose();

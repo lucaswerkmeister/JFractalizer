@@ -42,7 +42,7 @@ public class History<T>
 	 * @param capacity
 	 *            Specifies how many states will be stored. If more states are added, older states are discarded.
 	 */
-	public History(int capacity)
+	public History(final int capacity)
 	{
 		states = new ArrayList<>(capacity);
 		maxStates = capacity;
@@ -55,13 +55,11 @@ public class History<T>
 	 * 
 	 * @param newState
 	 */
-	public void add(T newState)
+	public void add(final T newState)
 	{
 		if (currentState != lastState)
-		{
 			for (int i = currentState + 1; i <= lastState; i++)
 				states.remove(i);
-		}
 		if (currentState == maxStates)
 		{
 			for (int i = 0; i < maxStates - 1;)
@@ -136,8 +134,8 @@ public class History<T>
 	@Override
 	public String toString()
 	{
-		StringBuilder b = new StringBuilder();
-		for (T t : states)
+		final StringBuilder b = new StringBuilder();
+		for (final T t : states)
 			b.append(t.toString());
 		return b.toString();
 	}

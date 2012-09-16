@@ -22,7 +22,8 @@ final class MandelbrotParams
 	 * @param superSamplingFactor
 	 *            The SuperSampling-factor.
 	 */
-	MandelbrotParams(double minReal, double maxReal, double minImag, double maxImag, int maxPasses, byte superSamplingFactor)
+	MandelbrotParams(final double minReal, final double maxReal, final double minImag, final double maxImag, final int maxPasses,
+			final byte superSamplingFactor)
 	{
 		this.minReal = minReal;
 		this.maxReal = maxReal;

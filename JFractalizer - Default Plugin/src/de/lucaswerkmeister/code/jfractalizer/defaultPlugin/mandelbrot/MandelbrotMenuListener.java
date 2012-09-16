@@ -29,58 +29,58 @@ import javax.swing.SpinnerNumberModel;
 
 public class MandelbrotMenuListener implements ActionListener
 {
-	private MandelbrotProvider	provider;
-	private MandelbrotCanvas	canvas;
-	private boolean				okClicked	= false;
-	Dialog						editBoundariesDialog	= null, additionalParamsDialog = null;	// initialize variable so the compiler doesn't
-																								// complain
+	private final MandelbrotProvider	provider;
+	private final MandelbrotCanvas		canvas;
+	private boolean						okClicked	= false;
+	Dialog								editBoundariesDialog	= null, additionalParamsDialog = null;	// initialize variable so the compiler doesn't
+																										// complain
 
-	MandelbrotMenuListener(MandelbrotProvider provider, MandelbrotCanvas canvas)
+	MandelbrotMenuListener(final MandelbrotProvider provider, final MandelbrotCanvas canvas)
 	{
 		this.provider = provider;
 		this.canvas = canvas;
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed(final ActionEvent e)
 	{
 		switch (e.getActionCommand())
 		{
 			case "Edit boundaries...":
 				editBoundariesDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
 				editBoundariesDialog.setLayout(new BorderLayout());
-				Panel interval = new Panel(new BorderLayout());
-				TextField maxImag = new TextField(((Double) canvas.getMaxImag()).toString());
+				final Panel interval = new Panel(new BorderLayout());
+				final TextField maxImag = new TextField(((Double) canvas.getMaxImag()).toString());
 				Panel p = new Panel(new GridBagLayout());
 				p.add(maxImag);
 				interval.add(p, BorderLayout.NORTH);
-				TextField minImag = new TextField(((Double) canvas.getMinImag()).toString());
+				final TextField minImag = new TextField(((Double) canvas.getMinImag()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(minImag);
 				interval.add(p, BorderLayout.SOUTH);
-				TextField maxReal = new TextField(((Double) canvas.getMaxReal()).toString());
+				final TextField maxReal = new TextField(((Double) canvas.getMaxReal()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(maxReal);
 				interval.add(p, BorderLayout.EAST);
-				TextField minReal = new TextField(((Double) canvas.getMinReal()).toString());
+				final TextField minReal = new TextField(((Double) canvas.getMinReal()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(minReal);
 				interval.add(p, BorderLayout.WEST);
-				Panel centerText = new Panel(new GridLayout(3, 1));
+				final Panel centerText = new Panel(new GridLayout(3, 1));
 				centerText.add(new Label("maxImag", Label.CENTER));
 				centerText.add(new Label("minReal + maxReal", Label.CENTER));
 				centerText.add(new Label("minImag", Label.CENTER));
 				interval.add(centerText, BorderLayout.CENTER);
 				editBoundariesDialog.add(interval, BorderLayout.NORTH);
-				Panel resolution = new Panel(new FlowLayout());
-				TextField width = new TextField(((Integer) canvas.getWidth()).toString());
+				final Panel resolution = new Panel(new FlowLayout());
+				final TextField width = new TextField(((Integer) canvas.getWidth()).toString());
 				resolution.add(width);
 				resolution.add(new Label("x"));
-				TextField height = new TextField(((Integer) canvas.getHeight()).toString());
+				final TextField height = new TextField(((Integer) canvas.getHeight()).toString());
 				resolution.add(height);
 				resolution.add(new Label("pixels"));
 				editBoundariesDialog.add(resolution, BorderLayout.CENTER);
-				Panel buttons = new Panel(new FlowLayout());
+				final Panel buttons = new Panel(new FlowLayout());
 				Button ok = new Button("OK");
 				ok.addActionListener(this);
 				buttons.add(ok);
@@ -131,10 +131,10 @@ public class MandelbrotMenuListener implements ActionListener
 				additionalParamsDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
 				additionalParamsDialog.setLayout(new GridLayout(3, 2));
 				additionalParamsDialog.add(new Label("SuperSampling Factor", Label.RIGHT));
-				JSpinner ssf = new JSpinner(new SpinnerNumberModel(canvas.getSuperSamplingFactor(), 1, Byte.MAX_VALUE, 1));
+				final JSpinner ssf = new JSpinner(new SpinnerNumberModel(canvas.getSuperSamplingFactor(), 1, Byte.MAX_VALUE, 1));
 				additionalParamsDialog.add(ssf);
 				additionalParamsDialog.add(new Label("Calculation depth", Label.RIGHT));
-				JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(canvas.getMaxPasses(), 1, Integer.MAX_VALUE, 1));
+				final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(canvas.getMaxPasses(), 1, Integer.MAX_VALUE, 1));
 				additionalParamsDialog.add(maxPasses);
 				ok = new Button("OK");
 				ok.addActionListener(this);

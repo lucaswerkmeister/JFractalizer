@@ -26,9 +26,9 @@ public class ColorNode extends Panel implements ActionListener
 	private static final long	serialVersionUID	= -5555238254555730578L;
 	private Color				startColor, endColor;
 	private int					length;
-	private SelectableColor		startC, endC;
-	private JSpinner			lengthC;
-	private ColorNode			linkedNode;
+	private final SelectableColor	startC, endC;
+	private final JSpinner			lengthC;
+	private ColorNode				linkedNode;
 
 	/**
 	 * Creates a new ColorNode with the specified parameters.
@@ -62,7 +62,7 @@ public class ColorNode extends Panel implements ActionListener
 		return startColor.toString() + "..." + length + "..." + endColor.toString();
 	}
 
-	public boolean equals(ColorNode otherNode)
+	public boolean equals(final ColorNode otherNode)
 	{
 		return length == otherNode.length && startColor == otherNode.startColor && endColor == otherNode.endColor;
 	}
@@ -91,7 +91,7 @@ public class ColorNode extends Panel implements ActionListener
 		return length;
 	}
 
-	public void link(ColorNode nextNode)
+	public void link(final ColorNode nextNode)
 	{
 		linkedNode = nextNode;
 		linkedNode.update(endC.getColor());
@@ -102,19 +102,17 @@ public class ColorNode extends Panel implements ActionListener
 		linkedNode = null;
 	}
 
-	private void update(Color newColor)
+	private void update(final Color newColor)
 	{
 		startC.setColor(newColor);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed(final ActionEvent e)
 	{
 		if (e.getActionCommand().equals("Color changed"))
-		{
 			if (linkedNode != null)
 				linkedNode.update(endC.getColor());
-		}
 	}
 
 	public ColorNode copy()

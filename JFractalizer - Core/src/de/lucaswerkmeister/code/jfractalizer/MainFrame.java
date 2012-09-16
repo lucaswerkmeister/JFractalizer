@@ -54,7 +54,7 @@ public class MainFrame extends Frame
 		{
 			setCurrentProvider(fractalChooserDialog.getSelectedService());
 		}
-		catch (NullPointerException e)
+		catch (final NullPointerException e)
 		{
 			// Do nothing, currentColorPalette wasn't set
 		}
@@ -164,17 +164,17 @@ public class MainFrame extends Frame
 
 		final short[] zooms = new short[] { 1, 2, 5, 10, 25, 50, 100 };
 
-		Menu zoomIn = new Menu(ZoomMenuListener.ZOOM_IN);
-		Menu zoomOut = new Menu(ZoomMenuListener.ZOOM_OUT);
-		Menu zoomInCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
-		Menu zoomInCenter = new Menu(ZoomMenuListener.USE_CENTER);
-		Menu zoomOutCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
-		Menu zoomOutCenter = new Menu(ZoomMenuListener.USE_CENTER);
+		final Menu zoomIn = new Menu(ZoomMenuListener.ZOOM_IN);
+		final Menu zoomOut = new Menu(ZoomMenuListener.ZOOM_OUT);
+		final Menu zoomInCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
+		final Menu zoomInCenter = new Menu(ZoomMenuListener.USE_CENTER);
+		final Menu zoomOutCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
+		final Menu zoomOutCenter = new Menu(ZoomMenuListener.USE_CENTER);
 		MenuItem m;
-		ZoomMenuListener listener = new ZoomMenuListener();
-		for (short s : zooms)
+		final ZoomMenuListener listener = new ZoomMenuListener();
+		for (final short s : zooms)
 		{
-			String t = s + "%";
+			final String t = s + "%";
 			m = new MenuItem(t);
 			m.addActionListener(listener);
 			zoomInCurrentPos.add(m);
@@ -195,7 +195,7 @@ public class MainFrame extends Frame
 		menu.add(zoomIn);
 		menu.add(zoomOut);
 
-		MenuItem center = new MenuItem(ZoomMenuListener.CENTER_NO_ZOOM);
+		final MenuItem center = new MenuItem(ZoomMenuListener.CENTER_NO_ZOOM);
 		center.addActionListener(listener);
 		menu.add(center);
 
@@ -203,19 +203,21 @@ public class MainFrame extends Frame
 		c.add(menu);
 		c.addMouseListener(new MouseAdapter()
 		{
-			public void mousePressed(MouseEvent e)
+			@Override
+			public void mousePressed(final MouseEvent e)
 			{
 				if (e.isPopupTrigger())
 					showMenu(e.getX(), e.getY());
 			}
 
-			public void mouseReleased(MouseEvent e)
+			@Override
+			public void mouseReleased(final MouseEvent e)
 			{
 				if (e.isPopupTrigger())
 					showMenu(e.getX(), e.getY());
 			}
 
-			private void showMenu(int x, int y)
+			private void showMenu(final int x, final int y)
 			{
 				menu.show(c, x, y);
 				zoomMenuX = x;
@@ -240,7 +242,7 @@ public class MainFrame extends Frame
 		return instance;
 	}
 
-	void setStatus(String status, Color color)
+	void setStatus(final String status, final Color color)
 	{
 		statusBar.setText(status);
 		statusBar.setForeground(color);

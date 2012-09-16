@@ -143,14 +143,14 @@ public class NodePalette implements ColorPalette
 	}
 
 	@Override
-	public void initMenu(Menu colorPaletteMenu, FractalProvider provider, Frame owner)
+	public void initMenu(final Menu colorPaletteMenu, final FractalProvider provider, final Frame owner)
 	{
-		MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
+		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
 		edit.addActionListener(new NodePaletteMenuListener(provider, owner, this));
 		colorPaletteMenu.add(edit);
 	}
 
-	public boolean equals(NodePalette otherPalette)
+	public boolean equals(final NodePalette otherPalette)
 	{
 		if (otherPalette.nodes.size() != nodes.size())
 			return false;
@@ -162,11 +162,11 @@ public class NodePalette implements ColorPalette
 
 	class NodePaletteMenuListener implements ActionListener
 	{
-		private FractalProvider	provider;
-		private Frame			owner;
-		private NodePalette		start;
+		private final FractalProvider	provider;
+		private final Frame				owner;
+		private NodePalette				start;
 
-		public NodePaletteMenuListener(FractalProvider provider, Frame owner, NodePalette start)
+		public NodePaletteMenuListener(final FractalProvider provider, final Frame owner, final NodePalette start)
 		{
 			this.provider = provider;
 			this.owner = owner;
@@ -174,11 +174,11 @@ public class NodePalette implements ColorPalette
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e)
+		public void actionPerformed(final ActionEvent e)
 		{
-			NodePaletteEditDialog d = new NodePaletteEditDialog(owner, start);
+			final NodePaletteEditDialog d = new NodePaletteEditDialog(owner, start);
 			d.setVisible(true);
-			NodePalette newPalette = d.getPalette();
+			final NodePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette))
 			{
 				start = newPalette;

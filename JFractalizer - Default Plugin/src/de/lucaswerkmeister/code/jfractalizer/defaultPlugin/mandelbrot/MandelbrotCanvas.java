@@ -52,7 +52,7 @@ public class MandelbrotCanvas extends Canvas
 		inverter = new LookupOp(new ShortLookupTable(0, invertTable), null);
 	}
 
-	public MandelbrotCanvas(MandelbrotProvider provider)
+	public MandelbrotCanvas(final MandelbrotProvider provider)
 	{
 		setSize(START_WIDTH, START_HEIGHT);
 		this.provider = provider;
@@ -109,20 +109,20 @@ public class MandelbrotCanvas extends Canvas
 		{
 			stopTime = System.currentTimeMillis();
 			long interval = stopTime - startTime;
-			short milliseconds = (short) (interval % 1000);
+			final short milliseconds = (short) (interval % 1000);
 			interval -= milliseconds;
 			interval /= 1000;
-			byte seconds = (byte) (interval % 60);
+			final byte seconds = (byte) (interval % 60);
 			interval -= seconds;
 			interval /= 60;
-			byte minutes = (byte) (interval % 60);
+			final byte minutes = (byte) (interval % 60);
 			interval -= minutes;
 			interval /= 60;
-			byte hours = (byte) (interval % 24);
+			final byte hours = (byte) (interval % 24);
 			interval -= hours;
 			interval /= 24;
-			long days = interval;
-			StringBuilder status = new StringBuilder("Calculation took ");
+			final long days = interval;
+			final StringBuilder status = new StringBuilder("Calculation took ");
 			if (days != 0)
 			{
 				status.append(days);
@@ -384,12 +384,12 @@ public class MandelbrotCanvas extends Canvas
 		return new MandelbrotParams(minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor);
 	}
 
-	void setParams(MandelbrotParams params)
+	void setParams(final MandelbrotParams params)
 	{
 		setParams(params, true);
 	}
 
-	void setParams(MandelbrotParams params, boolean addToHistory)
+	void setParams(final MandelbrotParams params, final boolean addToHistory)
 	{
 		minReal = params.minReal;
 		maxReal = params.maxReal;

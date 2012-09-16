@@ -25,12 +25,12 @@ import javax.swing.SpinnerNumberModel;
 public class SimplePaletteEditDialog extends Dialog implements ActionListener
 {
 	private static final long	serialVersionUID	= -4693221922749333802L;
-	private SelectableColor		coreColor, startColor, endColor;
-	private JSpinner			colorSteps;
-	private final SimplePalette	original;
-	private boolean				userCanceled		= false;
+	private final SelectableColor	coreColor, startColor, endColor;
+	private final JSpinner			colorSteps;
+	private final SimplePalette		original;
+	private boolean					userCanceled	= false;
 
-	public SimplePaletteEditDialog(Frame owner, SimplePalette start)
+	public SimplePaletteEditDialog(final Frame owner, final SimplePalette start)
 	{
 		super(owner, "Edit Color Palette", true);
 		original = start;
@@ -47,10 +47,10 @@ public class SimplePaletteEditDialog extends Dialog implements ActionListener
 		add(endColor);
 		add(new Label("Color steps", Label.RIGHT));
 		add(colorSteps);
-		Button ok = new Button("OK");
+		final Button ok = new Button("OK");
 		ok.addActionListener(this);
 		add(ok);
-		Button cancel = new Button("Cancel");
+		final Button cancel = new Button("Cancel");
 		cancel.addActionListener(this);
 		add(cancel);
 		pack();
@@ -64,7 +64,7 @@ public class SimplePaletteEditDialog extends Dialog implements ActionListener
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed(final ActionEvent e)
 	{
 		if (e.getActionCommand().equals("Cancel"))
 			userCanceled = true;
