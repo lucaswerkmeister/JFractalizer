@@ -42,9 +42,9 @@ public class MandelbrotImageMaker_NoHoles extends MandelbrotImageMaker
 	 * @param maxReal
 	 *            The higher value on the real scale (right boundary).
 	 * @param minImag
-	 *            The lower value on the real scale (<b>upper</b> boundary).
+	 *            The lower value on the imaginary scale (<b>lower</b> boundary).
 	 * @param maxImag
-	 *            The higher value on the real scale (lower boundary).
+	 *            The higher value on the imaginary scale (upper boundary).
 	 * @param maxPasses
 	 *            The number of iterations that a complex number has to pass before it is considered a member of the Mandelbrot Set.
 	 * @param targetGraphics

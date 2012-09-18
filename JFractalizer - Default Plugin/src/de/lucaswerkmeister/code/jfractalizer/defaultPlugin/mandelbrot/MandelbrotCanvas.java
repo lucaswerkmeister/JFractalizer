@@ -206,11 +206,12 @@ public class MandelbrotCanvas extends Canvas
 				for (int y = 0; y < verSections; y++)
 				{
 					// TODO the choice of the MandelbrotImageMaker class should probably some time be configurable
-					// TODO this code will leave black borders if width or height are not divisible by horSections or verSections
 					// TODO check if zoom settings will cause rounding errors due to limited computational accuracy
-					final MandelbrotImageMaker maker = new MandelbrotImageMaker_NoHoles(sectionWidth, sectionHeight, minReal + x * realWidth, minReal
-							+ (x + 1) * realWidth, minImag + y * imagHeight, minImag + (y + 1) * imagHeight, maxPasses, g, x * sectionWidth,
-							(verSections - y - 1) * sectionHeight, palette, superSamplingFactor);
+					final MandelbrotImageMaker maker = new MandelbrotImageMaker_NoHoles(x == horSections - 1 ? sectionWidth + getWidth()
+							% horSections : sectionWidth, y == 0 ? sectionHeight + getHeight() % verSections : sectionHeight,
+							minReal + x * realWidth, x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth, minImag + y * imagHeight,
+							y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, g, x * sectionWidth, (verSections - y - 1)
+									* sectionHeight, palette, superSamplingFactor);
 					runningThreads[x * verSections + y] = maker;
 					maker.start();
 				}
