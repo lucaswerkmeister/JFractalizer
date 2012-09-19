@@ -9,19 +9,20 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Graphics;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 
 /**
- * A MandelbrotImageMaker draws a snapshot of the Mandelbrot Set onto a specified graphics. Different implementations may use several optimizations.
+ * A CifImageMaker draws a snapshot of a CIF (Complex Iterative Fractal) onto a specified graphics. Different implementations may use several
+ * optimizations.
  * 
  * @author Lucas Werkmeister
  * 
  */
-public abstract class MandelbrotImageMaker extends Thread
+public abstract class CifImageMaker extends Thread
 {
 	final int			width;
 	final int			height;
@@ -39,7 +40,7 @@ public abstract class MandelbrotImageMaker extends Thread
 	protected boolean	running	= true;
 
 	/**
-	 * Creates a new instance of the MandelbrotImageMaker with specified bounds.
+	 * Creates a new instance of the CifImageMaker with specified bounds.
 	 * 
 	 * @param width
 	 *            The width of the generated image.
@@ -54,7 +55,7 @@ public abstract class MandelbrotImageMaker extends Thread
 	 * @param maxImag
 	 *            The higher value on the real scale (lower boundary).
 	 * @param maxPasses
-	 *            The number of iterations that a complex number has to pass before it is considered a member of the Mandelbrot Set.
+	 *            The number of iterations that a complex number has to pass before it is considered a member of the fractal.
 	 * @param targetGraphics
 	 *            The graphics to which the generated image will be drawin.
 	 * @param targetX
@@ -64,9 +65,9 @@ public abstract class MandelbrotImageMaker extends Thread
 	 * @param superSamplingFactor
 	 *            The AntiAliasing SuperSampling factor.
 	 */
-	public MandelbrotImageMaker(final int width, final int height, final double minReal, final double maxReal, final double minImag,
-			final double maxImag, final int maxPasses, final Graphics targetGraphics, final int targetX, final int targetY,
-			final ColorPalette palette, final byte superSamplingFactor)
+	public CifImageMaker(final int width, final int height, final double minReal, final double maxReal, final double minImag, final double maxImag,
+			final int maxPasses, final Graphics targetGraphics, final int targetX, final int targetY, final ColorPalette palette,
+			final byte superSamplingFactor)
 	{
 		this.width = width;
 		this.height = height;

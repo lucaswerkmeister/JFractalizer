@@ -9,14 +9,16 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
+
+import java.awt.Component;
 
 public class WaitForCalcThreads extends Thread
 {
-	MandelbrotImageMaker[]	threads;
-	MandelbrotCanvas		canvas;
+	Thread[]			threads;
+	private Component	canvas;
 
-	public WaitForCalcThreads(final MandelbrotImageMaker[] threads, final MandelbrotCanvas canvas)
+	public WaitForCalcThreads(final Thread[] threads, final Component canvas)
 	{
 		this.threads = threads;
 		this.canvas = canvas;
@@ -36,5 +38,15 @@ public class WaitForCalcThreads extends Thread
 				{
 					// do nothing
 				}
+	}
+
+	/**
+	 * Gets the threads.
+	 * 
+	 * @return The threads.
+	 */
+	public Thread[] getThreads()
+	{
+		return threads;
 	}
 }

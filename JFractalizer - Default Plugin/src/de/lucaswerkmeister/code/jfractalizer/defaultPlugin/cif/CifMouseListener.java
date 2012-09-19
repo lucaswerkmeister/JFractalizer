@@ -9,20 +9,20 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MandelbrotMouseListener extends MouseAdapter
+public class CifMouseListener extends MouseAdapter
 {
-	private final MandelbrotCanvas	canvas;
+	private final CifCanvas	canvas;
 	private Point					clickStart;
 	private static final boolean	keepRatio	= true; // TODO make this configurable
 
-	public MandelbrotMouseListener(final MandelbrotCanvas canvas)
+	public CifMouseListener(final CifCanvas canvas)
 	{
 		this.canvas = canvas;
 	}

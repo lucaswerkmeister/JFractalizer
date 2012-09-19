@@ -9,7 +9,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -21,21 +21,27 @@ import de.lucaswerkmeister.code.jfractalizer.FractXmlLoader;
 import de.lucaswerkmeister.code.jfractalizer.FractXmlPaletteLoader;
 import de.lucaswerkmeister.code.jfractalizer.FractalProvider;
 
-public class MandelbrotFractXmlLoader extends FractXmlLoader
+public class CifFractXmlLoader extends FractXmlLoader
 {
-	MandelbrotProvider		provider;
+	CifProvider				provider;
 
 	String					currentQName		= null;
 	Attributes				currentAttributes	= null;
 	ColorPalette			palette				= null;
 	FractXmlPaletteLoader	innerHandler		= null;
 	String					innerHandlerQName	= null;
-	MandelbrotCanvas		newCanvas			= null;
+	CifCanvas				newCanvas			= null;
 
-	public MandelbrotFractXmlLoader()
+	public CifFractXmlLoader(Class<? extends CifProvider> providerClass)
 	{
-		provider = new MandelbrotProvider();
-		newCanvas = new MandelbrotCanvas(provider);
+		try
+		{
+			provider = providerClass.newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override

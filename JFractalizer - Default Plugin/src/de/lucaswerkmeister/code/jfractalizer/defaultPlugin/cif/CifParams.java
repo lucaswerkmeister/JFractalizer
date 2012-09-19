@@ -1,13 +1,13 @@
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
-final class MandelbrotParams
+public final class CifParams
 {
 	public final double	minReal, maxReal, minImag, maxImag;
 	public final byte	superSamplingFactor;
 	public final int	maxPasses;
 
 	/**
-	 * Creates a new MandelbrotParams with the specified arguments.
+	 * Creates a new CIFParams with the specified arguments.
 	 * 
 	 * @param minReal
 	 *            The left boundary.
@@ -18,11 +18,11 @@ final class MandelbrotParams
 	 * @param maxImag
 	 *            The top boundary.
 	 * @param maxPasses
-	 *            The number of iterations after which a point is considered part of the Mandelbrot set.
+	 *            The number of iterations after which a point is considered part of the fractal.
 	 * @param superSamplingFactor
 	 *            The SuperSampling-factor.
 	 */
-	MandelbrotParams(final double minReal, final double maxReal, final double minImag, final double maxImag, final int maxPasses,
+	public CifParams(final double minReal, final double maxReal, final double minImag, final double maxImag, final int maxPasses,
 			final byte superSamplingFactor)
 	{
 		this.minReal = minReal;

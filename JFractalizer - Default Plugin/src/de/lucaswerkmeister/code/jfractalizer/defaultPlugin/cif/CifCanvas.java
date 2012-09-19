@@ -9,7 +9,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -22,27 +22,28 @@ import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.code.jfractalizer.Core;
 import de.lucaswerkmeister.code.jfractalizer.defaultPlugin.palettes.SimplePalette;
 
-public class MandelbrotCanvas extends Canvas
+public class CifCanvas<T extends CifImageMaker> extends Canvas
 {
-	private static final long			serialVersionUID	= -7909101981418946071L;
-	private final MandelbrotProvider	provider;
-	public static final int				START_WIDTH			= 1280;
-	public static final int				START_HEIGHT		= 720;
-	private double						minReal, maxReal, minImag, maxImag;
-	ColorPalette						palette;
-	private byte						superSamplingFactor;
-	private WaitForCalcThreads			waiterThread;
-	private int							maxPasses;
-	private BufferedImage				tempImg;
-	private long						startTime, stopTime;
-	MandelbrotMouseListener				mouseListener;
-	private Rectangle					selectedArea;
-	History<MandelbrotParams>			history;
+	private static final long		serialVersionUID	= -7909101981418946071L;
+	private final CifProvider		provider;
+	public static final int			START_WIDTH			= 1280;
+	public static final int			START_HEIGHT		= 720;
+	private double					minReal, maxReal, minImag, maxImag;
+	ColorPalette					palette;
+	private byte					superSamplingFactor;
+	private WaitForCalcThreads		waiterThread;
+	private int						maxPasses;
+	private BufferedImage			tempImg;
+	private long					startTime, stopTime;
+	CifMouseListener				mouseListener;
+	private Rectangle				selectedArea;
+	History<CifParams>				history;
+	private final Class<T>			imageMakerClass;
 
-	private static final LookupOp		inverter;
+	private static final LookupOp	inverter;
 	// this defines how fast the maxPasses will grow with increasing zoom. Higher number leads to slower growth.
 	// TODO Check whether this value is ok; maybe make it configurable.
-	static final double					maxPassesFactor		= 40;
+	static final double				maxPassesFactor		= 40;
 
 	static
 	{
@@ -52,11 +53,12 @@ public class MandelbrotCanvas extends Canvas
 		inverter = new LookupOp(new ShortLookupTable(0, invertTable), null);
 	}
 
-	public MandelbrotCanvas(final MandelbrotProvider provider)
+	public CifCanvas(final CifProvider provider, Class<T> imageMakerClass)
 	{
+		this.imageMakerClass = imageMakerClass;
 		setSize(START_WIDTH, START_HEIGHT);
 		this.provider = provider;
-		mouseListener = new MandelbrotMouseListener(this);
+		mouseListener = new CifMouseListener(this);
 		addMouseListener(mouseListener);
 		addMouseMotionListener(mouseListener);
 		initDefaultValues();
@@ -74,7 +76,7 @@ public class MandelbrotCanvas extends Canvas
 	public void stopCalculation()
 	{
 		if (waiterThread != null && waiterThread.isAlive())
-			for (final MandelbrotImageMaker m : waiterThread.threads)
+			for (final CifImageMaker m : (CifImageMaker[]) waiterThread.getThreads())
 				m.stopCalculation();
 	}
 
@@ -201,27 +203,35 @@ public class MandelbrotCanvas extends Canvas
 			final double imagHeight = (maxImag - minImag) / verSections;
 			final int sectionWidth = getWidth() / horSections;
 			final int sectionHeight = getHeight() / verSections;
-			final MandelbrotImageMaker[] runningThreads = new MandelbrotImageMaker[horSections * verSections];
-			for (int x = 0; x < horSections; x++)
-				for (int y = 0; y < verSections; y++)
-				{
-					// TODO the choice of the MandelbrotImageMaker class should probably some time be configurable
-					// TODO check if zoom settings will cause rounding errors due to limited computational accuracy
-					final MandelbrotImageMaker maker = new MandelbrotImageMaker_NoHoles(x == horSections - 1 ? sectionWidth + getWidth()
-							% horSections : sectionWidth, y == 0 ? sectionHeight + getHeight() % verSections : sectionHeight,
-							minReal + x * realWidth, x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth, minImag + y * imagHeight,
-							y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, g, x * sectionWidth, (verSections - y - 1)
-									* sectionHeight, palette, superSamplingFactor);
-					runningThreads[x * verSections + y] = maker;
-					maker.start();
-				}
-			waiterThread = new WaitForCalcThreads(runningThreads, this);
-			waiterThread.start();
+			final CifImageMaker[] runningThreads = new CifImageMaker[horSections * verSections];
+			try
+			{
+				for (int x = 0; x < horSections; x++)
+					for (int y = 0; y < verSections; y++)
+					{
+						// TODO check if zoom settings will cause rounding errors due to limited computational accuracy
+						final CifImageMaker maker = imageMakerClass.getConstructor(int.class, int.class, double.class, double.class, double.class,
+								double.class, int.class, Graphics.class, int.class, int.class, ColorPalette.class, byte.class).newInstance(
+								x == horSections - 1 ? sectionWidth + getWidth() % horSections : sectionWidth,
+								y == 0 ? sectionHeight + getHeight() % verSections : sectionHeight, minReal + x * realWidth,
+								x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth, minImag + y * imagHeight,
+								y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, g, x * sectionWidth,
+								(verSections - y - 1) * sectionHeight, palette, superSamplingFactor);
+						runningThreads[x * verSections + y] = maker;
+						maker.start();
+					}
+				waiterThread = new WaitForCalcThreads(runningThreads, this);
+				waiterThread.start();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 		else
 		{
 			System.out.println("Invalid values!");
-			waiterThread = new WaitForCalcThreads(new MandelbrotImageMaker[0], this);
+			waiterThread = new WaitForCalcThreads(new CifImageMaker[0], this);
 			waiterThread.start();
 		}
 	}
@@ -244,7 +254,7 @@ public class MandelbrotCanvas extends Canvas
 		double maxPassesF = Math.max((double) getWidth() / selectedArea.width, (double) getHeight() / selectedArea.height);
 		maxPassesF = ((maxPassesF - 1) / maxPassesFactor) + 1;
 		maxPasses *= maxPassesF;
-		setParams(new MandelbrotParams(newMinReal, newMaxReal, newMinImag, newMaxImag, maxPasses, superSamplingFactor));
+		setParams(new CifParams(newMinReal, newMaxReal, newMinImag, newMaxImag, maxPasses, superSamplingFactor));
 		start();
 	}
 
@@ -380,17 +390,17 @@ public class MandelbrotCanvas extends Canvas
 		repaint();
 	}
 
-	MandelbrotParams getParams()
+	CifParams getParams()
 	{
-		return new MandelbrotParams(minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor);
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor);
 	}
 
-	void setParams(final MandelbrotParams params)
+	void setParams(final CifParams params)
 	{
 		setParams(params, true);
 	}
 
-	void setParams(final MandelbrotParams params, final boolean addToHistory)
+	void setParams(final CifParams params, final boolean addToHistory)
 	{
 		minReal = params.minReal;
 		maxReal = params.maxReal;

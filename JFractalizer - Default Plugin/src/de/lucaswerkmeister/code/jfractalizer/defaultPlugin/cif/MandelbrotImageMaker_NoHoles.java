@@ -9,7 +9,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -26,7 +26,7 @@ import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
  * @author Lucas Werkmeister
  * 
  */
-public class MandelbrotImageMaker_NoHoles extends MandelbrotImageMaker
+public class MandelbrotImageMaker_NoHoles extends CifImageMaker
 {
 	final boolean[][]	pixels;
 
@@ -75,8 +75,7 @@ public class MandelbrotImageMaker_NoHoles extends MandelbrotImageMaker
 
 		final double factorR = (maxReal - minReal) / width;
 		final double factorI = (minImag - maxImag) / height; // imaginary scale goes up, but computer graphics y goes down, so min- and maxImag have
-																// to be
-																// swapped
+																// to be swapped
 		final double deltaR = factorR / superSamplingFactor;
 		final double deltaI = factorI / superSamplingFactor;
 

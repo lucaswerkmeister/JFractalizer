@@ -9,7 +9,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Canvas;
 import java.awt.Menu;
@@ -29,20 +29,13 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.code.jfractalizer.Core;
-import de.lucaswerkmeister.code.jfractalizer.FractXmlLoader;
 import de.lucaswerkmeister.code.jfractalizer.FractalProvider;
 
-public class MandelbrotProvider implements FractalProvider
+public abstract class CifProvider implements FractalProvider
 {
-	private MandelbrotCanvas				canvas;
-	private final MandelbrotMenuListener	menuListener;
-	MenuItem								undoMenuItem, redoMenuItem;
-
-	public MandelbrotProvider()
-	{
-		canvas = new MandelbrotCanvas(this);
-		menuListener = new MandelbrotMenuListener(this, canvas);
-	}
+	CifCanvas<?>	canvas;
+	CifMenuListener	menuListener;
+	MenuItem		undoMenuItem, redoMenuItem;
 
 	@Override
 	public Canvas getCanvas()
@@ -109,21 +102,9 @@ public class MandelbrotProvider implements FractalProvider
 		handler.endElement("", "", "provider");
 	}
 
-	@Override
-	public FractXmlLoader getFractXmlLoader()
-	{
-		return new MandelbrotFractXmlLoader();
-	}
-
-	public void setCanvas(final MandelbrotCanvas newCanvas)
+	public void setCanvas(final CifCanvas<?> newCanvas)
 	{
 		canvas = newCanvas;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "Mandelbrot Set";
 	}
 
 	@Override
@@ -172,7 +153,7 @@ public class MandelbrotProvider implements FractalProvider
 	public void initContextMenu(final PopupMenu contextMenu)
 	{
 		final MenuItem goToStart = new MenuItem("Show start image");
-		final MandelbrotCanvas c = canvas;
+		final CifCanvas<?> c = canvas;
 		goToStart.addActionListener(new ActionListener()
 		{
 			@Override
@@ -200,7 +181,7 @@ public class MandelbrotProvider implements FractalProvider
 		canvas.setMinImag(centerI - halfSizeI);
 		canvas.setMaxImag(centerI + halfSizeI);
 		double maxPassesF = 1 / factor;
-		maxPassesF = ((maxPassesF - 1) / MandelbrotCanvas.maxPassesFactor) + 1;
+		maxPassesF = ((maxPassesF - 1) / CifCanvas.maxPassesFactor) + 1;
 		canvas.setMaxPasses((int) Math.round(canvas.getMaxPasses() * maxPassesF));
 	}
 }

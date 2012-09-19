@@ -9,7 +9,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.mandelbrot;
+package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -27,15 +27,15 @@ import java.awt.event.ActionListener;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-public class MandelbrotMenuListener implements ActionListener
+public class CifMenuListener implements ActionListener
 {
-	private final MandelbrotProvider	provider;
-	private final MandelbrotCanvas		canvas;
-	private boolean						okClicked	= false;
-	Dialog								editBoundariesDialog	= null, additionalParamsDialog = null;	// initialize variable so the compiler doesn't
-																										// complain
+	private final CifProvider	provider;
+	private final CifCanvas		canvas;
+	private boolean				okClicked	= false;
+	Dialog						editBoundariesDialog	= null, additionalParamsDialog = null;	// initialize variable so the compiler doesn't
+																								// complain
 
-	MandelbrotMenuListener(final MandelbrotProvider provider, final MandelbrotCanvas canvas)
+	CifMenuListener(final CifProvider provider, final CifCanvas canvas)
 	{
 		this.provider = provider;
 		this.canvas = canvas;
@@ -163,7 +163,7 @@ public class MandelbrotMenuListener implements ActionListener
 				if (canvas.history.canUndo())
 				{
 					provider.stopCalculation();
-					canvas.setParams(canvas.history.undo(), false);
+					canvas.setParams((CifParams) canvas.history.undo(), false);
 					provider.startCalculation();
 				}
 				provider.undoMenuItem.setEnabled(canvas.history.canUndo());
@@ -173,7 +173,7 @@ public class MandelbrotMenuListener implements ActionListener
 				if (canvas.history.canRedo())
 				{
 					provider.stopCalculation();
-					canvas.setParams(canvas.history.redo(), false);
+					canvas.setParams((CifParams) canvas.history.redo(), false);
 					provider.startCalculation();
 				}
 				provider.undoMenuItem.setEnabled(canvas.history.canUndo());
