@@ -16,47 +16,16 @@ import java.awt.Graphics;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 
-/**
- * This implementation of a MandelbrotImageMaker calculates all pixels individually.
- * 
- * @author Lucas Werkmeister
- * 
- */
-public class MandelbrotImageMaker_CalcAll extends CifImageMaker
+public class JuliaImageMaker_CalcAll extends CifImageMaker
 {
-	/**
-	 * Creates a new instance of the MandelbrotImageMaker_CalcAll with specified bounds.
-	 * 
-	 * @param width
-	 *            The width of the generated image.
-	 * @param height
-	 *            The height of the generated image.
-	 * @param minReal
-	 *            The lower value on the real scale (left boundary).
-	 * @param maxReal
-	 *            The higher value on the real scale (right boundary).
-	 * @param minImag
-	 *            The lower value on the real scale (<b>upper</b> boundary).
-	 * @param maxImag
-	 *            The higher value on the real scale (lower boundary).
-	 * @param maxPasses
-	 *            The number of iterations that a complex number has to pass before it is considered a member of the Mandelbrot Set.
-	 * @param target
-	 *            The graphics to which the generated image will be drawin.
-	 * @param targetX
-	 *            The x coordinate on the target image to which the generated image will be written.
-	 * @param targetY
-	 *            The y coordinate on the target image to which the generated image will be written.
-	 * @param superSamplingFactor
-	 *            The AntiAliasing SuperSampling factor.
-	 * @param provider
-	 *            The fractal provider.
-	 */
-	public MandelbrotImageMaker_CalcAll(final int width, final int height, final double minReal, final double maxReal, final double minImag,
-			final double maxImag, final int maxPasses, final Graphics target, final int targetX, final int targetY, final ColorPalette palette,
-			final byte superSamplingFactor, final CifProvider provider)
+	private final double	cReal, cImag;
+
+	public JuliaImageMaker_CalcAll(int width, int height, double minReal, double maxReal, double minImag, double maxImag, int maxPasses,
+			Graphics targetGraphics, int targetX, int targetY, ColorPalette palette, byte superSamplingFactor, CifProvider provider)
 	{
-		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, target, targetX, targetY, palette, superSamplingFactor, provider);
+		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, targetGraphics, targetX, targetY, palette, superSamplingFactor, provider);
+		cReal = ((JuliaProvider) provider).getCReal();
+		cImag = ((JuliaProvider) provider).getCImag();
 	}
 
 	@Override
@@ -100,7 +69,7 @@ public class MandelbrotImageMaker_CalcAll extends CifImageMaker
 				for (r = centerR - rangeR; r <= borderR; r += deltaR)
 					for (i = centerI + rangeI; i <= borderI; i -= deltaI)
 					{
-						passes = mandelbrotPasses(r, i, maxPasses);
+						passes = juliaPasses(r, i, cReal, cImag, maxPasses);
 						c = palette.getColor(passes);
 						averageR += c.getRed();
 						averageG += c.getGreen();

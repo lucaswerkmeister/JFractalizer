@@ -211,12 +211,12 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 					{
 						// TODO check if zoom settings will cause rounding errors due to limited computational accuracy
 						final CifImageMaker maker = imageMakerClass.getConstructor(int.class, int.class, double.class, double.class, double.class,
-								double.class, int.class, Graphics.class, int.class, int.class, ColorPalette.class, byte.class).newInstance(
-								x == horSections - 1 ? sectionWidth + getWidth() % horSections : sectionWidth,
-								y == 0 ? sectionHeight + getHeight() % verSections : sectionHeight, minReal + x * realWidth,
-								x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth, minImag + y * imagHeight,
-								y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, g, x * sectionWidth,
-								(verSections - y - 1) * sectionHeight, palette, superSamplingFactor);
+								double.class, int.class, Graphics.class, int.class, int.class, ColorPalette.class, byte.class, CifProvider.class)
+								.newInstance(x == horSections - 1 ? sectionWidth + getWidth() % horSections : sectionWidth,
+										y == 0 ? sectionHeight + getHeight() % verSections : sectionHeight, minReal + x * realWidth,
+										x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth, minImag + y * imagHeight,
+										y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, g, x * sectionWidth,
+										(verSections - y - 1) * sectionHeight, palette, superSamplingFactor, provider);
 						runningThreads[x * verSections + y] = maker;
 						maker.start();
 					}

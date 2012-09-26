@@ -55,12 +55,14 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker
 	 *            The y coordinate on the target image to which the generated image will be written.
 	 * @param superSamplingFactor
 	 *            The AntiAliasing SuperSampling factor.
+	 * @param provider
+	 *            The fractal provider.
 	 */
 	public MandelbrotImageMaker_NoHoles(final int width, final int height, final double minReal, final double maxReal, final double minImag,
-			final double maxImag, final int maxPasses, final Graphics targetGraphics, final int targetX, final int targetY,
-			final ColorPalette palette, final byte superSamplingFactor)
+			final double maxImag, final int maxPasses, final Graphics target, final int targetX, final int targetY, final ColorPalette palette,
+			final byte superSamplingFactor, final CifProvider provider)
 	{
-		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, targetGraphics, targetX, targetY, palette, superSamplingFactor);
+		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, target, targetX, targetY, palette, superSamplingFactor, provider);
 		pixels = new boolean[width][height];
 	}
 

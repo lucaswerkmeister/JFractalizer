@@ -36,6 +36,7 @@ public abstract class CifImageMaker extends Thread
 	final int			targetY;
 	final ColorPalette	palette;
 	final byte			superSamplingFactor;
+	final CifProvider	provider;
 
 	protected boolean	running	= true;
 
@@ -64,10 +65,12 @@ public abstract class CifImageMaker extends Thread
 	 *            The y coordinate on the target image to which the generated image will be written.
 	 * @param superSamplingFactor
 	 *            The AntiAliasing SuperSampling factor.
+	 * @param provider
+	 *            The fractal provider for this image maker.
 	 */
 	public CifImageMaker(final int width, final int height, final double minReal, final double maxReal, final double minImag, final double maxImag,
 			final int maxPasses, final Graphics targetGraphics, final int targetX, final int targetY, final ColorPalette palette,
-			final byte superSamplingFactor)
+			final byte superSamplingFactor, CifProvider provider)
 	{
 		this.width = width;
 		this.height = height;
@@ -81,6 +84,7 @@ public abstract class CifImageMaker extends Thread
 		this.targetY = targetY;
 		this.palette = palette;
 		this.superSamplingFactor = superSamplingFactor;
+		this.provider = provider;
 	}
 
 	protected static int mandelbrotPasses(final double cReal, final double cImag, final int maxPasses)
@@ -98,7 +102,7 @@ public abstract class CifImageMaker extends Thread
 		return passes;
 	}
 
-	protected static int mandelbrotPasses_notFinal(final double cReal, final double cImag, final int maxPasses)
+	protected static final int mandelbrotPasses_notFinal(final double cReal, final double cImag, final int maxPasses)
 	{
 		double zReal = 0, zImag = 0, zRealNew = 0;
 		int passes = 0;
@@ -113,7 +117,7 @@ public abstract class CifImageMaker extends Thread
 		return passes;
 	}
 
-	protected static int mandelbrotPasses_final(final double cReal, final double cImag, final int maxPasses)
+	protected static final int mandelbrotPasses_final(final double cReal, final double cImag, final int maxPasses)
 	{
 		double zReal = 0, zImag = 0;
 		int passes = 0;
@@ -128,7 +132,7 @@ public abstract class CifImageMaker extends Thread
 		return passes;
 	}
 
-	protected static int mandelbrotPasses_twoPass(final double cReal, final double cImag, final int maxPasses)
+	protected static final int mandelbrotPasses_twoPass(final double cReal, final double cImag, final int maxPasses)
 	{
 		double zReal1 = 0, zImag1 = 0, zReal2 = 0, zImag2 = 0;
 		int passes = 0;
@@ -144,6 +148,20 @@ public abstract class CifImageMaker extends Thread
 				return -1;
 			zReal1 = zReal2 * zReal2 - zImag2 * zImag2 + cReal;
 			zImag1 = 2 * zReal2 * zImag2 + cImag;
+		}
+		return passes;
+	}
+
+	protected static final int juliaPasses(double zReal, double zImag, final double cReal, final double cImag, final int maxPasses)
+	{
+		int passes = 0;
+		while (Math.sqrt(zReal * zReal + zImag * zImag) < 2)
+		{
+			if (++passes > maxPasses)
+				return -1;
+			final double zRealNew = zReal * zReal - zImag * zImag + cReal;
+			zImag = 2 * zReal * zImag + cImag;
+			zReal = zRealNew;
 		}
 		return passes;
 	}

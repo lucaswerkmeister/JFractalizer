@@ -52,4 +52,13 @@ public interface FractalProvider extends SelectableService
 	 *            center), a greater factor means zoom out, a smaller factor means zoom in.
 	 */
 	public void zoom(int x, int y, double factor);
+
+	/**
+	 * By a call of this method, the JFractalizer informs the fractal provider that it was switched to on request from another FractalProvider, and
+	 * passes any received arguments on to it. The FractalProvider may ignore this completely, if wanted.
+	 * 
+	 * @param params
+	 *            The parameters that the other FractalProvider wished to pass on to this FractalProvider.
+	 */
+	public void onProviderChange(Object... params);
 }

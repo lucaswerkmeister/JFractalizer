@@ -22,8 +22,15 @@ import javax.swing.JColorChooser;
  * @author Lucas Werkmeister
  * @version 1.0
  */
-public abstract class Core
+public final class Core
 {
+	/**
+	 * <code>private</code> constructor so the class can't be instantiated.
+	 */
+	private Core()
+	{
+	}
+
 	/**
 	 * Gets the image currently displayed by the main window, whether it is completely calculated or not.
 	 * 
@@ -94,5 +101,24 @@ public abstract class Core
 		if (MainFrame.getInstance() == null)
 			return;
 		MainFrame.getInstance().setStatus(status, color);
+	}
+
+	/**
+	 * Changes the current provider to the specified type.
+	 * 
+	 * @param fractalProviderClass
+	 *            The class of the new provider type.
+	 * @param params
+	 *            Any parameters that will be passed to the new provider.
+	 * @throws ReflectiveOperationException
+	 *             If anything goes wrong instantiating the new provider.
+	 */
+	public static void changeProvider(Class<? extends FractalProvider> fractalProviderClass, Object... params) throws ReflectiveOperationException,
+			IllegalArgumentException
+	{
+		stopCalculation();
+		MainFrame.getInstance().setCurrentProvider(fractalProviderClass.newInstance());
+		MainFrame.getInstance().getCurrentProvider().onProviderChange(params);
+		startCalculation();
 	}
 }
