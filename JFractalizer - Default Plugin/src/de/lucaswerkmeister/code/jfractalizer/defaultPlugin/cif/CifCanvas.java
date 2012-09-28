@@ -101,7 +101,6 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 	{
 		if (waiterThread == null)
 			start();
-		g.setPaintMode();
 		g.drawImage(tempImg, 0, 0, null);
 		if (selectedArea != null)
 			g.drawImage(inverter.filter(tempImg, null), selectedArea.x, selectedArea.y, selectedArea.x + selectedArea.width, selectedArea.y
