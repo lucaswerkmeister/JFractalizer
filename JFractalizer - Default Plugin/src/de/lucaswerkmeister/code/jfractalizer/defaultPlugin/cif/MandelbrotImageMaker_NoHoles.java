@@ -14,6 +14,7 @@ package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
@@ -29,6 +30,7 @@ import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 public class MandelbrotImageMaker_NoHoles extends CifImageMaker
 {
 	final boolean[][]	pixels;
+	final Graphics		targetGraphics;
 
 	/**
 	 * Creates a new instance of the MandelbrotImageMaker_NoHoles with specified bounds.
@@ -47,8 +49,8 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker
 	 *            The higher value on the imaginary scale (upper boundary).
 	 * @param maxPasses
 	 *            The number of iterations that a complex number has to pass before it is considered a member of the Mandelbrot Set.
-	 * @param targetGraphics
-	 *            The graphics to which the generated image will be drawin.
+	 * @param target
+	 *            The BufferedImage to which the calculation results will be drawn.
 	 * @param targetX
 	 *            The x coordinate on the target image to which the generated image will be written.
 	 * @param targetY
@@ -59,21 +61,19 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker
 	 *            The fractal provider.
 	 */
 	public MandelbrotImageMaker_NoHoles(final int width, final int height, final double minReal, final double maxReal, final double minImag,
-			final double maxImag, final int maxPasses, final Graphics target, final int targetX, final int targetY, final ColorPalette palette,
+			final double maxImag, final int maxPasses, final BufferedImage target, final int targetX, final int targetY, final ColorPalette palette,
 			final byte superSamplingFactor, final CifProvider provider)
 	{
 		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, target, targetX, targetY, palette, superSamplingFactor, provider);
 		pixels = new boolean[width][height];
+		targetGraphics = target.createGraphics();
 	}
 
 	@Override
 	public void run()
 	{
-		synchronized (targetGraphics)
-		{
-			targetGraphics.setColor(palette.getColor(-1));
-			targetGraphics.fillRect(0, 0, height, width);
-		}
+		targetGraphics.setColor(palette.getColor(-1));
+		targetGraphics.fillRect(0, 0, height, width);
 
 		final double factorR = (maxReal - minReal) / width;
 		final double factorI = (minImag - maxImag) / height; // imaginary scale goes up, but computer graphics y goes down, so min- and maxImag have
@@ -113,7 +113,6 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker
 			lastColoredPoints.addLast(new Point(0, y));
 			lastColoredPoints.addLast(new Point(width - 1, y));
 		}
-
 		for (int x = 0; x < width;)
 			for (int y = 0; y < height;)
 			{
@@ -144,11 +143,8 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker
 					c = new Color(averageR / averageDenominator, averageG / averageDenominator, averageB / averageDenominator);
 					tX = x + targetX;
 					tY = y + targetY;
-					synchronized (targetGraphics)
-					{
-						targetGraphics.setColor(c);
-						targetGraphics.drawLine(tX, tY, tX, tY);
-					}
+					targetGraphics.setColor(c);
+					targetGraphics.drawLine(tX, tY, tX, tY);
 					// Save that the pixel has been calculated
 					pixels[x][y] = true;
 				}

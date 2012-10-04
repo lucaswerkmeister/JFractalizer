@@ -13,6 +13,7 @@ package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.LookupOp;
@@ -32,16 +33,18 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 	ColorPalette					palette;
 	private byte					superSamplingFactor;
 	private WaitForCalcThreads		waiterThread;
-	private int						maxPasses;
 	private BufferedImage			tempImg;
+	private int						maxPasses;
 	private long					startTime, stopTime;
 	CifMouseListener				mouseListener;
 	private Rectangle				selectedArea;
 	History<CifParams>				history;
 	private final Class<T>			imageMakerClass;
+	SubImage[]						subImages;
 
 	private static final LookupOp	inverter;
-	// this defines how fast the maxPasses will grow with increasing zoom. Higher number leads to slower growth.
+	// this defines how fast the maxPasses will grow with increasing zoom.
+	// Higher number leads to slower growth.
 	// TODO Check whether this value is ok; maybe make it configurable.
 	static final double				maxPassesFactor		= 40;
 
@@ -69,7 +72,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 	public void start()
 	{
 		tempImg = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-		initThreads(tempImg.createGraphics());
+		initThreads();
 		repaint();
 	}
 
@@ -101,6 +104,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 	{
 		if (waiterThread == null)
 			start();
+		for (int i = 0; i < subImages.length; i++)
+			tempImg.getGraphics().drawImage(subImages[i].subImage, subImages[i].offsetX, subImages[i].offsetY, null);
 		g.drawImage(tempImg, 0, 0, null);
 		if (selectedArea != null)
 			g.drawImage(inverter.filter(tempImg, null), selectedArea.x, selectedArea.y, selectedArea.x + selectedArea.width, selectedArea.y
@@ -177,7 +182,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 		paint(g);
 	}
 
-	private void initThreads(final Graphics g)
+	private void initThreads()
 	{
 		if (checkValues())
 		{
@@ -203,20 +208,25 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 			final int sectionWidth = getWidth() / horSections;
 			final int sectionHeight = getHeight() / verSections;
 			final CifImageMaker[] runningThreads = new CifImageMaker[horSections * verSections];
+			subImages = new SubImage[horSections * verSections];
 			try
 			{
 				for (int x = 0; x < horSections; x++)
 					for (int y = 0; y < verSections; y++)
 					{
-						// TODO check if zoom settings will cause rounding errors due to limited computational accuracy
-						final CifImageMaker maker = imageMakerClass.getConstructor(int.class, int.class, double.class, double.class, double.class,
-								double.class, int.class, Graphics.class, int.class, int.class, ColorPalette.class, byte.class, CifProvider.class)
-								.newInstance(x == horSections - 1 ? sectionWidth + getWidth() % horSections : sectionWidth,
-										y == 0 ? sectionHeight + getHeight() % verSections : sectionHeight, minReal + x * realWidth,
-										x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth, minImag + y * imagHeight,
-										y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, g, x * sectionWidth,
-										(verSections - y - 1) * sectionHeight, palette, superSamplingFactor, provider);
+						// TODO check if zoom settings will cause rounding
+						// errors due to limited computational accuracy
+						int width = x == horSections - 1 ? sectionWidth + getWidth() % horSections : sectionWidth;
+						int height = y == 0 ? sectionHeight + getHeight() % verSections : sectionHeight;
+						BufferedImage subImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+						final CifImageMaker maker = imageMakerClass
+								.getConstructor(int.class, int.class, double.class, double.class, double.class, double.class, int.class,
+										BufferedImage.class, int.class, int.class, ColorPalette.class, byte.class, CifProvider.class).newInstance(
+										width, height, minReal + x * realWidth, x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth,
+										minImag + y * imagHeight, y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses,
+										subImage, 0, 0, palette, superSamplingFactor, provider);
 						runningThreads[x * verSections + y] = maker;
+						subImages[x * verSections + y] = new SubImage(x * sectionWidth, (verSections - y - 1) * sectionHeight, subImage);
 						maker.start();
 					}
 				waiterThread = new WaitForCalcThreads(runningThreads, this);
@@ -411,5 +421,20 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 			history.add(params);
 		provider.undoMenuItem.setEnabled(history.canUndo());
 		provider.redoMenuItem.setEnabled(history.canRedo());
+	}
+}
+
+class SubImage
+{
+	final int	offsetX;
+	final int	offsetY;
+	final Image	subImage;
+
+	SubImage(int offsetX, int offsetY, Image subImage)
+	{
+		super();
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
+		this.subImage = subImage;
 	}
 }

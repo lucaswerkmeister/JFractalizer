@@ -13,19 +13,22 @@ package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 
 public class JuliaImageMaker_CalcAll extends CifImageMaker
 {
 	private final double	cReal, cImag;
+	final Graphics			targetGraphics;
 
 	public JuliaImageMaker_CalcAll(int width, int height, double minReal, double maxReal, double minImag, double maxImag, int maxPasses,
-			Graphics targetGraphics, int targetX, int targetY, ColorPalette palette, byte superSamplingFactor, CifProvider provider)
+			BufferedImage target, int targetX, int targetY, ColorPalette palette, byte superSamplingFactor, CifProvider provider)
 	{
-		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, targetGraphics, targetX, targetY, palette, superSamplingFactor, provider);
+		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, target, targetX, targetY, palette, superSamplingFactor, provider);
 		cReal = ((JuliaProvider) provider).getCReal();
 		cImag = ((JuliaProvider) provider).getCImag();
+		targetGraphics = target.createGraphics();
 	}
 
 	@Override
@@ -79,11 +82,8 @@ public class JuliaImageMaker_CalcAll extends CifImageMaker
 				tX = x + targetX;
 				tY = y + targetY;
 				c = new Color(averageR / averageDenominator, averageG / averageDenominator, averageB / averageDenominator);
-				synchronized (targetGraphics)
-				{
-					targetGraphics.setColor(c);
-					targetGraphics.drawLine(tX, tY, tX, tY);
-				}
+				targetGraphics.setColor(c);
+				targetGraphics.drawLine(tX, tY, tX, tY);
 			}
 	}
 }

@@ -12,6 +12,7 @@
 package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 
@@ -31,7 +32,7 @@ public abstract class CifImageMaker extends Thread
 	final double		minImag;
 	final double		maxImag;
 	final int			maxPasses;
-	final Graphics		targetGraphics;
+	final BufferedImage		targetImage;
 	final int			targetX;
 	final int			targetY;
 	final ColorPalette	palette;
@@ -57,8 +58,8 @@ public abstract class CifImageMaker extends Thread
 	 *            The higher value on the real scale (lower boundary).
 	 * @param maxPasses
 	 *            The number of iterations that a complex number has to pass before it is considered a member of the fractal.
-	 * @param targetGraphics
-	 *            The graphics to which the generated image will be drawin.
+	 * @param targetImage
+	 *            The image to which the calculation results will be drawn.
 	 * @param targetX
 	 *            The x coordinate on the target image to which the generated image will be written.
 	 * @param targetY
@@ -69,7 +70,7 @@ public abstract class CifImageMaker extends Thread
 	 *            The fractal provider for this image maker.
 	 */
 	public CifImageMaker(final int width, final int height, final double minReal, final double maxReal, final double minImag, final double maxImag,
-			final int maxPasses, final Graphics targetGraphics, final int targetX, final int targetY, final ColorPalette palette,
+			final int maxPasses, final BufferedImage targetImage, final int targetX, final int targetY, final ColorPalette palette,
 			final byte superSamplingFactor, CifProvider provider)
 	{
 		this.width = width;
@@ -79,7 +80,7 @@ public abstract class CifImageMaker extends Thread
 		this.minImag = minImag;
 		this.maxImag = maxImag;
 		this.maxPasses = maxPasses;
-		this.targetGraphics = targetGraphics;
+		this.targetImage = targetImage;
 		this.targetX = targetX;
 		this.targetY = targetY;
 		this.palette = palette;

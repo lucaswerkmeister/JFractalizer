@@ -13,6 +13,7 @@ package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 
@@ -24,6 +25,8 @@ import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
  */
 public class MandelbrotImageMaker_CalcAll extends CifImageMaker
 {
+	final Graphics	targetGraphics;
+
 	/**
 	 * Creates a new instance of the MandelbrotImageMaker_CalcAll with specified bounds.
 	 * 
@@ -42,7 +45,7 @@ public class MandelbrotImageMaker_CalcAll extends CifImageMaker
 	 * @param maxPasses
 	 *            The number of iterations that a complex number has to pass before it is considered a member of the Mandelbrot Set.
 	 * @param target
-	 *            The graphics to which the generated image will be drawin.
+	 *            The BufferedImage to which the calculation results will be drawn.
 	 * @param targetX
 	 *            The x coordinate on the target image to which the generated image will be written.
 	 * @param targetY
@@ -53,10 +56,11 @@ public class MandelbrotImageMaker_CalcAll extends CifImageMaker
 	 *            The fractal provider.
 	 */
 	public MandelbrotImageMaker_CalcAll(final int width, final int height, final double minReal, final double maxReal, final double minImag,
-			final double maxImag, final int maxPasses, final Graphics target, final int targetX, final int targetY, final ColorPalette palette,
+			final double maxImag, final int maxPasses, final BufferedImage target, final int targetX, final int targetY, final ColorPalette palette,
 			final byte superSamplingFactor, final CifProvider provider)
 	{
 		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, target, targetX, targetY, palette, superSamplingFactor, provider);
+		targetGraphics = target.createGraphics();
 	}
 
 	@Override
@@ -110,11 +114,8 @@ public class MandelbrotImageMaker_CalcAll extends CifImageMaker
 				tX = x + targetX;
 				tY = y + targetY;
 				c = new Color(averageR / averageDenominator, averageG / averageDenominator, averageB / averageDenominator);
-				synchronized (targetGraphics)
-				{
-					targetGraphics.setColor(c);
-					targetGraphics.drawLine(tX, tY, tX, tY);
-				}
+				targetGraphics.setColor(c);
+				targetGraphics.drawLine(tX, tY, tX, tY);
 			}
 	}
 }
