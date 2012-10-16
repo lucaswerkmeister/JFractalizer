@@ -191,7 +191,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 			startTime = System.currentTimeMillis();
 			final int cpuCount = Runtime.getRuntime().availableProcessors();
 			final int lessSections = (int) Math.sqrt(cpuCount);
-			final int moreSections = cpuCount / lessSections;
+			final int moreSections = (lessSections == 1) ? cpuCount : cpuCount / lessSections;
 			int horSections, verSections;
 			if (getWidth() >= getHeight())
 			{
