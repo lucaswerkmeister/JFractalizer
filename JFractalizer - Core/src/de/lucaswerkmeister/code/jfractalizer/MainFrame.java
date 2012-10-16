@@ -45,6 +45,8 @@ public class MainFrame extends Frame
 	private MainFrame()
 	{
 		super("JFractalizer");
+		setLayout(new BorderLayout());
+		statusBar = new Label("Calculating...");
 		// Let the user choose the fractal
 		final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this, "Choose Fractal", FractalProvider.class);
 		fractalChooserDialog.setVisible(true);
@@ -59,9 +61,7 @@ public class MainFrame extends Frame
 		// Let the user choose the color palette
 		final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this, "Choose Color Palette", ColorPalette.class);
 		colorPaletteDialog.setVisible(true);
-		setCurrentColorPalette(colorPaletteDialog.getSelectedService());
-		statusBar = new Label("Calculating...");
-		setLayout(new BorderLayout());
+		currentColorPalette = colorPaletteDialog.getSelectedService();
 		addWindowListener(new WindowAdapter()
 		{
 			@Override
