@@ -188,4 +188,10 @@ public class NodePalette implements ColorPalette
 			}
 		}
 	}
+
+	@Override
+	public void handleCommandLineArgs(String arg0)
+	{
+		// TODO implement
+	}
 }

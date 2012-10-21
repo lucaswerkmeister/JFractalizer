@@ -189,4 +189,10 @@ public class SimplePalette implements ColorPalette
 			}
 		}
 	}
+
+	@Override
+	public void handleCommandLineArgs(String arg0)
+	{
+		// TODO implement
+	}
 }

@@ -24,8 +24,6 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -142,13 +140,7 @@ public class MenuListener implements ActionListener
 				if (result == JFileChooser.APPROVE_OPTION)
 					try
 					{
-						final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-						final FractXmlLoader loader = new FractalClassReader();
-						saxParser.parse(fileChooser.getSelectedFile(), loader);
-						MainFrame.getInstance().setCurrentProvider(loader.getProvider());
-						final FractXmlPaletteLoader colorPaletteLoader = new PaletteClassReader();
-						saxParser.parse(fileChooser.getSelectedFile(), colorPaletteLoader);
-						MainFrame.getInstance().setCurrentColorPalette(colorPaletteLoader.getPalette());
+						Core.loadFile(fileChooser.getSelectedFile());
 					}
 					catch (SAXException | IOException | ParserConfigurationException e)
 					{
