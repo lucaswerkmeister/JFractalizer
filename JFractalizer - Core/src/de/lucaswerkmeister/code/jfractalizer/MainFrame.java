@@ -99,7 +99,8 @@ public class MainFrame extends Frame
 					}
 					catch (ParserConfigurationException e)
 					{
-						System.out.println("Something went wrong while initializing the file loader. If you see this, please contact the developer.");
+						System.out
+								.println("Something went wrong while initializing the file loader. If you see this, please contact the developer.");
 						e.printStackTrace();
 						System.exit(1);
 					}
@@ -116,7 +117,8 @@ public class MainFrame extends Frame
 				String[] fpCpArgs = args[0].split(":");
 				if (fpCpArgs.length < 2)
 				{
-					System.out.println("The FractalProvider and ColorPalette could not be parsed as there were not enough names specified!");
+					System.out
+							.println("The FractalProvider and ColorPalette could not be parsed as there were not enough names specified!");
 					System.exit(1);
 				}
 				try
@@ -174,8 +176,8 @@ public class MainFrame extends Frame
 			if (askForClasses)
 			{
 				// Let the user choose the fractal
-				final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this, "Choose Fractal",
-						FractalProvider.class);
+				final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this,
+						"Choose Fractal", FractalProvider.class);
 				fractalChooserDialog.setVisible(true);
 				try
 				{
@@ -186,9 +188,10 @@ public class MainFrame extends Frame
 					// Do nothing, currentColorPalette wasn't set
 				}
 				// Let the user choose the color palette
-				final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this, "Choose Color Palette", ColorPalette.class);
+				final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this,
+						"Choose Color Palette", ColorPalette.class);
 				colorPaletteDialog.setVisible(true);
-				setCurrentColorPalette(colorPaletteDialog.getSelectedService());
+				currentColorPalette = colorPaletteDialog.getSelectedService();
 			}
 			addWindowListener(new WindowAdapter()
 			{
@@ -290,7 +293,8 @@ public class MainFrame extends Frame
 		menuBar.add(fractalMenu);
 
 		colorPaletteMenu = new Menu("Color Palette");
-		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C, true));
+		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C,
+				true));
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
 		colorPaletteMenu.addSeparator();

@@ -12,6 +12,7 @@
 package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -59,7 +60,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 	public CifCanvas(final CifProvider provider, Class<T> imageMakerClass)
 	{
 		this.imageMakerClass = imageMakerClass;
-		setSize(START_WIDTH, START_HEIGHT);
+		setPreferredSize(new Dimension(START_WIDTH, START_HEIGHT));
 		this.provider = provider;
 		mouseListener = new CifMouseListener(this);
 		addMouseListener(mouseListener);
@@ -191,7 +192,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas
 			startTime = System.currentTimeMillis();
 			final int cpuCount = Runtime.getRuntime().availableProcessors();
 			final int lessSections = (int) Math.sqrt(cpuCount);
-			final int moreSections = cpuCount / lessSections;
+			final int moreSections = (lessSections == 1) ? cpuCount : cpuCount / lessSections;
 			int horSections, verSections;
 			if (getWidth() >= getHeight())
 			{

@@ -92,7 +92,7 @@ public abstract class CifImageMaker extends Thread
 	{
 		double zReal = 0, zImag = 0, zRealNew = 0;
 		int passes = 0;
-		while (Math.sqrt(zReal * zReal + zImag * zImag) < 2)
+		while (zReal * zReal + zImag * zImag < 4)
 		{
 			if (++passes > maxPasses)
 				return -1;
@@ -107,7 +107,7 @@ public abstract class CifImageMaker extends Thread
 	{
 		double zReal = 0, zImag = 0, zRealNew = 0;
 		int passes = 0;
-		while (Math.sqrt(zReal * zReal + zImag * zImag) < 2)
+		while (zReal * zReal + zImag * zImag < 4)
 		{
 			if (++passes > maxPasses)
 				return -1;
@@ -122,7 +122,7 @@ public abstract class CifImageMaker extends Thread
 	{
 		double zReal = 0, zImag = 0;
 		int passes = 0;
-		while (Math.sqrt(zReal * zReal + zImag * zImag) < 2)
+		while (zReal * zReal + zImag * zImag < 4)
 		{
 			if (++passes > maxPasses)
 				return -1;
@@ -137,13 +137,13 @@ public abstract class CifImageMaker extends Thread
 	{
 		double zReal1 = 0, zImag1 = 0, zReal2 = 0, zImag2 = 0;
 		int passes = 0;
-		while (Math.sqrt(zReal1 * zReal1 + zImag1 * zImag1) < 2)
+		while (zReal1 * zReal1 + zImag1 * zImag1 < 4)
 		{
 			if (++passes > maxPasses)
 				return -1;
 			zReal2 = zReal1 * zReal1 - zImag1 * zImag1 + cReal;
 			zImag2 = 2 * zReal1 * zImag1 + cImag;
-			if (Math.sqrt(zReal2 * zReal2 + zImag2 * zImag2) >= 2)
+			if (zReal2 * zReal2 + zImag2 * zImag2 >= 4)
 				break;
 			if (++passes > maxPasses)
 				return -1;
@@ -156,7 +156,7 @@ public abstract class CifImageMaker extends Thread
 	protected static final int juliaPasses(double zReal, double zImag, final double cReal, final double cImag, final int maxPasses)
 	{
 		int passes = 0;
-		while (Math.sqrt(zReal * zReal + zImag * zImag) < 2)
+		while (zReal * zReal + zImag * zImag < 4)
 		{
 			if (++passes > maxPasses)
 				return -1;
