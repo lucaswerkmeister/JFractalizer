@@ -11,7 +11,6 @@
  */
 package de.lucaswerkmeister.code.jfractalizer;
 
-public interface SelectableService
-{
-	public String getName();
+public interface SelectableService {
+    public String getName();
 }

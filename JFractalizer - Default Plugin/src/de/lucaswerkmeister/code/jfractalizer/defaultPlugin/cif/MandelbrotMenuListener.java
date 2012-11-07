@@ -17,36 +17,36 @@ import java.awt.event.ActionListener;
 
 import de.lucaswerkmeister.code.jfractalizer.Core;
 
-public class MandelbrotMenuListener implements ActionListener
-{
-	private final MandelbrotProvider	provider;
+public class MandelbrotMenuListener implements ActionListener {
+    private final MandelbrotProvider provider;
 
-	public MandelbrotMenuListener(MandelbrotProvider mandelbrotProvider)
-	{
-		this.provider = mandelbrotProvider;
-	}
+    public MandelbrotMenuListener(MandelbrotProvider mandelbrotProvider) {
+	this.provider = mandelbrotProvider;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-		switch (e.getActionCommand())
-		{
-			case "Switch to according Julia Set":
-			{
-				try
-				{
-					Core.changeProvider(
-							JuliaProvider.class,
-							provider.canvas.getMinReal() + (provider.canvas.getMaxReal() - provider.canvas.getMinReal())
-									* provider.canvas.getMousePosition().x / provider.canvas.getWidth(),
-							provider.canvas.getMinImag() + (provider.canvas.getMaxImag() - provider.canvas.getMinImag())
-									* (provider.canvas.getHeight() - provider.canvas.getMousePosition().y) / provider.canvas.getHeight());
-				}
-				catch (HeadlessException | IllegalArgumentException | ReflectiveOperationException e1)
-				{
-					e1.printStackTrace();
-				}
-			}
-		}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+	switch (e.getActionCommand()) {
+	case "Switch to according Julia Set": {
+	    try {
+		Core.changeProvider(
+			JuliaProvider.class,
+			provider.canvas.getMinReal()
+				+ (provider.canvas.getMaxReal() - provider.canvas
+					.getMinReal())
+				* provider.canvas.getMousePosition().x
+				/ provider.canvas.getWidth(),
+			provider.canvas.getMinImag()
+				+ (provider.canvas.getMaxImag() - provider.canvas
+					.getMinImag())
+				* (provider.canvas.getHeight() - provider.canvas
+					.getMousePosition().y)
+				/ provider.canvas.getHeight());
+	    } catch (HeadlessException | IllegalArgumentException
+		    | ReflectiveOperationException e1) {
+		e1.printStackTrace();
+	    }
 	}
+	}
+    }
 }
