@@ -42,4 +42,10 @@ public class MandelbrotProvider extends CifProvider
 	{
 		// Don't do anything
 	}
+
+	@Override
+	public void handleCommandLineArgs(String arg0)
+	{
+		// TODO implement
+	}
 }

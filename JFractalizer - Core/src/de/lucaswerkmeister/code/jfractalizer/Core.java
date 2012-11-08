@@ -13,8 +13,13 @@ package de.lucaswerkmeister.code.jfractalizer;
 
 import java.awt.Color;
 import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JColorChooser;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 /**
  * Acts as a wrapper for all functions that plugins may wish to invoke on the core.
@@ -120,5 +125,22 @@ public final class Core
 		MainFrame.getInstance().setCurrentProvider(fractalProviderClass.newInstance());
 		MainFrame.getInstance().getCurrentProvider().onProviderChange(params);
 		startCalculation();
+	}
+
+	/**
+	 * Loads the specified file.
+	 * 
+	 * @param saveFile
+	 *            The file that should be loaded.
+	 * @throws SAXException
+	 *             If anything goes wrong while loading the file.
+	 * @throws IOException
+	 *             If anything goes wrong while loading the file.
+	 * @throws ParserConfigurationException
+	 *             If anything goes wrong while loading the file.
+	 */
+	public static void loadFile(File saveFile) throws SAXException, IOException, ParserConfigurationException
+	{
+		MainFrame.getInstance().loadFile(saveFile);
 	}
 }

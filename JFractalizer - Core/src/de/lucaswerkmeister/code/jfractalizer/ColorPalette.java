@@ -40,4 +40,12 @@ public interface ColorPalette extends SelectableService
 	public void makeFastStorage();
 
 	public void initMenu(Menu colorPaletteMenu, FractalProvider provider, Frame owner);
+
+	/**
+	 * If the JFractalizer was started with command line arguments, some of them are passed to the color palette via this method.
+	 * 
+	 * @param args
+	 *            A String that contains all the arguments.
+	 */
+	public void handleCommandLineArgs(String args);
 }

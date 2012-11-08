@@ -7,6 +7,29 @@
 <body>
 	Full changelog for the JFractalizer:
 	<ul>
+		<li>v1.2:
+			<ul>
+				<li>Several improvements to performance:
+					<ul>
+						<li>Fixed a CIF Bug that caused black areas in calculated
+							images; this also improved performance</li>
+						<li>Vastly improved performance by using x<sup>2</sup>+y<sup>2</sup>&lt;4
+							instead of sqrt(x<sup>2</sup>+y<sup>2</sup>)&lt;2
+						</li>
+						<li>Fixed a bug that disabled the performance-increasing
+							feature from Mandelbrot: Calculate only pixels that are connected
+							to other colored pixels</li>
+					</ul>
+				</li>
+				<li>Fixed two bugs that would appear on Linux systems:
+					<ul>
+						<li>Window would not appear due to incorrect layout</li>
+						<li>Status bar would not appear due to incorrect layout</li>
+					</ul>
+				</li>
+				<li>New core feature: Command line options</li>
+			</ul>
+		</li>
 		<li>v1.1 (26.09.2012):
 			<ul>
 				<li>New core feature: Change FractalProvider</li>

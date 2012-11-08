@@ -61,4 +61,12 @@ public interface FractalProvider extends SelectableService
 	 *            The parameters that the other FractalProvider wished to pass on to this FractalProvider.
 	 */
 	public void onProviderChange(Object... params);
+
+	/**
+	 * If the JFractalizer was started with command line arguments, some of them are passed to the fractal provider via this method.
+	 * 
+	 * @param args
+	 *            A string that contains all the arguments.
+	 */
+	public void handleCommandLineArgs(String args);
 }

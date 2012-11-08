@@ -26,55 +26,202 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JColorChooser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
 
 public class MainFrame extends Frame
 {
-	private static final long		serialVersionUID	= 8587484082717377870L;
-	private static final MainFrame	instance			= new MainFrame();
-	private FractalProvider			currentProvider;
-	private ColorPalette			currentColorPalette;
+	private static final long	serialVersionUID	= 8587484082717377870L;
+	private static MainFrame	instance;
+	private FractalProvider		currentProvider;
+	private ColorPalette		currentColorPalette;
 
-	MenuBar							menuBar;
-	Menu							fileMenu, fractalMenu, colorPaletteMenu;
-	JColorChooser					colorChooser;
-	int								zoomMenuX, zoomMenuY;
-	private final Label				statusBar;
+	MenuBar						menuBar;
+	Menu						fileMenu, fractalMenu, colorPaletteMenu;
+	JColorChooser				colorChooser;
+	int							zoomMenuX, zoomMenuY;
+	private final Label			statusBar;
 
-	private MainFrame()
+	private MainFrame(String[] args)
 	{
 		super("JFractalizer");
-		setLayout(new BorderLayout());
-		statusBar = new Label("Calculating...");
-		// Let the user choose the fractal
-		final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this, "Choose Fractal", FractalProvider.class);
-		fractalChooserDialog.setVisible(true);
-		try
+
+		boolean useGUI = true;
+		boolean askForClasses = true;
+
+		// Read command line args
+		if (args.length > 0)
 		{
-			setCurrentProvider(fractalChooserDialog.getSelectedService());
-		}
-		catch (final NullPointerException e)
-		{
-			// Do nothing, currentColorPalette wasn't set
-		}
-		// Let the user choose the color palette
-		final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this, "Choose Color Palette", ColorPalette.class);
-		colorPaletteDialog.setVisible(true);
-		currentColorPalette = colorPaletteDialog.getSelectedService();
-		addWindowListener(new WindowAdapter()
-		{
-			@Override
-			public void windowClosing(final WindowEvent e)
+			askForClasses = false;
+			File file = new File(args[0]);
+			boolean isFile = file.exists();
+			if (!isFile)
 			{
-				System.exit(0);
+				// Check whether the file CAN exist
+				try
+				{
+					isFile = file.createNewFile();
+				}
+				catch (IOException e)
+				{
+					isFile = false;
+				}
 			}
-		});
-		initMenu();
-		initContextMenu();
-		pack();
-		setVisible(true);
-		colorChooser = new JColorChooser();
+			if (isFile)
+			{
+				// Specifies input file
+				if (file.exists())
+				{
+					try
+					{
+						loadFile(file);
+					}
+					catch (IOException e)
+					{
+						System.out
+								.println("Something went wrong while loading the file - perhaps the JFractalizer does not have the necessary permissions to read it?");
+						e.printStackTrace();
+						System.exit(1);
+					}
+					catch (SAXException e)
+					{
+						System.out
+								.println("Something went wrong while parsing the file - perhaps it contains invalid XML? (If you want to test that, most modern browsers can check XML for validity.)");
+						e.printStackTrace();
+						System.exit(1);
+					}
+					catch (ParserConfigurationException e)
+					{
+						System.out
+								.println("Something went wrong while initializing the file loader. If you see this, please contact the developer.");
+						e.printStackTrace();
+						System.exit(1);
+					}
+				}
+				else
+				{
+					System.out.println("The file you specified for loading (" + args[0] + ") does not exist!");
+					System.exit(1);
+				}
+			}
+			else
+			{
+				// Specifies FractalProvider and ColorPalette class
+				String[] fpCpArgs = args[0].split(":");
+				if (fpCpArgs.length < 2)
+				{
+					System.out
+							.println("The FractalProvider and ColorPalette could not be parsed as there were not enough names specified!");
+					System.exit(1);
+				}
+				try
+				{
+					setCurrentProvider((FractalProvider) Class.forName(fpCpArgs[0]).newInstance());
+				}
+				catch (InstantiationException | IllegalAccessException | ClassNotFoundException e)
+				{
+					System.out.println("Something went wrong while loading the specified FractalProvider class!");
+					e.printStackTrace();
+					System.exit(1);
+				}
+				catch (ClassCastException e)
+				{
+					System.out.println("The class you specified is not a FractalProvider!");
+					e.printStackTrace();
+					System.exit(1);
+				}
+				try
+				{
+					setCurrentColorPalette((ColorPalette) Class.forName(fpCpArgs[1]).newInstance());
+				}
+				catch (InstantiationException | IllegalAccessException | ClassNotFoundException e)
+				{
+					System.out.println("Something went wrong while loading the specified ColorPalette class!");
+					e.printStackTrace();
+					System.exit(1);
+				}
+				catch (ClassCastException e)
+				{
+					System.out.println("The class you specified is not a ColorPalette!");
+					e.printStackTrace();
+					System.exit(1);
+				}
+				if (fpCpArgs.length > 2)
+				{
+					// Pass additional arguments to provider and palette
+					currentProvider.handleCommandLineArgs(fpCpArgs[2]);
+					if (fpCpArgs.length > 3)
+					{
+						currentColorPalette.handleCommandLineArgs(fpCpArgs[3]);
+						if (fpCpArgs.length > 4)
+							System.out
+									.println("Unnecessary information detected: The JFractalizer only processes at most four parts in the \"provider:palette:args:args\" parts, but you specified more. Incorrect command line?");
+					}
+				}
+			}
+		}
+
+		if (useGUI)
+		{
+			// Init GUI
+			statusBar = new Label("Calculating...");
+			setLayout(new BorderLayout());
+			if (askForClasses)
+			{
+				// Let the user choose the fractal
+				final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this,
+						"Choose Fractal", FractalProvider.class);
+				fractalChooserDialog.setVisible(true);
+				try
+				{
+					setCurrentProvider(fractalChooserDialog.getSelectedService());
+				}
+				catch (final NullPointerException e)
+				{
+					// Do nothing, currentColorPalette wasn't set
+				}
+				// Let the user choose the color palette
+				final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this,
+						"Choose Color Palette", ColorPalette.class);
+				colorPaletteDialog.setVisible(true);
+				currentColorPalette = colorPaletteDialog.getSelectedService();
+			}
+			addWindowListener(new WindowAdapter()
+			{
+				@Override
+				public void windowClosing(final WindowEvent e)
+				{
+					System.exit(0);
+				}
+			});
+			initMenu();
+			initContextMenu();
+			pack();
+			setVisible(true);
+			colorChooser = new JColorChooser();
+		}
+		else
+		{
+			statusBar = null; // TODO this is just so the code compiles, think of something better!
+		}
+	}
+
+	void loadFile(File file) throws SAXException, IOException, ParserConfigurationException
+	{
+		final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+		final FractXmlLoader loader = new FractalClassReader();
+		saxParser.parse(file, loader);
+		MainFrame.getInstance().setCurrentProvider(loader.getProvider());
+		final FractXmlPaletteLoader colorPaletteLoader = new PaletteClassReader();
+		saxParser.parse(file, colorPaletteLoader);
+		MainFrame.getInstance().setCurrentColorPalette(colorPaletteLoader.getPalette());
 	}
 
 	/**
@@ -146,7 +293,8 @@ public class MainFrame extends Frame
 		menuBar.add(fractalMenu);
 
 		colorPaletteMenu = new Menu("Color Palette");
-		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C, true));
+		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C,
+				true));
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
 		colorPaletteMenu.addSeparator();
@@ -234,7 +382,7 @@ public class MainFrame extends Frame
 
 	public static void main(final String[] args)
 	{
-		MainFrame.getInstance();
+		instance = new MainFrame(args);
 	}
 
 	static MainFrame getInstance()
