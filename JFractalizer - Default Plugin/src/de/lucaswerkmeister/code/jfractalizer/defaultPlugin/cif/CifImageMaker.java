@@ -96,12 +96,16 @@ public abstract class CifImageMaker extends Thread {
 	    final double cImag, final int maxPasses) {
 	double zReal = 0, zImag = 0, zRealNew = 0;
 	int passes = 0;
-	while (zReal * zReal + zImag * zImag < 4) {
+	double zRealSquared = 0;
+	double zImagSquared = 0;
+	while (zRealSquared + zImagSquared < 4) {
 	    if (++passes > maxPasses)
 		return -1;
-	    zRealNew = zReal * zReal - zImag * zImag + cReal;
+	    zRealNew = zRealSquared - zImagSquared + cReal;
 	    zImag = 2 * zReal * zImag + cImag;
 	    zReal = zRealNew;
+	    zRealSquared = zReal * zReal;
+	    zImagSquared = zImag * zImag;
 	}
 	return passes;
     }
@@ -110,12 +114,16 @@ public abstract class CifImageMaker extends Thread {
 	    final double cImag, final int maxPasses) {
 	double zReal = 0, zImag = 0, zRealNew = 0;
 	int passes = 0;
-	while (zReal * zReal + zImag * zImag < 4) {
+	double zRealSquared = 0;
+	double zImagSquared = 0;
+	while (zRealSquared + zImagSquared < 4) {
 	    if (++passes > maxPasses)
 		return -1;
-	    zRealNew = zReal * zReal - zImag * zImag + cReal;
+	    zRealNew = zRealSquared - zImagSquared + cReal;
 	    zImag = 2 * zReal * zImag + cImag;
 	    zReal = zRealNew;
+	    zRealSquared = zReal * zReal;
+	    zImagSquared = zImag * zImag;
 	}
 	return passes;
     }
@@ -124,12 +132,16 @@ public abstract class CifImageMaker extends Thread {
 	    final double cImag, final int maxPasses) {
 	double zReal = 0, zImag = 0;
 	int passes = 0;
-	while (zReal * zReal + zImag * zImag < 4) {
+	double zRealSquared = 0;
+	double zImagSquared = 0;
+	while (zRealSquared + zImagSquared < 4) {
 	    if (++passes > maxPasses)
 		return -1;
-	    final double zRealNew = zReal * zReal - zImag * zImag + cReal;
+	    final double zRealNew = zRealSquared - zImagSquared + cReal;
 	    zImag = 2 * zReal * zImag + cImag;
 	    zReal = zRealNew;
+	    zRealSquared = zReal * zReal;
+	    zImagSquared = zImag * zImag;
 	}
 	return passes;
     }
