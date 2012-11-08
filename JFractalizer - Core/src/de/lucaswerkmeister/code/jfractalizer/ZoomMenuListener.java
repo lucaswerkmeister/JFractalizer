@@ -16,36 +16,39 @@ import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ZoomMenuListener implements ActionListener
-{
-	public static final String	ZOOM_IN			= "Zoom in";
-	public static final String	ZOOM_OUT		= "Zoom out";
-	public static final String	USE_COORDINATES	= "On mouse location";
-	public static final String	USE_CENTER		= "On center";
-	public static final String	CENTER_NO_ZOOM	= "Center on mouse location";
+public class ZoomMenuListener implements ActionListener {
+    public static final String ZOOM_IN = "Zoom in";
+    public static final String ZOOM_OUT = "Zoom out";
+    public static final String USE_COORDINATES = "On mouse location";
+    public static final String USE_CENTER = "On center";
+    public static final String CENTER_NO_ZOOM = "Center on mouse location";
 
-	@Override
-	public void actionPerformed(final ActionEvent e)
-	{
-		final String actionCommand = e.getActionCommand();
-		final MainFrame i = MainFrame.getInstance();
-		final FractalProvider p = i.getCurrentProvider();
-		final Canvas c = p.getCanvas();
-		p.stopCalculation();
-		if (actionCommand.equals(CENTER_NO_ZOOM))
-			p.zoom(i.zoomMenuX, i.zoomMenuY, 1.0);
-		else
-		{
-			final short factorPercent = Short.parseShort(actionCommand.substring(0, actionCommand.length() - 1));
-			final boolean useCoordinates = i.zoomMenuX >= 0 && i.zoomMenuY >= 0
-					&& ((MenuItem) ((MenuItem) e.getSource()).getParent()).getLabel().equals(USE_COORDINATES);
-			final boolean zoomIn = ((MenuItem) ((MenuItem) ((MenuItem) e.getSource()).getParent()).getParent()).getLabel().equals(ZOOM_IN);
-			final double factor = zoomIn ? 1 - factorPercent / 200.0 : 1 + factorPercent / 100.0;
-			final int x = useCoordinates ? i.zoomMenuX : c.getWidth() / 2;
-			final int y = useCoordinates ? i.zoomMenuY : c.getHeight() / 2;
-			p.zoom(x, y, factor);
-		}
-		p.startCalculation();
-		i.zoomMenuX = i.zoomMenuY = -1;
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+	final String actionCommand = e.getActionCommand();
+	final MainFrame i = MainFrame.getInstance();
+	final FractalProvider p = i.getCurrentProvider();
+	final Canvas c = p.getCanvas();
+	p.stopCalculation();
+	if (actionCommand.equals(CENTER_NO_ZOOM))
+	    p.zoom(i.zoomMenuX, i.zoomMenuY, 1.0);
+	else {
+	    final short factorPercent = Short.parseShort(actionCommand
+		    .substring(0, actionCommand.length() - 1));
+	    final boolean useCoordinates = i.zoomMenuX >= 0
+		    && i.zoomMenuY >= 0
+		    && ((MenuItem) ((MenuItem) e.getSource()).getParent())
+			    .getLabel().equals(USE_COORDINATES);
+	    final boolean zoomIn = ((MenuItem) ((MenuItem) ((MenuItem) e
+		    .getSource()).getParent()).getParent()).getLabel().equals(
+		    ZOOM_IN);
+	    final double factor = zoomIn ? 1 - factorPercent / 200.0
+		    : 1 + factorPercent / 100.0;
+	    final int x = useCoordinates ? i.zoomMenuX : c.getWidth() / 2;
+	    final int y = useCoordinates ? i.zoomMenuY : c.getHeight() / 2;
+	    p.zoom(x, y, factor);
 	}
+	p.startCalculation();
+	i.zoomMenuX = i.zoomMenuY = -1;
+    }
 }

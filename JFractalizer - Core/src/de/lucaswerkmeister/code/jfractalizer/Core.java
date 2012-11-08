@@ -22,125 +22,122 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 /**
- * Acts as a wrapper for all functions that plugins may wish to invoke on the core.
+ * Acts as a wrapper for all functions that plugins may wish to invoke on the
+ * core.
  * 
  * @author Lucas Werkmeister
  * @version 1.0
  */
-public final class Core
-{
-	/**
-	 * <code>private</code> constructor so the class can't be instantiated.
-	 */
-	private Core()
-	{
-	}
+public final class Core {
+    /**
+     * <code>private</code> constructor so the class can't be instantiated.
+     */
+    private Core() {
+    }
 
-	/**
-	 * Gets the image currently displayed by the main window, whether it is completely calculated or not.
-	 * 
-	 * @return The image currently displayed by the main window.
-	 */
-	public static RenderedImage getImage()
-	{
-		if (MainFrame.getInstance() == null)
-			return null;
-		return MainFrame.getInstance().getCurrentProvider().getImage();
-	}
+    /**
+     * Gets the image currently displayed by the main window, whether it is
+     * completely calculated or not.
+     * 
+     * @return The image currently displayed by the main window.
+     */
+    public static RenderedImage getImage() {
+	if (MainFrame.getInstance() == null)
+	    return null;
+	return MainFrame.getInstance().getCurrentProvider().getImage();
+    }
 
-	/**
-	 * Gets the global <code>JColorChooser</code> of the JFractalizer.
-	 * 
-	 * @return The global <code>JColorChooser</code> of the JFractalizer.
-	 */
-	public static JColorChooser getGlobalColorChooser()
-	{
-		if (MainFrame.getInstance() == null)
-			return null;
-		return MainFrame.getInstance().colorChooser;
-	}
+    /**
+     * Gets the global <code>JColorChooser</code> of the JFractalizer.
+     * 
+     * @return The global <code>JColorChooser</code> of the JFractalizer.
+     */
+    public static JColorChooser getGlobalColorChooser() {
+	if (MainFrame.getInstance() == null)
+	    return null;
+	return MainFrame.getInstance().colorChooser;
+    }
 
-	/**
-	 * Stops the currently running calculation.
-	 */
-	public static void stopCalculation()
-	{
-		if (MainFrame.getInstance() == null)
-			return;
-		MainFrame.getInstance().getCurrentProvider().stopCalculation();
-	}
+    /**
+     * Stops the currently running calculation.
+     */
+    public static void stopCalculation() {
+	if (MainFrame.getInstance() == null)
+	    return;
+	MainFrame.getInstance().getCurrentProvider().stopCalculation();
+    }
 
-	/**
-	 * Starts calculation of the current fractal image.
-	 */
-	public static void startCalculation()
-	{
-		if (MainFrame.getInstance() == null)
-			return;
-		MainFrame.getInstance().getCurrentProvider().startCalculation();
-	}
+    /**
+     * Starts calculation of the current fractal image.
+     */
+    public static void startCalculation() {
+	if (MainFrame.getInstance() == null)
+	    return;
+	MainFrame.getInstance().getCurrentProvider().startCalculation();
+    }
 
-	/**
-	 * Sets the text displayed by the status bar of the JFractalizer.
-	 * 
-	 * @param status
-	 *            The new status.
-	 */
-	public static void setStatus(final String status)
-	{
-		if (MainFrame.getInstance() == null)
-			return;
-		MainFrame.getInstance().setStatus(status, Color.black);
-	}
+    /**
+     * Sets the text displayed by the status bar of the JFractalizer.
+     * 
+     * @param status
+     *            The new status.
+     */
+    public static void setStatus(final String status) {
+	if (MainFrame.getInstance() == null)
+	    return;
+	MainFrame.getInstance().setStatus(status, Color.black);
+    }
 
-	/**
-	 * Sets the text displayed by the status bar of the JFractalizer and its color.
-	 * 
-	 * @param status
-	 *            The new status.
-	 * @param color
-	 *            The color of the new status.
-	 */
-	public static void setStatus(final String status, final Color color)
-	{
-		if (MainFrame.getInstance() == null)
-			return;
-		MainFrame.getInstance().setStatus(status, color);
-	}
+    /**
+     * Sets the text displayed by the status bar of the JFractalizer and its
+     * color.
+     * 
+     * @param status
+     *            The new status.
+     * @param color
+     *            The color of the new status.
+     */
+    public static void setStatus(final String status, final Color color) {
+	if (MainFrame.getInstance() == null)
+	    return;
+	MainFrame.getInstance().setStatus(status, color);
+    }
 
-	/**
-	 * Changes the current provider to the specified type.
-	 * 
-	 * @param fractalProviderClass
-	 *            The class of the new provider type.
-	 * @param params
-	 *            Any parameters that will be passed to the new provider.
-	 * @throws ReflectiveOperationException
-	 *             If anything goes wrong instantiating the new provider.
-	 */
-	public static void changeProvider(Class<? extends FractalProvider> fractalProviderClass, Object... params) throws ReflectiveOperationException,
-			IllegalArgumentException
-	{
-		stopCalculation();
-		MainFrame.getInstance().setCurrentProvider(fractalProviderClass.newInstance());
-		MainFrame.getInstance().getCurrentProvider().onProviderChange(params);
-		startCalculation();
-	}
+    /**
+     * Changes the current provider to the specified type.
+     * 
+     * @param fractalProviderClass
+     *            The class of the new provider type.
+     * @param params
+     *            Any parameters that will be passed to the new provider.
+     * @throws ReflectiveOperationException
+     *             If anything goes wrong instantiating the new provider.
+     */
+    public static void changeProvider(
+	    Class<? extends FractalProvider> fractalProviderClass,
+	    Object... params) throws ReflectiveOperationException,
+	    IllegalArgumentException {
+	stopCalculation();
+	MainFrame.getInstance().setCurrentProvider(
+		fractalProviderClass.newInstance());
+	MainFrame.getInstance().getCurrentProvider().onProviderChange(params);
+	startCalculation();
+    }
 
-	/**
-	 * Loads the specified file.
-	 * 
-	 * @param saveFile
-	 *            The file that should be loaded.
-	 * @throws SAXException
-	 *             If anything goes wrong while loading the file.
-	 * @throws IOException
-	 *             If anything goes wrong while loading the file.
-	 * @throws ParserConfigurationException
-	 *             If anything goes wrong while loading the file.
-	 */
-	public static void loadFile(File saveFile) throws SAXException, IOException, ParserConfigurationException
-	{
-		MainFrame.getInstance().loadFile(saveFile);
-	}
+    /**
+     * Loads the specified file.
+     * 
+     * @param saveFile
+     *            The file that should be loaded.
+     * @throws SAXException
+     *             If anything goes wrong while loading the file.
+     * @throws IOException
+     *             If anything goes wrong while loading the file.
+     * @throws ParserConfigurationException
+     *             If anything goes wrong while loading the file.
+     */
+    public static void loadFile(File saveFile) throws SAXException,
+	    IOException, ParserConfigurationException {
+	MainFrame.getInstance().loadFile(saveFile);
+    }
 }

@@ -13,58 +13,49 @@ package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
 import de.lucaswerkmeister.code.jfractalizer.FractXmlLoader;
 
-public class JuliaProvider extends CifProvider
-{
-	private double	cReal, cImag;
+public class JuliaProvider extends CifProvider {
+    private double cReal, cImag;
 
-	public JuliaProvider()
-	{
-		this(0.0, 0.0);
-	}
+    public JuliaProvider() {
+	this(0.0, 0.0);
+    }
 
-	public JuliaProvider(final double cReal, final double cImag)
-	{
-		canvas = new CifCanvas<>(this, JuliaImageMaker_CalcAll.class);
-		menuListener = new CifMenuListener(this, canvas);
-		this.cReal = cReal;
-		this.cImag = cImag;
-	}
+    public JuliaProvider(final double cReal, final double cImag) {
+	canvas = new CifCanvas<>(this, JuliaImageMaker_CalcAll.class);
+	menuListener = new CifMenuListener(this, canvas);
+	this.cReal = cReal;
+	this.cImag = cImag;
+    }
 
-	@Override
-	public FractXmlLoader getFractXmlLoader()
-	{
-		return new CifFractXmlLoader(JuliaProvider.class);
-	}
+    @Override
+    public FractXmlLoader getFractXmlLoader() {
+	return new CifFractXmlLoader(JuliaProvider.class);
+    }
 
-	@Override
-	public String getName()
-	{
-		return "Julia Set";
-	}
+    @Override
+    public String getName() {
+	return "Julia Set";
+    }
 
-	public double getCReal()
-	{
-		return cReal;
-	}
+    public double getCReal() {
+	return cReal;
+    }
 
-	public double getCImag()
-	{
-		return cImag;
-	}
+    public double getCImag() {
+	return cImag;
+    }
 
-	@Override
-	public void onProviderChange(Object... params)
-	{
-		if (params.length == 2 && params[0] instanceof Double && params[1] instanceof Double)
-		{
-			cReal = (double) params[0];
-			cImag = (double) params[1];
-		}
+    @Override
+    public void onProviderChange(Object... params) {
+	if (params.length == 2 && params[0] instanceof Double
+		&& params[1] instanceof Double) {
+	    cReal = (double) params[0];
+	    cImag = (double) params[1];
 	}
+    }
 
-	@Override
-	public void handleCommandLineArgs(String arg0)
-	{
-		// TODO implement args
-	}
+    @Override
+    public void handleCommandLineArgs(String arg0) {
+	// TODO implement args
+    }
 }

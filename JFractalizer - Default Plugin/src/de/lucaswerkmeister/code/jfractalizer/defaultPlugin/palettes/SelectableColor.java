@@ -33,145 +33,127 @@ import javax.swing.JColorChooser;
 
 import de.lucaswerkmeister.code.jfractalizer.Core;
 
-public class SelectableColor extends Component implements MouseListener
-{
-	private static final long			serialVersionUID	= -464835931994412419L;
-	private static final Dimension		size				= new Dimension(25, 25);
-	private Color						color				= Color.black;
-	private final List<ActionListener>	listeners			= new LinkedList<>();
+public class SelectableColor extends Component implements MouseListener {
+    private static final long serialVersionUID = -464835931994412419L;
+    private static final Dimension size = new Dimension(25, 25);
+    private Color color = Color.black;
+    private final List<ActionListener> listeners = new LinkedList<>();
 
-	public SelectableColor(final Color c)
-	{
-		color = c;
-		addMouseListener(this);
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    public SelectableColor(final Color c) {
+	color = c;
+	addMouseListener(this);
+	setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+	return size;
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+	return size;
+    }
+
+    @Override
+    public Dimension getMaximumSize() {
+	return size;
+    }
+
+    @Override
+    public void paint(final Graphics g) {
+	g.setColor(Color.black);
+	g.drawRect(0, 0, size.width, size.height);
+	g.setColor(color);
+	g.fillRect(1, 1, size.width - 1, size.height - 1);
+    }
+
+    public void setColor(final Color c) {
+	color = c;
+	repaint();
+    }
+
+    public Color getColor() {
+	return color;
+    }
+
+    public void addActionListener(final ActionListener listener) {
+	listeners.add(listener);
+    }
+
+    @Override
+    public void mouseClicked(final MouseEvent e) {
+	Container parent = getParent();
+	while (!(parent instanceof Frame))
+	    parent = parent.getParent();
+	final ColorDialog d = new ColorDialog((Frame) parent, color);
+	d.setVisible(true);
+	color = d.getColor();
+	repaint();
+	if (!listeners.isEmpty()) {
+	    final ActionEvent ae = new ActionEvent(this,
+		    ActionEvent.ACTION_PERFORMED, "Color changed");
+	    for (final ActionListener l : listeners)
+		l.actionPerformed(ae);
 	}
+    }
 
-	@Override
-	public Dimension getPreferredSize()
-	{
-		return size;
-	}
+    @Override
+    public void mousePressed(final MouseEvent e) {
 
-	@Override
-	public Dimension getMinimumSize()
-	{
-		return size;
-	}
+    }
 
-	@Override
-	public Dimension getMaximumSize()
-	{
-		return size;
-	}
+    @Override
+    public void mouseReleased(final MouseEvent e) {
 
-	@Override
-	public void paint(final Graphics g)
-	{
-		g.setColor(Color.black);
-		g.drawRect(0, 0, size.width, size.height);
-		g.setColor(color);
-		g.fillRect(1, 1, size.width - 1, size.height - 1);
-	}
+    }
 
-	public void setColor(final Color c)
-	{
-		color = c;
-		repaint();
-	}
+    @Override
+    public void mouseEntered(final MouseEvent e) {
 
-	public Color getColor()
-	{
-		return color;
-	}
+    }
 
-	public void addActionListener(final ActionListener listener)
-	{
-		listeners.add(listener);
-	}
+    @Override
+    public void mouseExited(final MouseEvent e) {
 
-	@Override
-	public void mouseClicked(final MouseEvent e)
-	{
-		Container parent = getParent();
-		while (!(parent instanceof Frame))
-			parent = parent.getParent();
-		final ColorDialog d = new ColorDialog((Frame) parent, color);
-		d.setVisible(true);
-		color = d.getColor();
-		repaint();
-		if (!listeners.isEmpty())
-		{
-			final ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Color changed");
-			for (final ActionListener l : listeners)
-				l.actionPerformed(ae);
-		}
-	}
-
-	@Override
-	public void mousePressed(final MouseEvent e)
-	{
-
-	}
-
-	@Override
-	public void mouseReleased(final MouseEvent e)
-	{
-
-	}
-
-	@Override
-	public void mouseEntered(final MouseEvent e)
-	{
-
-	}
-
-	@Override
-	public void mouseExited(final MouseEvent e)
-	{
-
-	}
+    }
 }
 
-class ColorDialog extends Dialog implements ActionListener
-{
-	private static final long	serialVersionUID	= 4347923773976010884L;
-	private boolean				okClicked			= false;
-	private final Color			startColor;
-	private final JColorChooser	chooser;
+class ColorDialog extends Dialog implements ActionListener {
+    private static final long serialVersionUID = 4347923773976010884L;
+    private boolean okClicked = false;
+    private final Color startColor;
+    private final JColorChooser chooser;
 
-	public ColorDialog(final Frame owner, final Color c)
-	{
-		super(owner, "Choose color", true);
-		startColor = c;
-		setLayout(new BorderLayout());
-		chooser = Core.getGlobalColorChooser();
-		chooser.setColor(c);
-		add(chooser, BorderLayout.CENTER);
-		final Panel south = new Panel();
-		final Button ok = new Button("OK");
-		ok.addActionListener(this);
-		south.add(ok);
-		final Button cancel = new Button("Cancel");
-		cancel.addActionListener(this);
-		south.add(cancel);
-		add(south, BorderLayout.SOUTH);
-		pack();
-		invalidate();
-	}
+    public ColorDialog(final Frame owner, final Color c) {
+	super(owner, "Choose color", true);
+	startColor = c;
+	setLayout(new BorderLayout());
+	chooser = Core.getGlobalColorChooser();
+	chooser.setColor(c);
+	add(chooser, BorderLayout.CENTER);
+	final Panel south = new Panel();
+	final Button ok = new Button("OK");
+	ok.addActionListener(this);
+	south.add(ok);
+	final Button cancel = new Button("Cancel");
+	cancel.addActionListener(this);
+	south.add(cancel);
+	add(south, BorderLayout.SOUTH);
+	pack();
+	invalidate();
+    }
 
-	@Override
-	public void actionPerformed(final ActionEvent e)
-	{
-		okClicked = e.getActionCommand().equals("OK");
-		dispose();
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+	okClicked = e.getActionCommand().equals("OK");
+	dispose();
+    }
 
-	public Color getColor()
-	{
-		if (okClicked)
-			return chooser.getColor();
-		else
-			return startColor;
-	}
+    public Color getColor() {
+	if (okClicked)
+	    return chooser.getColor();
+	else
+	    return startColor;
+    }
 }

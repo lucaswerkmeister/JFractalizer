@@ -30,108 +30,104 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class NodePaletteEditDialog extends Dialog implements ActionListener, ChangeListener
-{
-	private static final long		serialVersionUID	= -4994844391708814135L;
-	private final NodePalette		original;
-	private final Panel				nodesPanel;
-	private final List<ColorNode>	nodes;
-	private final Panel				otherPaletteStuff;
-	private final JSpinner			nodesCount;
-	private final SelectableColor	coreColor;
-	private final Panel				buttonsPanel;
-	private boolean					okClicked;
+public class NodePaletteEditDialog extends Dialog implements ActionListener,
+	ChangeListener {
+    private static final long serialVersionUID = -4994844391708814135L;
+    private final NodePalette original;
+    private final Panel nodesPanel;
+    private final List<ColorNode> nodes;
+    private final Panel otherPaletteStuff;
+    private final JSpinner nodesCount;
+    private final SelectableColor coreColor;
+    private final Panel buttonsPanel;
+    private boolean okClicked;
 
-	public NodePaletteEditDialog(final Frame owner, final NodePalette start)
-	{
-		super(owner, "Edit Color Palette", true);
-		original = start;
-		setLayout(new BorderLayout());
-		final ScrollPane nodesPanelParent = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
-		nodesPanel = new Panel(new FlowLayout());
-		nodesPanelParent.add(nodesPanel);
-		nodes = new ArrayList<>(start.nodes.size());
-		ColorNode lastNode = null;
-		for (final ColorNode n : start.nodes)
-		{
-			final ColorNode newNode = n.copy();
-			nodes.add(newNode);
-			if (lastNode != null)
-				lastNode.link(newNode);
-			nodesPanel.add(newNode);
-			lastNode = newNode;
-		}
-		if (nodes.size() > 1)
-			lastNode.link(nodes.get(0));
-		coreColor = new SelectableColor(start.coreColor);
-		nodesPanel.add(coreColor);
-		otherPaletteStuff = new Panel();
-		nodesCount = new JSpinner(new SpinnerNumberModel(start.nodes.size(), 1, null, 1));
-		nodesCount.addChangeListener(this);
-		otherPaletteStuff.add(new Label("Number of color nodes"));
-		otherPaletteStuff.add(nodesCount);
-		otherPaletteStuff.add(new Label("Core color"));
-		otherPaletteStuff.add(coreColor);
-		final Panel centerPanel = new Panel(new GridLayout(2, 1));
-		centerPanel.add(otherPaletteStuff);
-		centerPanel.add(nodesPanelParent);
-		add(centerPanel, BorderLayout.CENTER);
-		buttonsPanel = new Panel(new FlowLayout(FlowLayout.RIGHT));
-		final Button ok = new Button("OK");
-		ok.addActionListener(this);
-		buttonsPanel.add(ok);
-		final Button cancel = new Button("Cancel");
-		cancel.addActionListener(this);
-		buttonsPanel.add(cancel);
-		add(buttonsPanel, BorderLayout.SOUTH);
-		pack();
-		setVisible(true);
+    public NodePaletteEditDialog(final Frame owner, final NodePalette start) {
+	super(owner, "Edit Color Palette", true);
+	original = start;
+	setLayout(new BorderLayout());
+	final ScrollPane nodesPanelParent = new ScrollPane(
+		ScrollPane.SCROLLBARS_AS_NEEDED);
+	nodesPanel = new Panel(new FlowLayout());
+	nodesPanelParent.add(nodesPanel);
+	nodes = new ArrayList<>(start.nodes.size());
+	ColorNode lastNode = null;
+	for (final ColorNode n : start.nodes) {
+	    final ColorNode newNode = n.copy();
+	    nodes.add(newNode);
+	    if (lastNode != null)
+		lastNode.link(newNode);
+	    nodesPanel.add(newNode);
+	    lastNode = newNode;
 	}
+	if (nodes.size() > 1)
+	    lastNode.link(nodes.get(0));
+	coreColor = new SelectableColor(start.coreColor);
+	nodesPanel.add(coreColor);
+	otherPaletteStuff = new Panel();
+	nodesCount = new JSpinner(new SpinnerNumberModel(start.nodes.size(), 1,
+		null, 1));
+	nodesCount.addChangeListener(this);
+	otherPaletteStuff.add(new Label("Number of color nodes"));
+	otherPaletteStuff.add(nodesCount);
+	otherPaletteStuff.add(new Label("Core color"));
+	otherPaletteStuff.add(coreColor);
+	final Panel centerPanel = new Panel(new GridLayout(2, 1));
+	centerPanel.add(otherPaletteStuff);
+	centerPanel.add(nodesPanelParent);
+	add(centerPanel, BorderLayout.CENTER);
+	buttonsPanel = new Panel(new FlowLayout(FlowLayout.RIGHT));
+	final Button ok = new Button("OK");
+	ok.addActionListener(this);
+	buttonsPanel.add(ok);
+	final Button cancel = new Button("Cancel");
+	cancel.addActionListener(this);
+	buttonsPanel.add(cancel);
+	add(buttonsPanel, BorderLayout.SOUTH);
+	pack();
+	setVisible(true);
+    }
 
-	@Override
-	public void actionPerformed(final ActionEvent e)
-	{
-		switch (e.getActionCommand())
-		{
-			case "OK":
-				okClicked = true;
-				break;
-			case "Cancel":
-				okClicked = false;
-				break;
-		}
-		for (final ColorNode n : nodes)
-			n.prepare();
-		setVisible(false);
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+	switch (e.getActionCommand()) {
+	case "OK":
+	    okClicked = true;
+	    break;
+	case "Cancel":
+	    okClicked = false;
+	    break;
 	}
+	for (final ColorNode n : nodes)
+	    n.prepare();
+	setVisible(false);
+    }
 
-	public NodePalette getPalette()
-	{
-		if (okClicked)
-			return new NodePalette(nodes, coreColor.getColor());
-		else
-			return original;
-	}
+    public NodePalette getPalette() {
+	if (okClicked)
+	    return new NodePalette(nodes, coreColor.getColor());
+	else
+	    return original;
+    }
 
-	@Override
-	public void stateChanged(final ChangeEvent e)
-	{
-		final int newSize = (int) nodesCount.getValue();
-		while (nodes.size() > newSize)
-			nodes.remove(nodes.size() - 1);
-		while (nodes.size() < newSize)
-		{
-			final ColorNode newNode = new ColorNode(nodes.get(nodes.size() - 1).getEndColor(), nodes.get(0).getStartColor(), nodes.get(
-					nodes.size() - 1).getLength());
-			nodes.get(nodes.size() - 1).unlink();
-			nodes.get(nodes.size() - 1).link(newNode);
-			nodes.add(newNode);
-		}
-		if (nodes.size() > 1)
-			nodes.get(nodes.size() - 1).link(nodes.get(0));
-		nodesPanel.removeAll();
-		for (final ColorNode n : nodes)
-			nodesPanel.add(n);
-		validate();
+    @Override
+    public void stateChanged(final ChangeEvent e) {
+	final int newSize = (int) nodesCount.getValue();
+	while (nodes.size() > newSize)
+	    nodes.remove(nodes.size() - 1);
+	while (nodes.size() < newSize) {
+	    final ColorNode newNode = new ColorNode(nodes.get(nodes.size() - 1)
+		    .getEndColor(), nodes.get(0).getStartColor(), nodes.get(
+		    nodes.size() - 1).getLength());
+	    nodes.get(nodes.size() - 1).unlink();
+	    nodes.get(nodes.size() - 1).link(newNode);
+	    nodes.add(newNode);
 	}
+	if (nodes.size() > 1)
+	    nodes.get(nodes.size() - 1).link(nodes.get(0));
+	nodesPanel.removeAll();
+	for (final ColorNode n : nodes)
+	    nodesPanel.add(n);
+	validate();
+    }
 }
