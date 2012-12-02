@@ -11,7 +11,6 @@
  */
 package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
@@ -37,8 +36,6 @@ public abstract class CifImageMaker extends Thread {
 	final ColorPalette palette;
 	final byte superSamplingFactor;
 	final CifProvider provider;
-
-	protected boolean running = true;
 
 	/**
 	 * Creates a new instance of the CifImageMaker with specified bounds.
@@ -180,8 +177,4 @@ public abstract class CifImageMaker extends Thread {
 
 	@Override
 	public abstract void run();
-
-	public void stopCalculation() {
-		running = false;
-	}
 }

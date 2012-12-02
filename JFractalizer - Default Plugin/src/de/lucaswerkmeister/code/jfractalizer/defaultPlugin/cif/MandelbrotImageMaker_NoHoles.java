@@ -131,7 +131,7 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker {
 		}
 		for (int x = 0; x < width;)
 			for (int y = 0; y < height;) {
-				if (!running)
+				if (isInterrupted())
 					return;
 				if (pixels[x][y] == 0) {
 					averageR = averageG = averageB = averageDenominator = 0;
