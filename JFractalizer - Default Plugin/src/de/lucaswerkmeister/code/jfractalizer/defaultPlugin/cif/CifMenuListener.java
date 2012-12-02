@@ -28,176 +28,177 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 public class CifMenuListener implements ActionListener {
-    private final CifProvider provider;
-    private final CifCanvas canvas;
-    private boolean okClicked = false;
-    Dialog editBoundariesDialog = null, additionalParamsDialog = null; // initialize
-								       // variable
-								       // so the
-								       // compiler
-								       // doesn't
-								       // complain
+	private final CifProvider provider;
+	private final CifCanvas canvas;
+	private boolean okClicked = false;
+	Dialog editBoundariesDialog = null, additionalParamsDialog = null; // initialize
 
-    CifMenuListener(final CifProvider provider, final CifCanvas canvas) {
-	this.provider = provider;
-	this.canvas = canvas;
-    }
+	// variable
+	// so the
+	// compiler
+	// doesn't
+	// complain
 
-    @Override
-    public void actionPerformed(final ActionEvent e) {
-	switch (e.getActionCommand()) {
-	case "Edit boundaries...":
-	    editBoundariesDialog = new Dialog((Frame) provider.getCanvas()
-		    .getParent(), true);
-	    editBoundariesDialog.setLayout(new BorderLayout());
-	    final Panel interval = new Panel(new BorderLayout());
-	    final TextField maxImag = new TextField(
-		    ((Double) canvas.getMaxImag()).toString());
-	    Panel p = new Panel(new GridBagLayout());
-	    p.add(maxImag);
-	    interval.add(p, BorderLayout.NORTH);
-	    final TextField minImag = new TextField(
-		    ((Double) canvas.getMinImag()).toString());
-	    p = new Panel(new GridBagLayout());
-	    p.add(minImag);
-	    interval.add(p, BorderLayout.SOUTH);
-	    final TextField maxReal = new TextField(
-		    ((Double) canvas.getMaxReal()).toString());
-	    p = new Panel(new GridBagLayout());
-	    p.add(maxReal);
-	    interval.add(p, BorderLayout.EAST);
-	    final TextField minReal = new TextField(
-		    ((Double) canvas.getMinReal()).toString());
-	    p = new Panel(new GridBagLayout());
-	    p.add(minReal);
-	    interval.add(p, BorderLayout.WEST);
-	    final Panel centerText = new Panel(new GridLayout(3, 1));
-	    centerText.add(new Label("maxImag", Label.CENTER));
-	    centerText.add(new Label("minReal + maxReal", Label.CENTER));
-	    centerText.add(new Label("minImag", Label.CENTER));
-	    interval.add(centerText, BorderLayout.CENTER);
-	    editBoundariesDialog.add(interval, BorderLayout.NORTH);
-	    final Panel resolution = new Panel(new FlowLayout());
-	    final TextField width = new TextField(
-		    ((Integer) canvas.getWidth()).toString());
-	    resolution.add(width);
-	    resolution.add(new Label("x"));
-	    final TextField height = new TextField(
-		    ((Integer) canvas.getHeight()).toString());
-	    resolution.add(height);
-	    resolution.add(new Label("pixels"));
-	    editBoundariesDialog.add(resolution, BorderLayout.CENTER);
-	    final Panel buttons = new Panel(new FlowLayout());
-	    Button ok = new Button("OK");
-	    ok.addActionListener(this);
-	    buttons.add(ok);
-	    Button cancel = new Button("Cancel");
-	    cancel.addActionListener(this);
-	    buttons.add(cancel);
-	    editBoundariesDialog.add(buttons, BorderLayout.SOUTH);
-	    editBoundariesDialog.pack();
-	    editBoundariesDialog.setVisible(true);
-	    if (okClicked) {
-		canvas.setMinImag(Double.parseDouble(minImag.getText()));
-		canvas.setMaxImag(Double.parseDouble(maxImag.getText()));
-		canvas.setMinReal(Double.parseDouble(minReal.getText()));
-		canvas.setMaxReal(Double.parseDouble(maxReal.getText()));
-		canvas.setSize(Integer.parseInt(width.getText()),
-			Integer.parseInt(height.getText()));
-		((Frame) canvas.getParent()).pack();
-		provider.stopCalculation();
-		provider.startCalculation();
-	    }
-	    editBoundariesDialog = null;
-	    break;
-	case "OK":
-	    if (editBoundariesDialog != null) {
-		okClicked = true;
-		editBoundariesDialog.dispose();
-	    } else if (additionalParamsDialog != null) {
-		okClicked = true;
-		additionalParamsDialog.dispose();
-	    }
-	    break;
-	case "Cancel":
-	    if (editBoundariesDialog != null) {
-		okClicked = false;
-		editBoundariesDialog.dispose();
-	    } else if (additionalParamsDialog != null) {
-		okClicked = false;
-		additionalParamsDialog.dispose();
-	    }
-	    break;
-	case "Edit additional parameters...":
-	    additionalParamsDialog = new Dialog((Frame) provider.getCanvas()
-		    .getParent(), true);
-	    additionalParamsDialog.setLayout(new GridLayout(3, 2));
-	    additionalParamsDialog.add(new Label("SuperSampling Factor",
-		    Label.RIGHT));
-	    final JSpinner ssf = new JSpinner(new SpinnerNumberModel(
-		    canvas.getSuperSamplingFactor(), 1, Byte.MAX_VALUE, 1));
-	    additionalParamsDialog.add(ssf);
-	    additionalParamsDialog.add(new Label("Calculation depth",
-		    Label.RIGHT));
-	    final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(
-		    canvas.getMaxPasses(), 1, Integer.MAX_VALUE, 1));
-	    additionalParamsDialog.add(maxPasses);
-	    ok = new Button("OK");
-	    ok.addActionListener(this);
-	    additionalParamsDialog.add(ok);
-	    cancel = new Button("Cancel");
-	    cancel.addActionListener(this);
-	    additionalParamsDialog.add(cancel);
-	    additionalParamsDialog.pack();
-	    additionalParamsDialog.setVisible(true);
-	    if (okClicked) {
-		canvas.setSuperSamplingFactor((byte) (int) ssf.getValue()); // the
-									    // additional
-									    // (int)
-									    // cast
-									    // is
-									    // necessary
-									    // because
-									    // casting
-									    // from
-									    // Integer
-									    // to
-									    // byte
-									    // raises
-									    // a
-									    // ClassCastException
-		canvas.setMaxPasses((int) maxPasses.getValue());
-		provider.stopCalculation();
-		provider.startCalculation();
-	    }
-	    break;
-	case "Recalculate":
-	    provider.stopCalculation();
-	    provider.startCalculation();
-	    break;
-	case "Undo":
-	    if (canvas.history.canUndo()) {
-		provider.stopCalculation();
-		canvas.setParams((CifParams) canvas.history.undo(), false);
-		provider.startCalculation();
-	    }
-	    provider.undoMenuItem.setEnabled(canvas.history.canUndo());
-	    provider.redoMenuItem.setEnabled(canvas.history.canRedo());
-	    break;
-	case "Redo":
-	    if (canvas.history.canRedo()) {
-		provider.stopCalculation();
-		canvas.setParams((CifParams) canvas.history.redo(), false);
-		provider.startCalculation();
-	    }
-	    provider.undoMenuItem.setEnabled(canvas.history.canUndo());
-	    provider.redoMenuItem.setEnabled(canvas.history.canRedo());
-	    break;
-	default:
-	    System.out
-		    .println("Action \""
-			    + e.getActionCommand()
-			    + "\" not yet implemented. If you see this in a published version, punch the developer in the face. (No, seriously, don't do that. Just write me an e-mail.)");
+	CifMenuListener(final CifProvider provider, final CifCanvas canvas) {
+		this.provider = provider;
+		this.canvas = canvas;
 	}
-    }
+
+	@Override
+	public void actionPerformed(final ActionEvent e) {
+		switch (e.getActionCommand()) {
+		case "Edit boundaries...":
+			editBoundariesDialog = new Dialog((Frame) provider.getCanvas()
+					.getParent(), true);
+			editBoundariesDialog.setLayout(new BorderLayout());
+			final Panel interval = new Panel(new BorderLayout());
+			final TextField maxImag = new TextField(
+					((Double) canvas.getMaxImag()).toString());
+			Panel p = new Panel(new GridBagLayout());
+			p.add(maxImag);
+			interval.add(p, BorderLayout.NORTH);
+			final TextField minImag = new TextField(
+					((Double) canvas.getMinImag()).toString());
+			p = new Panel(new GridBagLayout());
+			p.add(minImag);
+			interval.add(p, BorderLayout.SOUTH);
+			final TextField maxReal = new TextField(
+					((Double) canvas.getMaxReal()).toString());
+			p = new Panel(new GridBagLayout());
+			p.add(maxReal);
+			interval.add(p, BorderLayout.EAST);
+			final TextField minReal = new TextField(
+					((Double) canvas.getMinReal()).toString());
+			p = new Panel(new GridBagLayout());
+			p.add(minReal);
+			interval.add(p, BorderLayout.WEST);
+			final Panel centerText = new Panel(new GridLayout(3, 1));
+			centerText.add(new Label("maxImag", Label.CENTER));
+			centerText.add(new Label("minReal + maxReal", Label.CENTER));
+			centerText.add(new Label("minImag", Label.CENTER));
+			interval.add(centerText, BorderLayout.CENTER);
+			editBoundariesDialog.add(interval, BorderLayout.NORTH);
+			final Panel resolution = new Panel(new FlowLayout());
+			final TextField width = new TextField(
+					((Integer) canvas.getWidth()).toString());
+			resolution.add(width);
+			resolution.add(new Label("x"));
+			final TextField height = new TextField(
+					((Integer) canvas.getHeight()).toString());
+			resolution.add(height);
+			resolution.add(new Label("pixels"));
+			editBoundariesDialog.add(resolution, BorderLayout.CENTER);
+			final Panel buttons = new Panel(new FlowLayout());
+			Button ok = new Button("OK");
+			ok.addActionListener(this);
+			buttons.add(ok);
+			Button cancel = new Button("Cancel");
+			cancel.addActionListener(this);
+			buttons.add(cancel);
+			editBoundariesDialog.add(buttons, BorderLayout.SOUTH);
+			editBoundariesDialog.pack();
+			editBoundariesDialog.setVisible(true);
+			if (okClicked) {
+				canvas.setMinImag(Double.parseDouble(minImag.getText()));
+				canvas.setMaxImag(Double.parseDouble(maxImag.getText()));
+				canvas.setMinReal(Double.parseDouble(minReal.getText()));
+				canvas.setMaxReal(Double.parseDouble(maxReal.getText()));
+				canvas.setSize(Integer.parseInt(width.getText()),
+						Integer.parseInt(height.getText()));
+				((Frame) canvas.getParent()).pack();
+				provider.stopCalculation();
+				provider.startCalculation();
+			}
+			editBoundariesDialog = null;
+			break;
+		case "OK":
+			if (editBoundariesDialog != null) {
+				okClicked = true;
+				editBoundariesDialog.dispose();
+			} else if (additionalParamsDialog != null) {
+				okClicked = true;
+				additionalParamsDialog.dispose();
+			}
+			break;
+		case "Cancel":
+			if (editBoundariesDialog != null) {
+				okClicked = false;
+				editBoundariesDialog.dispose();
+			} else if (additionalParamsDialog != null) {
+				okClicked = false;
+				additionalParamsDialog.dispose();
+			}
+			break;
+		case "Edit additional parameters...":
+			additionalParamsDialog = new Dialog((Frame) provider.getCanvas()
+					.getParent(), true);
+			additionalParamsDialog.setLayout(new GridLayout(3, 2));
+			additionalParamsDialog.add(new Label("SuperSampling Factor",
+					Label.RIGHT));
+			final JSpinner ssf = new JSpinner(new SpinnerNumberModel(
+					canvas.getSuperSamplingFactor(), 1, Byte.MAX_VALUE, 1));
+			additionalParamsDialog.add(ssf);
+			additionalParamsDialog.add(new Label("Calculation depth",
+					Label.RIGHT));
+			final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(
+					canvas.getMaxPasses(), 1, Integer.MAX_VALUE, 1));
+			additionalParamsDialog.add(maxPasses);
+			ok = new Button("OK");
+			ok.addActionListener(this);
+			additionalParamsDialog.add(ok);
+			cancel = new Button("Cancel");
+			cancel.addActionListener(this);
+			additionalParamsDialog.add(cancel);
+			additionalParamsDialog.pack();
+			additionalParamsDialog.setVisible(true);
+			if (okClicked) {
+				canvas.setSuperSamplingFactor((byte) (int) ssf.getValue()); // the
+				// additional
+				// (int)
+				// cast
+				// is
+				// necessary
+				// because
+				// casting
+				// from
+				// Integer
+				// to
+				// byte
+				// raises
+				// a
+				// ClassCastException
+				canvas.setMaxPasses((int) maxPasses.getValue());
+				provider.stopCalculation();
+				provider.startCalculation();
+			}
+			break;
+		case "Recalculate":
+			provider.stopCalculation();
+			provider.startCalculation();
+			break;
+		case "Undo":
+			if (canvas.history.canUndo()) {
+				provider.stopCalculation();
+				canvas.setParams((CifParams) canvas.history.undo(), false);
+				provider.startCalculation();
+			}
+			provider.undoMenuItem.setEnabled(canvas.history.canUndo());
+			provider.redoMenuItem.setEnabled(canvas.history.canRedo());
+			break;
+		case "Redo":
+			if (canvas.history.canRedo()) {
+				provider.stopCalculation();
+				canvas.setParams((CifParams) canvas.history.redo(), false);
+				provider.startCalculation();
+			}
+			provider.undoMenuItem.setEnabled(canvas.history.canUndo());
+			provider.redoMenuItem.setEnabled(canvas.history.canRedo());
+			break;
+		default:
+			System.out
+					.println("Action \""
+							+ e.getActionCommand()
+							+ "\" not yet implemented. If you see this in a published version, punch the developer in the face. (No, seriously, don't do that. Just write me an e-mail.)");
+		}
+	}
 }

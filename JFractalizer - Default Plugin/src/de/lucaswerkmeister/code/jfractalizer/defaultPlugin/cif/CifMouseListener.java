@@ -17,82 +17,83 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CifMouseListener extends MouseAdapter {
-    private final CifCanvas canvas;
-    private Point clickStart;
-    private static final boolean keepRatio = true; // TODO make this
-						   // configurable
+	private final CifCanvas canvas;
+	private Point clickStart;
+	private static final boolean keepRatio = true; // TODO make this
 
-    public CifMouseListener(final CifCanvas canvas) {
-	this.canvas = canvas;
-    }
+	// configurable
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mousePressed(final MouseEvent e) {
-	if (e.getButton() == MouseEvent.BUTTON1)
-	    clickStart = e.getPoint();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseReleased(final MouseEvent e) {
-	if (e.getButton() == MouseEvent.BUTTON1) {
-	    if (e.getX() != clickStart.x || e.getY() != clickStart.y) {
-		canvas.setSelectedArea(makeArea(e.getX(), e.getY()));
-		canvas.goToSelectedArea();
-	    }
-	    canvas.setSelectedArea(null);
+	public CifMouseListener(final CifCanvas canvas) {
+		this.canvas = canvas;
 	}
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.MouseAdapter#mouseDragged(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseDragged(final MouseEvent e) {
-	// if (e.getButton() == MouseEvent.BUTTON1) //for some odd reason
-	// e.getButton() returns 0 and not 1
-	canvas.setSelectedArea(makeArea(e.getX(), e.getY()));
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.MouseAdapter#mousePressed(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mousePressed(final MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1)
+			clickStart = e.getPoint();
+	}
 
-    private Rectangle makeArea(final int mouseX, final int mouseY) {
-	final int dX = mouseX - clickStart.x;
-	final int dY = mouseY - clickStart.y;
-	if (keepRatio) {
-	    final int cWidth = canvas.getWidth();
-	    final int cHeight = canvas.getHeight();
-	    final double xRatio = (double) dX / cWidth;
-	    final double yRatio = (double) dY / cHeight;
-	    if (xRatio > yRatio)
-		return positiveRectangle(new Rectangle(clickStart.x,
-			clickStart.y, (int) (cWidth * yRatio), dY));
-	    else
-		return positiveRectangle(new Rectangle(clickStart.x,
-			clickStart.y, dX, (int) (cHeight * xRatio)));
-	} else
-	    return new Rectangle(clickStart.x, clickStart.y, dX, dY);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseReleased(final MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getX() != clickStart.x || e.getY() != clickStart.y) {
+				canvas.setSelectedArea(makeArea(e.getX(), e.getY()));
+				canvas.goToSelectedArea();
+			}
+			canvas.setSelectedArea(null);
+		}
+	}
 
-    private Rectangle positiveRectangle(final Rectangle r) {
-	if (r.width > 0) {
-	    if (r.height > 0)
-		return r;
-	    else
-		return new Rectangle(r.x, r.y + r.height, r.width, -r.height);
-	} else if (r.height > 0)
-	    return new Rectangle(r.x + r.width, r.y, -r.width, r.height);
-	else
-	    return new Rectangle(r.x + r.width, r.y + r.height, -r.width,
-		    -r.height);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.awt.event.MouseAdapter#mouseDragged(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseDragged(final MouseEvent e) {
+		// if (e.getButton() == MouseEvent.BUTTON1) //for some odd reason
+		// e.getButton() returns 0 and not 1
+		canvas.setSelectedArea(makeArea(e.getX(), e.getY()));
+	}
+
+	private Rectangle makeArea(final int mouseX, final int mouseY) {
+		final int dX = mouseX - clickStart.x;
+		final int dY = mouseY - clickStart.y;
+		if (keepRatio) {
+			final int cWidth = canvas.getWidth();
+			final int cHeight = canvas.getHeight();
+			final double xRatio = (double) dX / cWidth;
+			final double yRatio = (double) dY / cHeight;
+			if (xRatio > yRatio)
+				return positiveRectangle(new Rectangle(clickStart.x,
+						clickStart.y, (int) (cWidth * yRatio), dY));
+			else
+				return positiveRectangle(new Rectangle(clickStart.x,
+						clickStart.y, dX, (int) (cHeight * xRatio)));
+		} else
+			return new Rectangle(clickStart.x, clickStart.y, dX, dY);
+	}
+
+	private Rectangle positiveRectangle(final Rectangle r) {
+		if (r.width > 0) {
+			if (r.height > 0)
+				return r;
+			else
+				return new Rectangle(r.x, r.y + r.height, r.width, -r.height);
+		} else if (r.height > 0)
+			return new Rectangle(r.x + r.width, r.y, -r.width, r.height);
+		else
+			return new Rectangle(r.x + r.width, r.y + r.height, -r.width,
+					-r.height);
+	}
 }

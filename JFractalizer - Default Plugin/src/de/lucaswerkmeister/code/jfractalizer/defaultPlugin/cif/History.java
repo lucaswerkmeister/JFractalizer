@@ -24,116 +24,116 @@ import java.util.List;
  * @version 1.0
  */
 public class History<T> {
-    private final List<T> states;
-    private final int maxStates;
-    private int currentState;
-    private int lastState;
+	private final List<T> states;
+	private final int maxStates;
+	private int currentState;
+	private int lastState;
 
-    /**
-     * Creates a <code>History</code> that will store 10 states. If more states
-     * are added, older states are discarded.
-     */
-    public History() {
-	this(10);
-    }
-
-    /**
-     * Creates a <code>History</code> that will store the specified amount of
-     * states.
-     * 
-     * @param capacity
-     *            Specifies how many states will be stored. If more states are
-     *            added, older states are discarded.
-     */
-    public History(final int capacity) {
-	states = new ArrayList<>(capacity);
-	maxStates = capacity;
-	currentState = lastState = -1;
-    }
-
-    /**
-     * Adds a new state to the <code>History</code>. If the current state of the
-     * <code>History</code> is not the last one (i. e. if the
-     * <code>History</code> can redo), all newer states will be discarded.
-     * 
-     * @param newState
-     */
-    public void add(final T newState) {
-	if (currentState != lastState)
-	    for (int i = currentState + 1; i <= lastState; i++)
-		states.remove(i);
-	if (currentState == maxStates) {
-	    for (int i = 0; i < maxStates - 1;)
-		states.set(i, states.get(++i));
-	    states.set(maxStates - 1, newState);
-	} else {
-	    states.add(newState);
-	    currentState++;
-	    if (lastState < currentState)
-		lastState = currentState;
+	/**
+	 * Creates a <code>History</code> that will store 10 states. If more states
+	 * are added, older states are discarded.
+	 */
+	public History() {
+		this(10);
 	}
-    }
 
-    /**
-     * Gets the current state of the <code>History</code>, or <code>null</code>
-     * if no states have been added yet.
-     * 
-     * @return The current state of the <code>History</code> if it contains any
-     *         states, <code>null</code> otherwise.
-     */
-    public T getCurrentState() {
-	if (currentState <= lastState)
-	    return states.get(currentState);
-	return null;
-    }
+	/**
+	 * Creates a <code>History</code> that will store the specified amount of
+	 * states.
+	 * 
+	 * @param capacity
+	 *            Specifies how many states will be stored. If more states are
+	 *            added, older states are discarded.
+	 */
+	public History(final int capacity) {
+		states = new ArrayList<>(capacity);
+		maxStates = capacity;
+		currentState = lastState = -1;
+	}
 
-    /**
-     * If there are states to be undone, moves one state back and returns it.
-     * 
-     * @return The previous state if there is one, <code>null</code> otherwise.
-     */
-    public T undo() {
-	if (canUndo())
-	    return states.get(--currentState);
-	return null;
-    }
+	/**
+	 * Adds a new state to the <code>History</code>. If the current state of the
+	 * <code>History</code> is not the last one (i. e. if the
+	 * <code>History</code> can redo), all newer states will be discarded.
+	 * 
+	 * @param newState
+	 */
+	public void add(final T newState) {
+		if (currentState != lastState)
+			for (int i = currentState + 1; i <= lastState; i++)
+				states.remove(i);
+		if (currentState == maxStates) {
+			for (int i = 0; i < maxStates - 1;)
+				states.set(i, states.get(++i));
+			states.set(maxStates - 1, newState);
+		} else {
+			states.add(newState);
+			currentState++;
+			if (lastState < currentState)
+				lastState = currentState;
+		}
+	}
 
-    /**
-     * If there are states to be redone, moves one state forth and returns it.
-     * 
-     * @return The next state if there is one, <code>null</code> otherwise.
-     */
-    public T redo() {
-	if (canRedo())
-	    return states.get(++currentState);
-	return null;
-    }
+	/**
+	 * Gets the current state of the <code>History</code>, or <code>null</code>
+	 * if no states have been added yet.
+	 * 
+	 * @return The current state of the <code>History</code> if it contains any
+	 *         states, <code>null</code> otherwise.
+	 */
+	public T getCurrentState() {
+		if (currentState <= lastState)
+			return states.get(currentState);
+		return null;
+	}
 
-    /**
-     * Determines if there are states to be undone.
-     * 
-     * @return <code>true</code> if there are previous states,
-     *         <code>false</code> otherwise.
-     */
-    public boolean canUndo() {
-	return currentState > 0;
-    }
+	/**
+	 * If there are states to be undone, moves one state back and returns it.
+	 * 
+	 * @return The previous state if there is one, <code>null</code> otherwise.
+	 */
+	public T undo() {
+		if (canUndo())
+			return states.get(--currentState);
+		return null;
+	}
 
-    /**
-     * Determines if there are states to be redone.
-     * 
-     * @return <code>true</code> if there are further states, <code>false</code>
-     *         otherwise.
-     */
-    public boolean canRedo() {
-	return currentState < lastState;
-    }
+	/**
+	 * If there are states to be redone, moves one state forth and returns it.
+	 * 
+	 * @return The next state if there is one, <code>null</code> otherwise.
+	 */
+	public T redo() {
+		if (canRedo())
+			return states.get(++currentState);
+		return null;
+	}
 
-    @Override
-    public String toString() {
-	final StringBuilder b = new StringBuilder();
-	for (final T t : states)
-	    b.append(t.toString());
-	return b.toString();
-    }
+	/**
+	 * Determines if there are states to be undone.
+	 * 
+	 * @return <code>true</code> if there are previous states,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean canUndo() {
+		return currentState > 0;
+	}
+
+	/**
+	 * Determines if there are states to be redone.
+	 * 
+	 * @return <code>true</code> if there are further states, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean canRedo() {
+		return currentState < lastState;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder b = new StringBuilder();
+		for (final T t : states)
+			b.append(t.toString());
+		return b.toString();
+	}
 }

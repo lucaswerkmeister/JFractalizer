@@ -14,32 +14,32 @@ package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 import java.awt.Component;
 
 public class WaitForCalcThreads extends Thread {
-    Thread[] threads;
-    private Component canvas;
+	Thread[] threads;
+	private Component canvas;
 
-    public WaitForCalcThreads(final Thread[] threads, final Component canvas) {
-	this.threads = threads;
-	this.canvas = canvas;
-    }
+	public WaitForCalcThreads(final Thread[] threads, final Component canvas) {
+		this.threads = threads;
+		this.canvas = canvas;
+	}
 
-    @Override
-    public void run() {
-	for (final Thread t : threads)
-	    while (t.isAlive())
-		try {
-		    Thread.sleep(25);
-		    canvas.repaint(25);
-		} catch (final InterruptedException e) {
-		    // do nothing
-		}
-    }
+	@Override
+	public void run() {
+		for (final Thread t : threads)
+			while (t.isAlive())
+				try {
+					Thread.sleep(25);
+					canvas.repaint(25);
+				} catch (final InterruptedException e) {
+					// do nothing
+				}
+	}
 
-    /**
-     * Gets the threads.
-     * 
-     * @return The threads.
-     */
-    public Thread[] getThreads() {
-	return threads;
-    }
+	/**
+	 * Gets the threads.
+	 * 
+	 * @return The threads.
+	 */
+	public Thread[] getThreads() {
+		return threads;
+	}
 }

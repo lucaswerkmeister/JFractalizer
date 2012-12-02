@@ -20,37 +20,37 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.xml.sax.SAXException;
 
 public interface ColorPalette extends SelectableService {
-    /**
-     * Gets the color that the palette assignes to the specified number of
-     * passes.
-     * 
-     * Implementations should note that this method can be called by multiple
-     * threads at the same time; <i>the caller does not take care of
-     * synchronization</i>. The implementation has to take care of potential
-     * synchronization issues itself. (Most implementations should only have to
-     * access the fast storage, which is (in most cases) thread-safe, so this
-     * shouldn't be too much of a problem.)
-     * 
-     * @param passes
-     * @return
-     */
-    public Color getColor(int passes);
+	/**
+	 * Gets the color that the palette assignes to the specified number of
+	 * passes.
+	 * 
+	 * Implementations should note that this method can be called by multiple
+	 * threads at the same time; <i>the caller does not take care of
+	 * synchronization</i>. The implementation has to take care of potential
+	 * synchronization issues itself. (Most implementations should only have to
+	 * access the fast storage, which is (in most cases) thread-safe, so this
+	 * shouldn't be too much of a problem.)
+	 * 
+	 * @param passes
+	 * @return
+	 */
+	public Color getColor(int passes);
 
-    public void saveFractXml(TransformerHandler handler) throws SAXException;
+	public void saveFractXml(TransformerHandler handler) throws SAXException;
 
-    public FractXmlPaletteLoader getFractXmlLoader();
+	public FractXmlPaletteLoader getFractXmlLoader();
 
-    public void makeFastStorage();
+	public void makeFastStorage();
 
-    public void initMenu(Menu colorPaletteMenu, FractalProvider provider,
-	    Frame owner);
+	public void initMenu(Menu colorPaletteMenu, FractalProvider provider,
+			Frame owner);
 
-    /**
-     * If the JFractalizer was started with command line arguments, some of them
-     * are passed to the color palette via this method.
-     * 
-     * @param args
-     *            A String that contains all the arguments.
-     */
-    public void handleCommandLineArgs(String args);
+	/**
+	 * If the JFractalizer was started with command line arguments, some of them
+	 * are passed to the color palette via this method.
+	 * 
+	 * @param args
+	 *            A String that contains all the arguments.
+	 */
+	public void handleCommandLineArgs(String args);
 }

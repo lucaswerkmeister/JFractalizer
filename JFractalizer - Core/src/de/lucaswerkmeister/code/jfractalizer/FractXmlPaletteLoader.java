@@ -14,5 +14,5 @@ package de.lucaswerkmeister.code.jfractalizer;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class FractXmlPaletteLoader extends DefaultHandler {
-    public abstract ColorPalette getPalette();
+	public abstract ColorPalette getPalette();
 }
