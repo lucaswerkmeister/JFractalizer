@@ -24,12 +24,12 @@ public class CifFractXmlLoader extends FractXmlLoader {
 	String currentQName = null;
 	Attributes currentAttributes = null;
 	ColorPalette palette = null;
-	CifCanvas newCanvas = null;
+	CifCanvas<?> newCanvas = null;
 
 	public CifFractXmlLoader(Class<? extends CifProvider> providerClass) {
 		try {
 			provider = providerClass.newInstance();
-			newCanvas = (CifCanvas) provider.getCanvas();
+			newCanvas = (CifCanvas<?>) provider.getCanvas();
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
