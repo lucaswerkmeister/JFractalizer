@@ -43,21 +43,9 @@ public class SelectableColor extends Component implements MouseListener {
 		color = c;
 		addMouseListener(this);
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	}
-
-	@Override
-	public Dimension getPreferredSize() {
-		return size;
-	}
-
-	@Override
-	public Dimension getMinimumSize() {
-		return size;
-	}
-
-	@Override
-	public Dimension getMaximumSize() {
-		return size;
+		setPreferredSize(size);
+		setMinimumSize(size);
+		setMaximumSize(size);
 	}
 
 	@Override
