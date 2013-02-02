@@ -11,6 +11,8 @@
  */
 package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
+import java.awt.Dimension;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -56,13 +58,17 @@ public class CifFractXmlLoader extends FractXmlLoader {
 		final String asString = new String(ch).substring(start, start + length);
 		if (asString.equals("\n"))
 			return;
-		if (currentQName.equals("width"))
-			newCanvas.setSize(Integer.parseInt(asString), provider.getCanvas()
-					.getHeight());
-		else if (currentQName.equals("height"))
-			newCanvas.setSize(provider.getCanvas().getWidth(),
+		if (currentQName.equals("width")) {
+			Dimension d = new Dimension(Integer.parseInt(asString), provider
+					.getCanvas().getHeight());
+			newCanvas.setPreferredSize(d);
+			newCanvas.setSize(d);
+		} else if (currentQName.equals("height")) {
+			Dimension d = new Dimension(provider.getCanvas().getWidth(),
 					Integer.parseInt(asString));
-		else if (currentQName.equals("minReal"))
+			newCanvas.setPreferredSize(d);
+			newCanvas.setSize(d);
+		} else if (currentQName.equals("minReal"))
 			newCanvas.setMinReal(Double.parseDouble(asString));
 		else if (currentQName.equals("maxReal"))
 			newCanvas.setMaxReal(Double.parseDouble(asString));

@@ -14,6 +14,7 @@ package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
@@ -103,8 +104,10 @@ public class CifMenuListener implements ActionListener {
 				canvas.setMaxImag(Double.parseDouble(maxImag.getText()));
 				canvas.setMinReal(Double.parseDouble(minReal.getText()));
 				canvas.setMaxReal(Double.parseDouble(maxReal.getText()));
-				canvas.setSize(Integer.parseInt(width.getText()),
+				Dimension d = new Dimension(Integer.parseInt(width.getText()),
 						Integer.parseInt(height.getText()));
+				canvas.setPreferredSize(d);
+				canvas.setSize(d);
 				((Frame) canvas.getParent()).pack();
 				provider.stopCalculation();
 				provider.startCalculation();
