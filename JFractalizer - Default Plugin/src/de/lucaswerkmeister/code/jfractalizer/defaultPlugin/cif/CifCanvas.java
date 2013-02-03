@@ -19,20 +19,29 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.code.jfractalizer.Core;
 import de.lucaswerkmeister.code.jfractalizer.defaultPlugin.palettes.SimplePalette;
 
 public class CifCanvas<T extends CifImageMaker> extends Canvas {
+
 	private static final long serialVersionUID = -7909101981418946071L;
+	private static final boolean USE_MORE_THREADS_THAN_CORES = true;
+
 	private final CifProvider provider;
-	public static final int START_WIDTH = 1280;
-	public static final int START_HEIGHT = 720;
+	public static final int START_WIDTH = 960;
+	public static final int START_HEIGHT = 540;
 	private double minReal, maxReal, minImag, maxImag;
 	ColorPalette palette;
 	private byte superSamplingFactor;
-	private WaitForCalcThreads waiterThread;
+	private ExecutorService executorService;
+	private List<Future<?>> runningTasks; // <?> because no result is returned
 	private BufferedImage tempImg;
 	private int maxPasses;
 	private long startTime, stopTime;
@@ -75,10 +84,9 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	public void stopCalculation() {
-		if (waiterThread != null && waiterThread.isAlive())
-			for (final CifImageMaker m : (CifImageMaker[]) waiterThread
-					.getThreads())
-				m.stopCalculation();
+		if (runningTasks != null)
+			for (Future<?> f : runningTasks)
+				f.cancel(true);
 	}
 
 	public BufferedImage getImage() {
@@ -97,7 +105,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 
 	@Override
 	public void paint(final Graphics g) {
-		if (waiterThread == null)
+		if (executorService == null)
 			start();
 		for (int i = 0; i < subImages.length; i++)
 			tempImg.getGraphics().drawImage(subImages[i].subImage,
@@ -109,7 +117,9 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 					selectedArea.y + selectedArea.height, selectedArea.x,
 					selectedArea.y, selectedArea.x + selectedArea.width,
 					selectedArea.y + selectedArea.height, null);
-		if (!waiterThread.isAlive() && stopTime == 0 && startTime != 0) {
+		if (isRunning())
+			repaint(10);
+		else if (stopTime == 0 && startTime != 0) {
 			stopTime = System.currentTimeMillis();
 			long interval = stopTime - startTime;
 			final short milliseconds = (short) (interval % 1000);
@@ -174,14 +184,23 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	private void initThreads() {
+		final int cpuCount = Runtime.getRuntime().availableProcessors();
+		if (executorService == null)
+			executorService = Executors.newFixedThreadPool(cpuCount);
+		if (runningTasks == null)
+			runningTasks = new LinkedList<>();
 		if (checkValues()) {
 			Core.setStatus("Calculating...");
 			stopTime = 0;
 			startTime = System.currentTimeMillis();
-			final int cpuCount = Runtime.getRuntime().availableProcessors();
-			final int lessSections = (int) Math.sqrt(cpuCount);
-			final int moreSections = (lessSections == 1) ? cpuCount : cpuCount
+			int lessSections = (int) Math.sqrt(cpuCount);
+			int moreSections = (lessSections == 1) ? cpuCount : cpuCount
 					/ lessSections;
+			if (USE_MORE_THREADS_THAN_CORES) {
+				final int temp = lessSections;
+				lessSections = moreSections;
+				moreSections = 2 * temp;
+			}
 			int horSections, verSections;
 			if (getWidth() >= getHeight()) {
 				horSections = moreSections;
@@ -194,8 +213,6 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 			final double imagHeight = (maxImag - minImag) / verSections;
 			final int sectionWidth = getWidth() / horSections;
 			final int sectionHeight = getHeight() / verSections;
-			final CifImageMaker[] runningThreads = new CifImageMaker[horSections
-					* verSections];
 			subImages = new SubImage[horSections * verSections];
 			try {
 				for (int x = 0; x < horSections; x++)
@@ -227,22 +244,26 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 														* imagHeight,
 										maxPasses, subImage, 0, 0, palette,
 										superSamplingFactor, provider);
-						runningThreads[x * verSections + y] = maker;
+						runningTasks.add(executorService.submit(maker));
 						subImages[x * verSections + y] = new SubImage(x
 								* sectionWidth, (verSections - y - 1)
 								* sectionHeight, subImage);
-						maker.start();
 					}
-				waiterThread = new WaitForCalcThreads(runningThreads, this);
-				waiterThread.start();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
 			System.out.println("Invalid values!");
-			waiterThread = new WaitForCalcThreads(new CifImageMaker[0], this);
-			waiterThread.start();
 		}
+	}
+
+	private boolean isRunning() {
+		if (runningTasks == null)
+			return false;
+		for (Future<?> f : runningTasks)
+			if (!f.isDone())
+				return true;
+		return false;
 	}
 
 	private boolean checkValues() {

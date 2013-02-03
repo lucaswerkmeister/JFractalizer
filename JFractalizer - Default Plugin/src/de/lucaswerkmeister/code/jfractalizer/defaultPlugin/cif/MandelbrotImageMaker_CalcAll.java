@@ -101,7 +101,7 @@ public class MandelbrotImageMaker_CalcAll extends CifImageMaker {
 
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < height; y++) {
-				if (!running)
+				if (isInterrupted())
 					return;
 				averageR = 0;
 				averageG = 0;
