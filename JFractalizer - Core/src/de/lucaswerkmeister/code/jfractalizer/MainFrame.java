@@ -27,7 +27,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JColorChooser;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,6 +44,7 @@ public class MainFrame extends Frame {
 	private FractalProvider currentProvider;
 	private ColorPalette currentColorPalette;
 
+	private boolean showGui = true;
 	MenuBar menuBar;
 	Menu fileMenu, fractalMenu, colorPaletteMenu;
 	JColorChooser colorChooser;
@@ -51,117 +54,33 @@ public class MainFrame extends Frame {
 	private MainFrame(String[] args) {
 		super("JFractalizer");
 
-		boolean useGUI = true;
 		boolean askForClasses = true;
 
 		// Read command line args
-		if (args.length > 0) {
-			askForClasses = false;
-			File file = new File(args[0]);
-			boolean isFile = file.exists();
-			if (!isFile) {
-				// Check whether the file CAN exist
-				try {
-					isFile = file.createNewFile();
-				} catch (IOException e) {
-					isFile = false;
-				}
-			}
-			if (isFile) {
-				// Specifies input file
-				if (file.exists()) {
-					try {
-						loadFile(file);
-					} catch (IOException e) {
-						System.out
-								.println("Something went wrong while loading the file - perhaps the JFractalizer does not have the necessary permissions to read it?");
-						e.printStackTrace();
-						System.exit(1);
-					} catch (SAXException e) {
-						System.out
-								.println("Something went wrong while parsing the file - perhaps it contains invalid XML? (If you want to test that, most modern browsers can check XML for validity.)");
-						e.printStackTrace();
-						System.exit(1);
-					} catch (ParserConfigurationException e) {
-						System.out
-								.println("Something went wrong while initializing the file loader. If you see this, please contact the developer.");
-						e.printStackTrace();
-						System.exit(1);
-					}
-				} else {
-					System.out.println("The file you specified for loading ("
-							+ args[0] + ") does not exist!");
-					System.exit(1);
-				}
-			} else {
-				// Specifies FractalProvider and ColorPalette class
-				String[] fpCpArgs = args[0].split(":");
-				if (fpCpArgs.length < 2) {
-					System.out
-							.println("The FractalProvider and ColorPalette could not be parsed as there were not enough names specified!");
-					System.exit(1);
-				}
-				try {
-					setCurrentProvider((FractalProvider) Class.forName(
-							fpCpArgs[0]).newInstance());
-				} catch (InstantiationException | IllegalAccessException
-						| ClassNotFoundException e) {
-					System.out
-							.println("Something went wrong while loading the specified FractalProvider class!");
-					e.printStackTrace();
-					System.exit(1);
-				} catch (ClassCastException e) {
-					System.out
-							.println("The class you specified is not a FractalProvider!");
-					e.printStackTrace();
-					System.exit(1);
-				}
-				try {
-					setCurrentColorPalette((ColorPalette) Class.forName(
-							fpCpArgs[1]).newInstance());
-				} catch (InstantiationException | IllegalAccessException
-						| ClassNotFoundException e) {
-					System.out
-							.println("Something went wrong while loading the specified ColorPalette class!");
-					e.printStackTrace();
-					System.exit(1);
-				} catch (ClassCastException e) {
-					System.out
-							.println("The class you specified is not a ColorPalette!");
-					e.printStackTrace();
-					System.exit(1);
-				}
-				if (fpCpArgs.length > 2) {
-					// Pass additional arguments to provider and palette
-					currentProvider.handleCommandLineArgs(fpCpArgs[2]);
-					if (fpCpArgs.length > 3) {
-						currentColorPalette.handleCommandLineArgs(fpCpArgs[3]);
-						if (fpCpArgs.length > 4)
-							System.out
-									.println("Unnecessary information detected: The JFractalizer only processes at most four parts in the \"provider:palette:args:args\" parts, but you specified more. Incorrect command line?");
-					}
-				}
-			}
-		}
+		String realm = "";
+		for (String arg : args)
+			if (arg.startsWith("--"))
+				realm = arg.substring("--".length());
+			else
+				handleOption(realm, arg);
 
-		if (useGUI) {
+		if (showGui) {
 			// Init GUI
 			statusBar = new Label("Calculating...");
 			setLayout(new BorderLayout());
 			if (askForClasses) {
 				// Let the user choose the fractal
-				final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(
-						this, "Choose Fractal", FractalProvider.class);
+				final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this,
+						"Choose Fractal", FractalProvider.class);
 				fractalChooserDialog.setVisible(true);
 				try {
-					setCurrentProvider(fractalChooserDialog
-							.getSelectedService());
+					setCurrentProvider(fractalChooserDialog.getSelectedService());
 				} catch (final NullPointerException e) {
 					// Do nothing, currentColorPalette wasn't set
 				}
 				// Let the user choose the color palette
-				final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(
-						this, "Choose Color Palette", ColorPalette.class);
+				final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this,
+						"Choose Color Palette", ColorPalette.class);
 				colorPaletteDialog.setVisible(true);
 				currentColorPalette = colorPaletteDialog.getSelectedService();
 			}
@@ -182,17 +101,126 @@ public class MainFrame extends Frame {
 		}
 	}
 
-	void loadFile(File file) throws SAXException, IOException,
-			ParserConfigurationException {
-		final SAXParser saxParser = SAXParserFactory.newInstance()
-				.newSAXParser();
+	private void handleOption(String realm, String option) {
+		String optionName = option.substring(0, option.indexOf('='));
+		String optionContent = option.substring(option.indexOf('=') + 1);
+		switch (realm) {
+		case "":
+			throw new IllegalCommandLineException("No realm specified!");
+		case "ui":
+			switch (optionName) {
+			case "show-gui":
+				switch (optionContent) {
+				case "true":
+					showGui = true;
+					return;
+				case "false":
+					showGui = false;
+					return;
+				default:
+					throw new IllegalCommandLineException("\"" + optionContent + "\" is not a valid boolean value!");
+				}
+			}
+			throw new IllegalCommandLineException("Unknown option \"" + option + "\" in realm \"" + realm + "\"!");
+		case "input":
+			switch (optionName) {
+			case "file":
+				File file = new File(optionContent);
+				if (!file.exists())
+					throw new IllegalCommandLineException("File \"" + optionContent
+							+ "\" does not exist! (Assumed absolute path: \"" + file.getAbsolutePath() + "\")");
+				if (!optionContent.endsWith(".fractXml"))
+					warn("Warning: You are trying to read a file which is apparently not a FractXML file!");
+				try {
+					loadFile(file);
+					return;
+				} catch (SAXException | IOException | ParserConfigurationException e) {
+					fatalError("Something went wrong while loading FractXML file \"" + optionContent + "\"!", e);
+				}
+			case "stdin":
+				try {
+					load(System.in);
+					return;
+				} catch (SAXException | IOException | ParserConfigurationException e) {
+					fatalError("Something went wrong while reading FractXML stream from stdin!", e);
+				}
+			case "fractal":
+				Class<?> fractalClass;
+				try {
+					fractalClass = Class.forName(optionContent);
+				} catch (ClassNotFoundException e) {
+					throw new IllegalCommandLineException("Class \"" + optionContent + "\" was not found!");
+				}
+				if (!FractalProvider.class.isAssignableFrom(fractalClass))
+					throw new IllegalCommandLineException("\"" + optionContent + "\" is not a FractalProvider class!");
+				try {
+					setCurrentProvider((FractalProvider) fractalClass.newInstance());
+					return;
+				} catch (InstantiationException e) {
+					throw new IllegalCommandLineException("An error occured while creating instance of class \""
+							+ optionContent + "\"!", e);
+				} catch (IllegalAccessException e) {
+					throw new IllegalCommandLineException("Can't access default constructor of class \""
+							+ optionContent + "\"!");
+				}
+			case "palette":
+				Class<?> paletteClass;
+				try {
+					paletteClass = Class.forName(optionContent);
+				} catch (ClassNotFoundException e) {
+					throw new IllegalCommandLineException("Class \"" + optionContent + "\" was not found!");
+				}
+				if (!ColorPalette.class.isAssignableFrom(paletteClass))
+					throw new IllegalCommandLineException("\"" + optionContent + "\" is not a ColorPalette class!");
+				try {
+					setCurrentColorPalette((ColorPalette) paletteClass.newInstance());
+					return;
+				} catch (InstantiationException e) {
+					throw new IllegalCommandLineException("An error occured while creating instance of class \""
+							+ optionContent + "\"!", e);
+				} catch (IllegalAccessException e) {
+					throw new IllegalCommandLineException("Can't access default constructor of class \""
+							+ optionContent + "\"!");
+				}
+			}
+		}
+	}
+
+	private void warn(String warning) {
+		System.out.println(warning);
+	}
+
+	private void error(String message) {
+		System.out.println(message);
+	}
+
+	private void error(String message, Throwable t) {
+		System.out.println(message);
+		t.printStackTrace();
+	}
+
+	private void fatalError(String message) {
+		error(message);
+		System.exit(1);
+	}
+
+	private void fatalError(String message, Throwable t) {
+		error(message, t);
+		System.exit(1);
+	}
+
+	void loadFile(File file) throws SAXException, IOException, ParserConfigurationException {
+		load(new FileInputStream(file));
+	}
+
+	void load(InputStream stream) throws SAXException, IOException, ParserConfigurationException {
+		final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
 		final FractXmlLoader loader = new FractalClassReader();
-		saxParser.parse(file, loader);
+		saxParser.parse(stream, loader);
 		MainFrame.getInstance().setCurrentProvider(loader.getProvider());
 		final FractXmlPaletteLoader colorPaletteLoader = new PaletteClassReader();
-		saxParser.parse(file, colorPaletteLoader);
-		MainFrame.getInstance().setCurrentColorPalette(
-				colorPaletteLoader.getPalette());
+		saxParser.parse(stream, colorPaletteLoader);
+		MainFrame.getInstance().setCurrentColorPalette(colorPaletteLoader.getPalette());
 	}
 
 	/**
@@ -208,12 +236,14 @@ public class MainFrame extends Frame {
 	 */
 	void setCurrentProvider(final FractalProvider newProvider) {
 		currentProvider = newProvider;
-		removeAll();
-		add(newProvider.getCanvas(), BorderLayout.CENTER);
-		add(statusBar, BorderLayout.SOUTH);
-		initMenu();
-		initContextMenu();
-		pack();
+		if (showGui) {
+			removeAll();
+			add(newProvider.getCanvas(), BorderLayout.CENTER);
+			add(statusBar, BorderLayout.SOUTH);
+			initMenu();
+			initContextMenu();
+			pack();
+		}
 	}
 
 	/**
@@ -236,16 +266,13 @@ public class MainFrame extends Frame {
 		menuBar = new MenuBar();
 
 		fileMenu = new Menu("File");
-		final MenuItem saveSetup = new MenuItem("Save Setup", new MenuShortcut(
-				KeyEvent.VK_S));
+		final MenuItem saveSetup = new MenuItem("Save Setup", new MenuShortcut(KeyEvent.VK_S));
 		saveSetup.addActionListener(listener);
 		fileMenu.add(saveSetup);
-		final MenuItem loadSetup = new MenuItem("Load Setup", new MenuShortcut(
-				KeyEvent.VK_O));
+		final MenuItem loadSetup = new MenuItem("Load Setup", new MenuShortcut(KeyEvent.VK_O));
 		loadSetup.addActionListener(listener);
 		fileMenu.add(loadSetup);
-		final MenuItem saveImage = new MenuItem("Save Image", new MenuShortcut(
-				KeyEvent.VK_P));
+		final MenuItem saveImage = new MenuItem("Save Image", new MenuShortcut(KeyEvent.VK_P));
 		saveImage.addActionListener(listener);
 		fileMenu.add(saveImage);
 		fileMenu.addSeparator();
@@ -255,17 +282,15 @@ public class MainFrame extends Frame {
 		menuBar.add(fileMenu);
 
 		fractalMenu = new Menu("Fractal");
-		final MenuItem chooseFractal = new MenuItem("Choose Fractal...",
-				new MenuShortcut(KeyEvent.VK_C));
+		final MenuItem chooseFractal = new MenuItem("Choose Fractal...", new MenuShortcut(KeyEvent.VK_C));
 		chooseFractal.addActionListener(listener);
 		fractalMenu.add(chooseFractal);
 		fractalMenu.addSeparator();
 		menuBar.add(fractalMenu);
 
 		colorPaletteMenu = new Menu("Color Palette");
-		final MenuItem chooseColorPalette = new MenuItem(
-				"Choose Color Palette...",
-				new MenuShortcut(KeyEvent.VK_C, true));
+		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C,
+				true));
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
 		colorPaletteMenu.addSeparator();
@@ -280,14 +305,13 @@ public class MainFrame extends Frame {
 	private void initContextMenu() {
 		final PopupMenu menu = new PopupMenu();
 
-		final short[] zooms = new short[] { 1, 2, 5, 10, 25, 50, 100 };
+		final short[] zooms = new short[] {1, 2, 5, 10, 25, 50, 100 };
 
 		final Menu zoomIn = new Menu(ZoomMenuListener.ZOOM_IN);
 		final Menu zoomOut = new Menu(ZoomMenuListener.ZOOM_OUT);
 		final Menu zoomInCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
 		final Menu zoomInCenter = new Menu(ZoomMenuListener.USE_CENTER);
-		final Menu zoomOutCurrentPos = new Menu(
-				ZoomMenuListener.USE_COORDINATES);
+		final Menu zoomOutCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
 		final Menu zoomOutCenter = new Menu(ZoomMenuListener.USE_CENTER);
 		MenuItem m;
 		final ZoomMenuListener listener = new ZoomMenuListener();
