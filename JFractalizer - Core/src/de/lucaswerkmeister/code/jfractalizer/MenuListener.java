@@ -50,12 +50,9 @@ public class MenuListener implements ActionListener {
 	public void actionPerformed(final ActionEvent event) {
 		switch (event.getActionCommand()) {
 		case "Save Image":
-			final FileNameExtensionFilter jpg = new FileNameExtensionFilter(
-					"JPEG image", "jpg", "jpeg");
-			final FileNameExtensionFilter png = new FileNameExtensionFilter(
-					"PNG image", "png");
-			final FileNameExtensionFilter gif = new FileNameExtensionFilter(
-					"GIF image", "gif");
+			final FileNameExtensionFilter jpg = new FileNameExtensionFilter("JPEG image", "jpg", "jpeg");
+			final FileNameExtensionFilter png = new FileNameExtensionFilter("PNG image", "png");
+			final FileNameExtensionFilter gif = new FileNameExtensionFilter("GIF image", "gif");
 			fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter()); // remove
 			// the
 			// "all files"
@@ -67,8 +64,7 @@ public class MenuListener implements ActionListener {
 			if (result == JFileChooser.APPROVE_OPTION)
 				try {
 					String fileFormat;
-					String fileString = fileChooser.getSelectedFile()
-							.getAbsolutePath();
+					String fileString = fileChooser.getSelectedFile().getAbsolutePath();
 					final String[] fileStringParts = fileString.split("[.]");
 					switch (fileStringParts[fileStringParts.length - 1]) {
 					case "jpeg":
@@ -90,21 +86,17 @@ public class MenuListener implements ActionListener {
 						else if (filter == gif)
 							fileFormat = "gif";
 						else
-							throw new IllegalArgumentException(
-									"Unknown image type! Allowed image types: jpg, png, gif");
+							throw new IllegalArgumentException("Unknown image type! Allowed image types: jpg, png, gif");
 						fileString = fileString + "." + fileFormat;
 					}
-					ImageIO.write(Core.getImage(), fileFormat, new File(
-							fileString));
+					ImageIO.write(Core.getImage(), fileFormat, new File(fileString));
 				} catch (final IOException e) {
-					System.out
-							.println("An error occured while writing image file. Exception:");
+					System.out.println("An error occured while writing image file. Exception:");
 					e.printStackTrace();
 				}
 			break;
 		case "Save Setup":
-			FileNameExtensionFilter fractXml = new FileNameExtensionFilter(
-					"Fractal XML", "fractXml", "xml");
+			FileNameExtensionFilter fractXml = new FileNameExtensionFilter("Fractal XML", "fractXml", "xml");
 			for (final FileFilter f : fileChooser.getChoosableFileFilters())
 				fileChooser.removeChoosableFileFilter(f);
 			fileChooser.addChoosableFileFilter(fractXml);
@@ -112,15 +104,11 @@ public class MenuListener implements ActionListener {
 			if (result == JFileChooser.APPROVE_OPTION)
 				try {
 					File selectedFile = fileChooser.getSelectedFile();
-					if (!(selectedFile.getName().endsWith("xml") || selectedFile
-							.getName().endsWith("Xml")))
-						selectedFile = new File(selectedFile.getAbsolutePath()
-								+ ".fractXml");
-					final OutputStream out = new BufferedOutputStream(
-							new FileOutputStream(selectedFile));
+					if (!(selectedFile.getName().endsWith("xml") || selectedFile.getName().endsWith("Xml")))
+						selectedFile = new File(selectedFile.getAbsolutePath() + ".fractXml");
+					final OutputStream out = new BufferedOutputStream(new FileOutputStream(selectedFile));
 					final StreamResult streamResult = new StreamResult(out);
-					final SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
-							.newInstance();
+					final SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance();
 					TransformerHandler hd;
 					hd = tf.newTransformerHandler();
 					final Transformer serializer = hd.getTransformer();
@@ -128,18 +116,15 @@ public class MenuListener implements ActionListener {
 					serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 					hd.setResult(streamResult);
 					hd.startDocument();
-					MainFrame.getInstance().getCurrentProvider()
-							.saveFractXml(hd);
+					Core.getCurrentProvider().saveFractXml(hd);
 					hd.endDocument();
 					out.close();
-				} catch (TransformerConfigurationException | SAXException
-						| IOException e) {
+				} catch (TransformerConfigurationException | SAXException | IOException e) {
 					e.printStackTrace();
 				}
 			break;
 		case "Load Setup":
-			fractXml = new FileNameExtensionFilter("Fractal XML", "fractXml",
-					"xml");
+			fractXml = new FileNameExtensionFilter("Fractal XML", "fractXml", "xml");
 			for (final FileFilter f : fileChooser.getChoosableFileFilters())
 				fileChooser.removeChoosableFileFilter(f);
 			fileChooser.addChoosableFileFilter(fractXml);
@@ -147,26 +132,21 @@ public class MenuListener implements ActionListener {
 			if (result == JFileChooser.APPROVE_OPTION)
 				try {
 					Core.loadFile(fileChooser.getSelectedFile());
-				} catch (SAXException | IOException
-						| ParserConfigurationException e) {
+				} catch (SAXException | IOException | ParserConfigurationException e) {
 					e.printStackTrace();
 				}
 			break;
 		case "Choose Fractal...":
 			final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(
-					MainFrame.getInstance(), "Choose Fractal",
-					FractalProvider.class);
+					MainFrame.getInstance(), "Choose Fractal", FractalProvider.class);
 			fractalChooserDialog.setVisible(true);
-			MainFrame.getInstance().setCurrentProvider(
-					fractalChooserDialog.getSelectedService());
+			Core.setCurrentProvider(fractalChooserDialog.getSelectedService());
 			break;
 		case "Choose Color Palette...":
 			final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(
-					MainFrame.getInstance(), "Choose Color Palette",
-					ColorPalette.class);
+					MainFrame.getInstance(), "Choose Color Palette", ColorPalette.class);
 			colorPaletteDialog.setVisible(true);
-			MainFrame.getInstance().setCurrentColorPalette(
-					colorPaletteDialog.getSelectedService());
+			Core.setCurrentColorPalette(colorPaletteDialog.getSelectedService());
 			break;
 		case "Exit":
 			System.exit(0);
