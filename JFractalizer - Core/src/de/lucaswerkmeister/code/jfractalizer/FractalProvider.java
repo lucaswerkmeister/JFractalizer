@@ -43,37 +43,31 @@ public interface FractalProvider extends SelectableService {
 	 * Zooms the fractal to the specified center with the specified zoom factor.
 	 * 
 	 * @param x
-	 *            The x coordinate of the point that is to become the new
-	 *            center, in pixels.
+	 *            The x coordinate of the point that is to become the new center, in pixels.
 	 * @param y
-	 *            The y coordinate of the point that is to become the new
-	 *            center, in pixels.
+	 *            The y coordinate of the point that is to become the new center, in pixels.
 	 * @param factor
-	 *            The zoom factor as (width of new area) / (width of old area).
-	 *            <code>1</code> means no zoom (the image is centered on the new
-	 *            center), a greater factor means zoom out, a smaller factor
-	 *            means zoom in.
+	 *            The zoom factor as (width of new area) / (width of old area). <code>1</code> means no zoom (the image
+	 *            is centered on the new center), a greater factor means zoom out, a smaller factor means zoom in.
 	 */
 	public void zoom(int x, int y, double factor);
 
 	/**
-	 * By a call of this method, the JFractalizer informs the fractal provider
-	 * that it was switched to on request from another FractalProvider, and
-	 * passes any received arguments on to it. The FractalProvider may ignore
-	 * this completely, if wanted.
+	 * By a call of this method, the JFractalizer informs the fractal provider that it was switched to on request from
+	 * another FractalProvider, and passes any received arguments on to it. The FractalProvider may ignore this
+	 * completely, if wanted.
 	 * 
 	 * @param params
-	 *            The parameters that the other FractalProvider wished to pass
-	 *            on to this FractalProvider.
+	 *            The parameters that the other FractalProvider wished to pass on to this FractalProvider.
 	 */
 	public void onProviderChange(Object... params);
 
 	/**
-	 * If the JFractalizer was started with command line arguments, some of them
-	 * are passed to the fractal provider via this method.
+	 * If the JFractalizer was started with command line arguments, some of them are passed to the fractal provider (one
+	 * by one) via this method.
 	 * 
 	 * @param args
-	 *            A string that contains all the arguments.
+	 *            A string that contains a single option.
 	 */
-	public void handleCommandLineArgs(String args);
+	public void handleCommandLineOption(String option);
 }

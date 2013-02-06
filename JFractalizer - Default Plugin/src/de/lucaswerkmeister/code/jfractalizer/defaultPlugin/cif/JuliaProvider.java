@@ -47,15 +47,14 @@ public class JuliaProvider extends CifProvider {
 
 	@Override
 	public void onProviderChange(Object... params) {
-		if (params.length == 2 && params[0] instanceof Double
-				&& params[1] instanceof Double) {
+		if (params.length == 2 && params[0] instanceof Double && params[1] instanceof Double) {
 			cReal = (double) params[0];
 			cImag = (double) params[1];
 		}
 	}
 
 	@Override
-	public void handleCommandLineArgs(String arg0) {
-		// TODO implement args
+	public void handleCommandLineOption(String option) {
+		// TODO implement options
 	}
 }

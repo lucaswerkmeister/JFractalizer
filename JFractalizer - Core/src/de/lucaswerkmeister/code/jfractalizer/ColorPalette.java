@@ -21,15 +21,12 @@ import org.xml.sax.SAXException;
 
 public interface ColorPalette extends SelectableService {
 	/**
-	 * Gets the color that the palette assignes to the specified number of
-	 * passes.
+	 * Gets the color that the palette assignes to the specified number of passes.
 	 * 
-	 * Implementations should note that this method can be called by multiple
-	 * threads at the same time; <i>the caller does not take care of
-	 * synchronization</i>. The implementation has to take care of potential
-	 * synchronization issues itself. (Most implementations should only have to
-	 * access the fast storage, which is (in most cases) thread-safe, so this
-	 * shouldn't be too much of a problem.)
+	 * Implementations should note that this method can be called by multiple threads at the same time; <i>the caller
+	 * does not take care of synchronization</i>. The implementation has to take care of potential synchronization
+	 * issues itself. (Most implementations should only have to access the fast storage, which is (in most cases)
+	 * thread-safe, so this shouldn't be too much of a problem.)
 	 * 
 	 * @param passes
 	 * @return
@@ -42,15 +39,14 @@ public interface ColorPalette extends SelectableService {
 
 	public void makeFastStorage();
 
-	public void initMenu(Menu colorPaletteMenu, FractalProvider provider,
-			Frame owner);
+	public void initMenu(Menu colorPaletteMenu, FractalProvider provider, Frame owner);
 
 	/**
-	 * If the JFractalizer was started with command line arguments, some of them
-	 * are passed to the color palette via this method.
+	 * If the JFractalizer was started with command line arguments, some of them are passed to the color palette (one by
+	 * one) via this method.
 	 * 
 	 * @param args
-	 *            A String that contains all the arguments.
+	 *            A String that contains a single option.
 	 */
-	public void handleCommandLineArgs(String args);
+	public void handleCommandLineOption(String option);
 }

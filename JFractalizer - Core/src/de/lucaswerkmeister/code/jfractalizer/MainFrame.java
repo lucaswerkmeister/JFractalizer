@@ -183,6 +183,12 @@ public class MainFrame extends Frame {
 							+ optionContent + "\"!");
 				}
 			}
+		case "fractArgs":
+			currentProvider.handleCommandLineOption(option);
+			return;
+		case "paletteArgs":
+			currentColorPalette.handleCommandLineOption(option);
+			return;
 		}
 	}
 
