@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.code.jfractalizer;
 
@@ -30,16 +32,17 @@ import java.awt.event.WindowEvent;
 import javax.swing.JColorChooser;
 
 public class MainFrame extends Frame {
-	private static final long serialVersionUID = 8587484082717377870L;
-	private static MainFrame instance;
-	MenuBar menuBar;
-	Menu fileMenu, fractalMenu, colorPaletteMenu;
-	JColorChooser colorChooser;
-	int zoomMenuX, zoomMenuY;
-	private final Label statusBar;
+	private static final long	serialVersionUID	= 8587484082717377870L;
+	private static MainFrame	instance;
+	MenuBar						menuBar;
+	Menu						fileMenu, fractalMenu, colorPaletteMenu;
+	JColorChooser				colorChooser;
+	int							zoomMenuX, zoomMenuY;
+	private final Label			statusBar;
 
 	MainFrame(boolean askForFractalClass, boolean askForPaletteClass) {
 		super("JFractalizer");
+		instance = this;
 
 		// Init GUI
 		statusBar = new Label("Calculating...");
@@ -51,7 +54,8 @@ public class MainFrame extends Frame {
 			fractalChooserDialog.setVisible(true);
 			try {
 				Core.setCurrentProvider(fractalChooserDialog.getSelectedService());
-			} catch (final NullPointerException e) {
+			}
+			catch (final NullPointerException e) {
 				// Do nothing, currentColorPalette wasn't set
 			}
 		}
@@ -69,6 +73,7 @@ public class MainFrame extends Frame {
 			}
 		});
 		add(Core.getCurrentProvider().getCanvas(), BorderLayout.CENTER);
+		add(statusBar, BorderLayout.SOUTH);
 		initMenu();
 		initContextMenu();
 		pack();
@@ -120,7 +125,7 @@ public class MainFrame extends Frame {
 	private void initContextMenu() {
 		final PopupMenu menu = new PopupMenu();
 
-		final short[] zooms = new short[] {1, 2, 5, 10, 25, 50, 100 };
+		final short[] zooms = new short[] { 1, 2, 5, 10, 25, 50, 100 };
 
 		final Menu zoomIn = new Menu(ZoomMenuListener.ZOOM_IN);
 		final Menu zoomOut = new Menu(ZoomMenuListener.ZOOM_OUT);
