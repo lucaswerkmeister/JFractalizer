@@ -4,7 +4,7 @@ The '''JFractalizer''' is a fractal explorer, written in Java. The inspiration, 
 Go to [http://code.lucaswerkmeister.de/jfractalizer my website] for compiled and runnable versions.
 
 ==Features==
-Explore the Mandelbrot set (other fractals to follow) and enjoy high-speed calculation (tries to utilize all processor cores, by dividing the image into parts – 2x2 on a quad-core processor) and high image quality (SuperSampling AntiAliasing). Save and load your favourite setups, including the color palette. Save the image you're seeing in various formats.
+Explore the Mandelbrot or Julia Set and enjoy high-speed calculation (tries to utilize all processor cores, by dividing the image into parts ï¿½ 2x2 on a quad-core processor) and high image quality (SuperSampling AntiAliasing). Save and load your favourite setups, including the color palette. Save the image you're seeing in various formats.
 
 Screenshots following soon!
 
@@ -19,4 +19,3 @@ Everyone can write other plugins. I will write a more detailed guide on how to d
 **AutoMovie for the Mandelbrot fractal
 *More fractals
 **Buddhabrot
-**Julia set
