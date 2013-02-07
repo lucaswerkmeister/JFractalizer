@@ -14,6 +14,7 @@ package de.lucaswerkmeister.code.jfractalizer;
 import java.awt.Canvas;
 import java.awt.Menu;
 import java.awt.PopupMenu;
+import java.awt.event.ActionListener;
 import java.awt.image.RenderedImage;
 
 import javax.xml.transform.sax.TransformerHandler;
@@ -70,4 +71,17 @@ public interface FractalProvider extends SelectableService {
 	 *            A string that contains a single option.
 	 */
 	public void handleCommandLineOption(String option);
+
+	/**
+	 * Blocks until calculation is either stopped or finished.
+	 */
+	public void awaitCalculation();
+
+	/**
+	 * Adds an {@link ActionListener} that will be notified when the calculation is finished.
+	 * 
+	 * @param listener
+	 *            The action listener.
+	 */
+	public void addCalculationFinishedListener(ActionListener listener);
 }

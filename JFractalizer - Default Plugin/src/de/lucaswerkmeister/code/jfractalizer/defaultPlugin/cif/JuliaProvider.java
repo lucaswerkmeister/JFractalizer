@@ -11,6 +11,8 @@
  */
 package de.lucaswerkmeister.code.jfractalizer.defaultPlugin.cif;
 
+import java.awt.event.ActionListener;
+
 import de.lucaswerkmeister.code.jfractalizer.FractXmlLoader;
 
 public class JuliaProvider extends CifProvider {
@@ -56,5 +58,20 @@ public class JuliaProvider extends CifProvider {
 	@Override
 	public void handleCommandLineOption(String option) {
 		// TODO implement options
+	}
+
+	@Override
+	public void awaitCalculation() {
+		canvas.awaitCalculation();
+	}
+
+	@Override
+	public void addCalculationFinishedListener(final ActionListener listener) {
+		new Thread() {
+			public void run() {
+				JuliaProvider.this.awaitCalculation();
+				listener.actionPerformed(null);
+			}
+		}.start();
 	}
 }

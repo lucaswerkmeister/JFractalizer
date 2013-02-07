@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import de.lucaswerkmeister.code.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.code.jfractalizer.Core;
@@ -410,6 +411,14 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	public void setImageSize(Dimension d) {
 		width = d.width;
 		height = d.height;
+	}
+
+	public void awaitCalculation() {
+		try {
+			executorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.DAYS);
+		} catch (InterruptedException e) {
+			// do nothing
+		}
 	}
 }
 
