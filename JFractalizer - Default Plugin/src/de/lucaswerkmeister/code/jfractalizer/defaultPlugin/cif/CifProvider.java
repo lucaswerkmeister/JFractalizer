@@ -171,4 +171,9 @@ public abstract class CifProvider implements FractalProvider {
 		maxPassesF = ((maxPassesF - 1) / CifCanvas.maxPassesFactor) + 1;
 		canvas.setMaxPasses((int) Math.round(canvas.getMaxPasses() * maxPassesF));
 	}
+
+	@Override
+	public void awaitCalculation() {
+		canvas.awaitCalculation();
+	}
 }

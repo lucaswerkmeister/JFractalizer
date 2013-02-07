@@ -61,11 +61,6 @@ public class JuliaProvider extends CifProvider {
 	}
 
 	@Override
-	public void awaitCalculation() {
-		canvas.awaitCalculation();
-	}
-
-	@Override
 	public void addCalculationFinishedListener(final ActionListener listener) {
 		new Thread() {
 			public void run() {
