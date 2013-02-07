@@ -107,7 +107,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	@Override
 	public void paint(final Graphics g) {
 		if (executorService == null)
-			start();
+			return;
 		for (int i = 0; i < subImages.length; i++)
 			tempImg.getGraphics().drawImage(subImages[i].subImage, subImages[i].offsetX, subImages[i].offsetY, null);
 		g.drawImage(tempImg, 0, 0, null);
