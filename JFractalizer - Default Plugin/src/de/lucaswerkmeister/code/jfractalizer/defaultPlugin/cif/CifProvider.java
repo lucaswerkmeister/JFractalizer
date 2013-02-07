@@ -19,7 +19,7 @@ import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -42,17 +42,15 @@ public abstract class CifProvider implements FractalProvider {
 	}
 
 	@Override
-	public RenderedImage getImage() {
+	public BufferedImage getImage() {
 		return canvas.getImage();
 	}
 
 	@Override
-	public void saveFractXml(final TransformerHandler handler)
-			throws SAXException {
+	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
 		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass()
-				.getCanonicalName());
+		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
 		handler.startElement("", "", "provider", atts);
 
 		handler.startElement("", "", "width", noAtts);
@@ -61,44 +59,37 @@ public abstract class CifProvider implements FractalProvider {
 		handler.endElement("", "", "width");
 
 		handler.startElement("", "", "height", noAtts);
-		final char[] height = Integer.toString(canvas.getHeight())
-				.toCharArray();
+		final char[] height = Integer.toString(canvas.getHeight()).toCharArray();
 		handler.characters(height, 0, height.length);
 		handler.endElement("", "", "height");
 
 		handler.startElement("", "", "minReal", noAtts);
-		final char[] minReal = Double.toString(canvas.getMinReal())
-				.toCharArray();
+		final char[] minReal = Double.toString(canvas.getMinReal()).toCharArray();
 		handler.characters(minReal, 0, minReal.length);
 		handler.endElement("", "", "minReal");
 
 		handler.startElement("", "", "maxReal", noAtts);
-		final char[] maxReal = Double.toString(canvas.getMaxReal())
-				.toCharArray();
+		final char[] maxReal = Double.toString(canvas.getMaxReal()).toCharArray();
 		handler.characters(maxReal, 0, maxReal.length);
 		handler.endElement("", "", "maxReal");
 
 		handler.startElement("", "", "minImag", noAtts);
-		final char[] minImag = Double.toString(canvas.getMinImag())
-				.toCharArray();
+		final char[] minImag = Double.toString(canvas.getMinImag()).toCharArray();
 		handler.characters(minImag, 0, minImag.length);
 		handler.endElement("", "", "minImag");
 
 		handler.startElement("", "", "maxImag", noAtts);
-		final char[] maxImag = Double.toString(canvas.getMaxImag())
-				.toCharArray();
+		final char[] maxImag = Double.toString(canvas.getMaxImag()).toCharArray();
 		handler.characters(maxImag, 0, maxImag.length);
 		handler.endElement("", "", "maxImag");
 
 		handler.startElement("", "", "maxPasses", noAtts);
-		final char[] maxPasses = Integer.toString(canvas.getMaxPasses())
-				.toCharArray();
+		final char[] maxPasses = Integer.toString(canvas.getMaxPasses()).toCharArray();
 		handler.characters(maxPasses, 0, maxPasses.length);
 		handler.endElement("", "", "maxPasses");
 
 		handler.startElement("", "", "superSamplingFactor", noAtts);
-		final char[] superSamplingFactor = Byte.toString(
-				canvas.getSuperSamplingFactor()).toCharArray();
+		final char[] superSamplingFactor = Byte.toString(canvas.getSuperSamplingFactor()).toCharArray();
 		handler.characters(superSamplingFactor, 0, superSamplingFactor.length);
 		handler.endElement("", "", "superSamplingFactor");
 
@@ -128,18 +119,14 @@ public abstract class CifProvider implements FractalProvider {
 
 	@Override
 	public void initMenu(final Menu fractalMenu) {
-		final MenuItem recalculate = new MenuItem("Recalculate",
-				new MenuShortcut(KeyEvent.VK_R));
+		final MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
 		recalculate.addActionListener(menuListener);
 		fractalMenu.add(recalculate);
 		fractalMenu.addSeparator();
-		final MenuItem editBoundaries = new MenuItem("Edit boundaries...",
-				new MenuShortcut(KeyEvent.VK_E));
+		final MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
 		editBoundaries.addActionListener(menuListener);
 		fractalMenu.add(editBoundaries);
-		final MenuItem additionalParams = new MenuItem(
-				"Edit additional parameters...",
-				new MenuShortcut(KeyEvent.VK_A));
+		final MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));
 		additionalParams.addActionListener(menuListener);
 		fractalMenu.add(additionalParams);
 		fractalMenu.addSeparator();
@@ -172,10 +159,8 @@ public abstract class CifProvider implements FractalProvider {
 	public void zoom(final int x, final int y, final double factor) {
 		final double currentWidth = (canvas.getMaxReal() - canvas.getMinReal());
 		final double currentHeight = (canvas.getMaxImag() - canvas.getMinImag());
-		final double centerR = canvas.getMinReal() + currentWidth
-				* ((double) x / canvas.getWidth());
-		final double centerI = canvas.getMinImag() + currentHeight
-				* (1 - ((double) y / canvas.getHeight()));
+		final double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getWidth());
+		final double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getHeight()));
 		final double halfSizeR = currentWidth * factor / 2;
 		final double halfSizeI = currentHeight * factor / 2;
 		canvas.setMinReal(centerR - halfSizeR);

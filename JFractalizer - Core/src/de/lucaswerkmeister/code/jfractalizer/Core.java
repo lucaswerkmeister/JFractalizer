@@ -12,12 +12,20 @@
 package de.lucaswerkmeister.code.jfractalizer;
 
 import java.awt.Color;
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -38,6 +46,8 @@ public final class Core {
 	private static boolean showGui = true;
 	private static MainFrame gui;
 	private static boolean running = false;
+	private static String currentFormat = "raw-RGB";
+	private static Set<Output> outputs = new HashSet<>();
 
 	/**
 	 * <code>private</code> constructor so the class can't be instantiated.
@@ -50,7 +60,7 @@ public final class Core {
 	 * 
 	 * @return The image currently displayed by the main window.
 	 */
-	public static RenderedImage getImage() {
+	public static BufferedImage getImage() {
 		if (MainFrame.getInstance() == null)
 			return null;
 		return getCurrentProvider().getImage();
@@ -139,7 +149,7 @@ public final class Core {
 	 */
 	static void setCurrentProvider(final FractalProvider newProvider) {
 		currentProvider = newProvider;
-		if (showGui)
+		if (showGui && gui != null)
 			gui.reset();
 	}
 
@@ -160,8 +170,12 @@ public final class Core {
 	}
 
 	private static void handleOption(String realm, String option) {
-		String optionName = option.substring(0, option.indexOf('='));
-		String optionContent = option.substring(option.indexOf('=') + 1);
+		String optionName = option;
+		String optionContent = "";
+		if (option.contains("=")) {
+			optionName = option.substring(0, option.indexOf('='));
+			optionContent = option.substring(option.indexOf('=') + 1);
+		}
 		switch (realm) {
 		case "":
 			throw new IllegalCommandLineException("No realm specified!");
@@ -247,6 +261,22 @@ public final class Core {
 		case "paletteArgs":
 			Core.getCurrentColorPalette().handleCommandLineOption(option);
 			return;
+		case "output":
+			switch (optionName) {
+			case "format":
+				currentFormat = optionContent;
+			case "file":
+				try {
+					outputs.add(new SingleFileOutput(currentFormat, optionContent));
+				} catch (IOException e) {
+					error("An error occured while preparing output file \"" + optionContent + "\"!", e);
+				}
+				return;
+			case "files":
+				outputs.add(new MultipleFilesOutput(currentFormat, optionContent));
+			case "stdout":
+				outputs.add(new StdoutOutput(currentFormat));
+			}
 		}
 	}
 
@@ -290,7 +320,7 @@ public final class Core {
 		Core.setCurrentColorPalette(colorPaletteLoader.getPalette());
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// Read command line args
 		String realm = "";
 		for (String arg : args)
@@ -304,5 +334,95 @@ public final class Core {
 		// Start
 		running = true;
 		startCalculation();
+		currentProvider.awaitCalculation();
+		// DEBUGCODE
+		// for (Output o : outputs)
+		// o.writeImage(currentProvider.getImage(), 0);
+		// System.exit(0);
+	}
+}
+
+abstract class Output {
+	protected final String format;
+
+	protected Output(String format) {
+		this.format = format;
+	}
+
+	public abstract void writeImage(BufferedImage BufferedImage, int count) throws IOException;
+
+	protected void write(BufferedImage image, OutputStream stream) throws IOException {
+		switch (format) {
+		case "png":
+		case "jpg":
+			ImageIO.write(image, format, stream);
+			break;
+		case "raw-ARGB": {
+			BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			newImage.getGraphics().drawImage(image, 0, 0, null);
+			DataBufferInt buffer = (DataBufferInt) newImage.getRaster().getDataBuffer();
+			int[] data = buffer.getData();
+			ByteBuffer bbuf = ByteBuffer.allocate(data.length * 4);
+			bbuf.asIntBuffer().put(data);
+			stream.write(bbuf.array());
+			break;
+		}
+		case "raw-BGR": {
+			BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(),
+					BufferedImage.TYPE_3BYTE_BGR);
+			newImage.getGraphics().drawImage(image, 0, 0, null);
+			DataBufferByte buffer = (DataBufferByte) newImage.getRaster().getDataBuffer();
+			byte[] data = buffer.getData();
+			stream.write(data);
+			break;
+		}
+		}
+	}
+}
+
+class SingleFileOutput extends Output {
+	private OutputStream stream;
+
+	public SingleFileOutput(String format, String filename) throws IOException {
+		super(format);
+		File file = new File(filename);
+		file.createNewFile();
+		this.stream = new FileOutputStream(file);
+	}
+
+	@Override
+	public void writeImage(BufferedImage image, int count) throws IOException {
+		write(image, stream);
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		stream.close();
+		super.finalize();
+	}
+}
+
+class MultipleFilesOutput extends Output {
+	private String filename;
+
+	public MultipleFilesOutput(String format, String filename) {
+		super(format);
+		this.filename = filename;
+	}
+
+	@Override
+	public void writeImage(BufferedImage image, int count) throws IOException {
+		write(image, new FileOutputStream(filename.replace("?", Integer.toString(count))));
+	}
+}
+
+class StdoutOutput extends Output {
+	public StdoutOutput(String format) {
+		super(format);
+	}
+
+	@Override
+	public void writeImage(BufferedImage image, int count) throws IOException {
+		write(image, System.out);
 	}
 }

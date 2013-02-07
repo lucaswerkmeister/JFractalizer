@@ -15,7 +15,7 @@ import java.awt.Canvas;
 import java.awt.Menu;
 import java.awt.PopupMenu;
 import java.awt.event.ActionListener;
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 public interface FractalProvider extends SelectableService {
 	public Canvas getCanvas();
 
-	public RenderedImage getImage();
+	public BufferedImage getImage();
 
 	public void saveFractXml(TransformerHandler handler) throws SAXException;
 
