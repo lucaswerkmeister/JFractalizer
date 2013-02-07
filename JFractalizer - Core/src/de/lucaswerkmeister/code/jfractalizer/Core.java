@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -328,6 +329,9 @@ public final class Core {
 				realm = arg.substring("--".length());
 			else
 				handleOption(realm, arg);
+		if (!showGui && (currentProvider == null || currentColorPalette == null))
+			throw new IllegalCommandLineException(
+					"If running without GUI, fractal provider and color palette must be provided!");
 		// Create GUI
 		if (showGui)
 			gui = new MainFrame(currentProvider == null, currentColorPalette == null);
@@ -346,6 +350,8 @@ abstract class Output {
 	protected final String format;
 
 	protected Output(String format) {
+		if (!Arrays.asList("png", "jpg", "raw-ARGB", "raw-BGR").contains(format))
+			throw new IllegalCommandLineException("Unknown output format \"" + format + "\"!");
 		this.format = format;
 	}
 
