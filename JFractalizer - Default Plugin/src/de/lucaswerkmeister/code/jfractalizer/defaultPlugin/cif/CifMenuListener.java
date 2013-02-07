@@ -34,11 +34,7 @@ public class CifMenuListener implements ActionListener {
 	private boolean okClicked = false;
 	Dialog editBoundariesDialog = null, additionalParamsDialog = null; // initialize
 
-	// variable
-	// so the
-	// compiler
-	// doesn't
-	// complain
+	// variable so the compiler doesn't complain
 
 	CifMenuListener(final CifProvider provider, final CifCanvas canvas) {
 		this.provider = provider;
@@ -49,27 +45,22 @@ public class CifMenuListener implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "Edit boundaries...":
-			editBoundariesDialog = new Dialog((Frame) provider.getCanvas()
-					.getParent(), true);
+			editBoundariesDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
 			editBoundariesDialog.setLayout(new BorderLayout());
 			final Panel interval = new Panel(new BorderLayout());
-			final TextField maxImag = new TextField(
-					((Double) canvas.getMaxImag()).toString());
+			final TextField maxImag = new TextField(((Double) canvas.getMaxImag()).toString());
 			Panel p = new Panel(new GridBagLayout());
 			p.add(maxImag);
 			interval.add(p, BorderLayout.NORTH);
-			final TextField minImag = new TextField(
-					((Double) canvas.getMinImag()).toString());
+			final TextField minImag = new TextField(((Double) canvas.getMinImag()).toString());
 			p = new Panel(new GridBagLayout());
 			p.add(minImag);
 			interval.add(p, BorderLayout.SOUTH);
-			final TextField maxReal = new TextField(
-					((Double) canvas.getMaxReal()).toString());
+			final TextField maxReal = new TextField(((Double) canvas.getMaxReal()).toString());
 			p = new Panel(new GridBagLayout());
 			p.add(maxReal);
 			interval.add(p, BorderLayout.EAST);
-			final TextField minReal = new TextField(
-					((Double) canvas.getMinReal()).toString());
+			final TextField minReal = new TextField(((Double) canvas.getMinReal()).toString());
 			p = new Panel(new GridBagLayout());
 			p.add(minReal);
 			interval.add(p, BorderLayout.WEST);
@@ -80,12 +71,10 @@ public class CifMenuListener implements ActionListener {
 			interval.add(centerText, BorderLayout.CENTER);
 			editBoundariesDialog.add(interval, BorderLayout.NORTH);
 			final Panel resolution = new Panel(new FlowLayout());
-			final TextField width = new TextField(
-					((Integer) canvas.getWidth()).toString());
+			final TextField width = new TextField(((Integer) canvas.getWidth()).toString());
 			resolution.add(width);
 			resolution.add(new Label("x"));
-			final TextField height = new TextField(
-					((Integer) canvas.getHeight()).toString());
+			final TextField height = new TextField(((Integer) canvas.getHeight()).toString());
 			resolution.add(height);
 			resolution.add(new Label("pixels"));
 			editBoundariesDialog.add(resolution, BorderLayout.CENTER);
@@ -104,8 +93,8 @@ public class CifMenuListener implements ActionListener {
 				canvas.setMaxImag(Double.parseDouble(maxImag.getText()));
 				canvas.setMinReal(Double.parseDouble(minReal.getText()));
 				canvas.setMaxReal(Double.parseDouble(maxReal.getText()));
-				Dimension d = new Dimension(Integer.parseInt(width.getText()),
-						Integer.parseInt(height.getText()));
+				Dimension d = new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
+				canvas.setImageSize(d);
 				canvas.setPreferredSize(d);
 				canvas.setSize(d);
 				((Frame) canvas.getParent()).pack();
@@ -133,18 +122,15 @@ public class CifMenuListener implements ActionListener {
 			}
 			break;
 		case "Edit additional parameters...":
-			additionalParamsDialog = new Dialog((Frame) provider.getCanvas()
-					.getParent(), true);
+			additionalParamsDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
 			additionalParamsDialog.setLayout(new GridLayout(3, 2));
-			additionalParamsDialog.add(new Label("SuperSampling Factor",
-					Label.RIGHT));
-			final JSpinner ssf = new JSpinner(new SpinnerNumberModel(
-					canvas.getSuperSamplingFactor(), 1, Byte.MAX_VALUE, 1));
+			additionalParamsDialog.add(new Label("SuperSampling Factor", Label.RIGHT));
+			final JSpinner ssf = new JSpinner(new SpinnerNumberModel(canvas.getSuperSamplingFactor(), 1,
+					Byte.MAX_VALUE, 1));
 			additionalParamsDialog.add(ssf);
-			additionalParamsDialog.add(new Label("Calculation depth",
-					Label.RIGHT));
-			final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(
-					canvas.getMaxPasses(), 1, Integer.MAX_VALUE, 1));
+			additionalParamsDialog.add(new Label("Calculation depth", Label.RIGHT));
+			final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(canvas.getMaxPasses(), 1, Integer.MAX_VALUE,
+					1));
 			additionalParamsDialog.add(maxPasses);
 			ok = new Button("OK");
 			ok.addActionListener(this);
@@ -156,20 +142,7 @@ public class CifMenuListener implements ActionListener {
 			additionalParamsDialog.setVisible(true);
 			if (okClicked) {
 				canvas.setSuperSamplingFactor((byte) (int) ssf.getValue()); // the
-				// additional
-				// (int)
-				// cast
-				// is
-				// necessary
-				// because
-				// casting
-				// from
-				// Integer
-				// to
-				// byte
-				// raises
-				// a
-				// ClassCastException
+				// additional (int) cast is necessary because casting from Integer to byte raises a ClassCastException
 				canvas.setMaxPasses((int) maxPasses.getValue());
 				provider.stopCalculation();
 				provider.startCalculation();
