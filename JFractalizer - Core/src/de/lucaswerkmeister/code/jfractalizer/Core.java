@@ -12,6 +12,8 @@
 package de.lucaswerkmeister.code.jfractalizer;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
@@ -170,6 +172,35 @@ public final class Core {
 		startCalculation();
 	}
 
+	private static void startRealm(String name) {
+		switch (name) {
+		case "image":
+			Core.getCurrentProvider().addCalculationFinishedListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					for (Output o : outputs)
+						try {
+							o.writeImage(getCurrentProvider().getImage(), 0);
+						} catch (IOException e) {
+							fatalError("Couldn't write image, aborting!", e);
+						}
+				}
+			});
+		case "film":
+			Core.getCurrentProvider().addCalculationFinishedListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					for (Output o : outputs)
+						try {
+							o.writeImage(getCurrentProvider().getImage(), getFrameCount());
+						} catch (IOException e) {
+							fatalError("Couldn't write image no. " + getFrameCount() + ", aborting!", e);
+						}
+				}
+			});
+		}
+	}
+
 	private static void handleOption(String realm, String option) {
 		String optionName = option;
 		String optionContent = "";
@@ -281,6 +312,14 @@ public final class Core {
 		}
 	}
 
+	private static void endRealm(String name) {
+	}
+
+	protected static int getFrameCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	private static void warn(String warning) {
 		System.out.println(warning);
 	}
@@ -325,9 +364,11 @@ public final class Core {
 		// Read command line args
 		String realm = "";
 		for (String arg : args)
-			if (arg.startsWith("--"))
+			if (arg.startsWith("--")) {
+				endRealm(realm);
 				realm = arg.substring("--".length());
-			else
+				startRealm(realm);
+			} else
 				handleOption(realm, arg);
 		if (!showGui && (currentProvider == null || currentColorPalette == null))
 			throw new IllegalCommandLineException(
@@ -338,11 +379,11 @@ public final class Core {
 		// Start
 		running = true;
 		startCalculation();
-		currentProvider.awaitCalculation();
-		// DEBUGCODE
-		// for (Output o : outputs)
-		// o.writeImage(currentProvider.getImage(), 0);
-		// System.exit(0);
+
+		if (!showGui) {
+			currentProvider.awaitCalculation();
+			System.exit(0);
+		}
 	}
 }
 
