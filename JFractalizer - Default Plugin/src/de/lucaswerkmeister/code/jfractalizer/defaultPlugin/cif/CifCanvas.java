@@ -92,6 +92,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	public BufferedImage getImage() {
+		if (getParent() == null)
+			constructImage();
 		return tempImg;
 	}
 
@@ -109,8 +111,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	public void paint(final Graphics g) {
 		if (executorService == null)
 			return;
-		for (int i = 0; i < subImages.length; i++)
-			tempImg.getGraphics().drawImage(subImages[i].subImage, subImages[i].offsetX, subImages[i].offsetY, null);
+		constructImage();
 		g.drawImage(tempImg, 0, 0, null);
 		if (selectedArea != null)
 			g.drawImage(inverter.filter(tempImg, null), selectedArea.x, selectedArea.y, selectedArea.x
@@ -175,6 +176,11 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 			status.append(" ms).");
 			Core.setStatus(status.toString());
 		}
+	}
+
+	private void constructImage() {
+		for (int i = 0; i < subImages.length; i++)
+			tempImg.getGraphics().drawImage(subImages[i].subImage, subImages[i].offsetX, subImages[i].offsetY, null);
 	}
 
 	@Override

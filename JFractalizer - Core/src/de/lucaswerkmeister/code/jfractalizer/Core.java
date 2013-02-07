@@ -51,6 +51,7 @@ public final class Core {
 	private static boolean running = false;
 	private static String currentFormat = "raw-RGB";
 	private static Set<Output> outputs = new HashSet<>();
+	private static Set<ActionListener> calculationFinishedListeners = new HashSet<>();
 
 	/**
 	 * <code>private</code> constructor so the class can't be instantiated.
@@ -175,7 +176,7 @@ public final class Core {
 	private static void startRealm(String name) {
 		switch (name) {
 		case "image":
-			Core.getCurrentProvider().addCalculationFinishedListener(new ActionListener() {
+			calculationFinishedListeners.add(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent event) {
 					for (Output o : outputs)
@@ -184,10 +185,11 @@ public final class Core {
 						} catch (IOException e) {
 							fatalError("Couldn't write image, aborting!", e);
 						}
+					System.exit(0);
 				}
 			});
 		case "film":
-			Core.getCurrentProvider().addCalculationFinishedListener(new ActionListener() {
+			calculationFinishedListeners.add(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent event) {
 					for (Output o : outputs)
@@ -213,17 +215,9 @@ public final class Core {
 			throw new IllegalCommandLineException("No realm specified!");
 		case "ui":
 			switch (optionName) {
-			case "show-gui":
-				switch (optionContent) {
-				case "true":
-					showGui = true;
-					return;
-				case "false":
-					showGui = false;
-					return;
-				default:
-					throw new IllegalCommandLineException("\"" + optionContent + "\" is not a valid boolean value!");
-				}
+			case "no-gui":
+				showGui = false;
+				return;
 			}
 			throw new IllegalCommandLineException("Unknown option \"" + option + "\" in realm \"" + realm + "\"!");
 		case "input":
@@ -297,6 +291,7 @@ public final class Core {
 			switch (optionName) {
 			case "format":
 				currentFormat = optionContent;
+				return;
 			case "file":
 				try {
 					outputs.add(new SingleFileOutput(currentFormat, optionContent));
@@ -306,8 +301,10 @@ public final class Core {
 				return;
 			case "files":
 				outputs.add(new MultipleFilesOutput(currentFormat, optionContent));
+				return;
 			case "stdout":
 				outputs.add(new StdoutOutput(currentFormat));
+				return;
 			}
 		}
 	}
@@ -379,11 +376,8 @@ public final class Core {
 		// Start
 		running = true;
 		startCalculation();
-
-		if (!showGui) {
-			currentProvider.awaitCalculation();
-			System.exit(0);
-		}
+		for (ActionListener l : calculationFinishedListeners)
+			currentProvider.addCalculationFinishedListener(l);
 	}
 }
 
