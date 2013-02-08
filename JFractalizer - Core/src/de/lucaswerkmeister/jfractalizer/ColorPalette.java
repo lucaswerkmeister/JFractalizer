@@ -19,13 +19,9 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.xml.sax.SAXException;
 
-import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
-import de.lucaswerkmeister.jfractalizer.SelectableService;
-
 public interface ColorPalette extends SelectableService {
 	/**
-	 * Gets the color that the palette assignes to the specified number of passes.
+	 * Gets the color that the palette assigns to the specified number of passes.
 	 * 
 	 * Implementations should note that this method can be called by multiple threads at the same time; <i>the caller
 	 * does not take care of synchronization</i>. The implementation has to take care of potential synchronization
