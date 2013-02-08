@@ -21,27 +21,69 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.xml.sax.SAXException;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
-import de.lucaswerkmeister.jfractalizer.SelectableService;
-
+/**
+ * A {@link FractalProvider} provides a fractal for the JFractalizer.
+ * 
+ * @author Lucas Werkmeister
+ */
 public interface FractalProvider extends SelectableService {
+	/**
+	 * Returns a {@link Canvas} that displays the fractal.
+	 * <p>
+	 * The JFractalizer will add a context menu; to amend to that, use {@link #initContextMenu(PopupMenu)}. Any other
+	 * user interaction (select to zoom etc.) should be managed by the plugin.
+	 * 
+	 * @return A Canvas displaying the fractal.
+	 */
 	public Canvas getCanvas();
 
+	/**
+	 * Returns the current image.
+	 * 
+	 * @return The image.
+	 */
 	public BufferedImage getImage();
 
 	public void saveFractXml(TransformerHandler handler) throws SAXException;
 
 	public FractXmlLoader getFractXmlLoader();
 
+	/**
+	 * Stops the calculation of the fractal.
+	 */
 	public void stopCalculation();
 
+	/**
+	 * Sets the {@link ColorPalette} for the fractal.
+	 * <p>
+	 * This method shall never be called while the calculation is running.
+	 * 
+	 * @param newPalette
+	 *            The new color palette.
+	 */
 	public void setColorPalette(ColorPalette newPalette);
 
+	/**
+	 * Starts the calculation.
+	 * <p>
+	 * This method shall never be called while the calculation is running.
+	 */
 	public void startCalculation();
 
+	/**
+	 * Adds entries to the Fractal menu on the menu bar.
+	 * 
+	 * @param fractalMenu
+	 *            The menu.
+	 */
 	public void initMenu(Menu fractalMenu);
 
+	/**
+	 * Adds entries to the context menu.
+	 * 
+	 * @param contextMenu
+	 *            The context menu.
+	 */
 	public void initContextMenu(PopupMenu contextMenu);
 
 	/**
