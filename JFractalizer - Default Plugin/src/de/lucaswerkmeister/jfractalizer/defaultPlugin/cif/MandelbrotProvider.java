@@ -2,7 +2,6 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
-import java.awt.event.ActionListener;
 
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 
@@ -41,15 +40,5 @@ public class MandelbrotProvider extends CifProvider {
 	@Override
 	public void handleCommandLineOption(String option) {
 		// TODO implement
-	}
-
-	@Override
-	public void addCalculationFinishedListener(final ActionListener listener) {
-		new Thread() {
-			public void run() {
-				MandelbrotProvider.this.awaitCalculation();
-				listener.actionPerformed(null);
-			}
-		}.start();
 	}
 }

@@ -176,4 +176,14 @@ public abstract class CifProvider implements FractalProvider {
 	public void awaitCalculation() {
 		canvas.awaitCalculation();
 	}
+
+	@Override
+	public void addCalculationFinishedListener(final ActionListener listener) {
+		new Thread() {
+			public void run() {
+				awaitCalculation();
+				listener.actionPerformed(null);
+			}
+		}.start();
+	}
 }
