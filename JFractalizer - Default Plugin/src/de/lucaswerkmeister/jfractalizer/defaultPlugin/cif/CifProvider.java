@@ -31,6 +31,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.Core;
 import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 
 public abstract class CifProvider implements FractalProvider {
 	CifCanvas<?> canvas;
@@ -240,6 +241,13 @@ public abstract class CifProvider implements FractalProvider {
 			params = params.copyChangeSuperSamplingFactor(Byte
 					.parseByte(optionContent));
 			break;
+		default:
+			throw new IllegalCommandLineException(
+					"Unknown option \""
+							+ optionName
+							+ "\" for fractal provider "
+							+ getClass().getSimpleName()
+							+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
 		}
 		canvas.setParams(params);
 	}
