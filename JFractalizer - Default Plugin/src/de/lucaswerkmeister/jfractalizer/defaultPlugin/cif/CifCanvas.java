@@ -114,9 +114,11 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		constructImage();
 		g.drawImage(tempImg, 0, 0, null);
 		if (selectedArea != null)
-			g.drawImage(inverter.filter(tempImg, null), selectedArea.x, selectedArea.y, selectedArea.x
-					+ selectedArea.width, selectedArea.y + selectedArea.height, selectedArea.x, selectedArea.y,
-					selectedArea.x + selectedArea.width, selectedArea.y + selectedArea.height, null);
+			g.drawImage(inverter.filter(tempImg, null), selectedArea.x,
+					selectedArea.y, selectedArea.x + selectedArea.width,
+					selectedArea.y + selectedArea.height, selectedArea.x,
+					selectedArea.y, selectedArea.x + selectedArea.width,
+					selectedArea.y + selectedArea.height, null);
 		if (isRunning())
 			repaint(10);
 		else if (stopTime == 0 && startTime != 0) {
@@ -180,7 +182,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 
 	private void constructImage() {
 		for (int i = 0; i < subImages.length; i++)
-			tempImg.getGraphics().drawImage(subImages[i].subImage, subImages[i].offsetX, subImages[i].offsetY, null);
+			tempImg.getGraphics().drawImage(subImages[i].subImage,
+					subImages[i].offsetX, subImages[i].offsetY, null);
 	}
 
 	@Override
@@ -199,7 +202,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 			stopTime = 0;
 			startTime = System.currentTimeMillis();
 			int lessSections = (int) Math.sqrt(cpuCount);
-			int moreSections = (lessSections == 1) ? cpuCount : cpuCount / lessSections;
+			int moreSections = (lessSections == 1) ? cpuCount : cpuCount
+					/ lessSections;
 			if (USE_MORE_THREADS_THAN_CORES) {
 				final int temp = lessSections;
 				lessSections = moreSections;
@@ -223,20 +227,35 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 					for (int y = 0; y < verSections; y++) {
 						// TODO check if zoom settings will cause rounding
 						// errors due to limited computational accuracy
-						int currentWidth = x == horSections - 1 ? sectionWidth + width % horSections : sectionWidth;
-						int currentHeight = y == 0 ? sectionHeight + height % verSections : sectionHeight;
-						BufferedImage subImage = new BufferedImage(currentWidth, currentHeight,
+						int currentWidth = x == horSections - 1 ? sectionWidth
+								+ width % horSections : sectionWidth;
+						int currentHeight = y == 0 ? sectionHeight + height
+								% verSections : sectionHeight;
+						BufferedImage subImage = new BufferedImage(
+								currentWidth, currentHeight,
 								BufferedImage.TYPE_INT_ARGB);
-						final CifImageMaker maker = imageMakerClass.getConstructor(int.class, int.class, double.class,
-								double.class, double.class, double.class, int.class, BufferedImage.class, int.class,
-								int.class, ColorPalette.class, byte.class, CifProvider.class).newInstance(currentWidth,
-								currentHeight, minReal + x * realWidth,
-								x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth,
-								minImag + y * imagHeight,
-								y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, subImage,
-								0, 0, palette, superSamplingFactor, provider);
+						final CifImageMaker maker = imageMakerClass
+								.getConstructor(int.class, int.class,
+										double.class, double.class,
+										double.class, double.class, int.class,
+										BufferedImage.class, int.class,
+										int.class, ColorPalette.class,
+										byte.class, CifProvider.class)
+								.newInstance(
+										currentWidth,
+										currentHeight,
+										minReal + x * realWidth,
+										x == horSections - 1 ? maxReal
+												: minReal + (x + 1) * realWidth,
+										minImag + y * imagHeight,
+										y == verSections - 1 ? maxImag
+												: minImag + (y + 1)
+														* imagHeight,
+										maxPasses, subImage, 0, 0, palette,
+										superSamplingFactor, provider);
 						runningTasks.add(executorService.submit(maker));
-						subImages[x * verSections + y] = new SubImage(x * sectionWidth, (verSections - y - 1)
+						subImages[x * verSections + y] = new SubImage(x
+								* sectionWidth, (verSections - y - 1)
 								* sectionHeight, subImage);
 					}
 			} catch (Exception e) {
@@ -257,22 +276,29 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	private boolean checkValues() {
-		return maxReal > minReal && maxImag > minImag && superSamplingFactor > 0 && palette != null && maxPasses > 0;
+		return maxReal > minReal && maxImag > minImag
+				&& superSamplingFactor > 0 && palette != null && maxPasses > 0;
 	}
 
 	public void goToSelectedArea() {
 		final double currentWidth = maxReal - minReal;
-		final double newWidth = currentWidth * ((double) selectedArea.width / width);
-		final double newMinReal = minReal + ((double) selectedArea.x / width) * currentWidth;
+		final double newWidth = currentWidth
+				* ((double) selectedArea.width / width);
+		final double newMinReal = minReal + ((double) selectedArea.x / width)
+				* currentWidth;
 		final double newMaxReal = newMinReal + newWidth;
 		final double currentHeight = maxImag - minImag;
-		final double newHeight = currentHeight * ((double) selectedArea.height / height);
-		final double newMaxImag = maxImag - ((double) selectedArea.y / height) * currentHeight;
+		final double newHeight = currentHeight
+				* ((double) selectedArea.height / height);
+		final double newMaxImag = maxImag - ((double) selectedArea.y / height)
+				* currentHeight;
 		final double newMinImag = newMaxImag - newHeight;
-		double maxPassesF = Math.max((double) width / selectedArea.width, (double) height / selectedArea.height);
+		double maxPassesF = Math.max((double) width / selectedArea.width,
+				(double) height / selectedArea.height);
 		maxPassesF = ((maxPassesF - 1) / maxPassesFactor) + 1;
 		maxPasses *= maxPassesF;
-		setParams(new CifParams(newMinReal, newMaxReal, newMinImag, newMaxImag, maxPasses, superSamplingFactor));
+		setParams(new CifParams(newMinReal, newMaxReal, newMinImag, newMaxImag,
+				maxPasses, superSamplingFactor));
 		start();
 	}
 
@@ -394,7 +420,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	CifParams getParams() {
-		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor);
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses,
+				superSamplingFactor);
 	}
 
 	void setParams(final CifParams params) {
@@ -417,6 +444,10 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	public void setImageSize(Dimension d) {
 		width = d.width;
 		height = d.height;
+	}
+
+	public Dimension getImageSize() {
+		return new Dimension(width, height);
 	}
 
 	public void awaitCalculation() {

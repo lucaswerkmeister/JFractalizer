@@ -53,9 +53,4 @@ public class JuliaProvider extends CifProvider {
 			cImag = (double) params[1];
 		}
 	}
-
-	@Override
-	public void handleCommandLineOption(String option) {
-		// TODO implement options
-	}
 }

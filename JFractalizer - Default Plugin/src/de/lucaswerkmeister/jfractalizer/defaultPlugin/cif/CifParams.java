@@ -32,4 +32,34 @@ public final class CifParams {
 		this.maxPasses = maxPasses;
 		this.superSamplingFactor = superSamplingFactor;
 	}
+
+	public CifParams copyChangeMinReal(double minReal) {
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses,
+				superSamplingFactor);
+	}
+
+	public CifParams copyChangeMaxReal(double maxReal) {
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses,
+				superSamplingFactor);
+	}
+
+	public CifParams copyChangeMinImag(double minImag) {
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses,
+				superSamplingFactor);
+	}
+
+	public CifParams copyChangeMaxImag(double maxImag) {
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses,
+				superSamplingFactor);
+	}
+
+	public CifParams copyChangeMaxPasses(int maxPasses) {
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses,
+				superSamplingFactor);
+	}
+
+	public CifParams copyChangeSuperSamplingFactor(byte superSamplingFactor) {
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses,
+				superSamplingFactor);
+	}
 }

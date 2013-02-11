@@ -18,9 +18,9 @@ import java.awt.event.ActionListener;
 import de.lucaswerkmeister.jfractalizer.Core;
 
 public class MandelbrotMenuListener implements ActionListener {
-	private final MandelbrotProvider provider;
+	private final CifProvider provider;
 
-	public MandelbrotMenuListener(MandelbrotProvider mandelbrotProvider) {
+	public MandelbrotMenuListener(CifProvider mandelbrotProvider) {
 		this.provider = mandelbrotProvider;
 	}
 

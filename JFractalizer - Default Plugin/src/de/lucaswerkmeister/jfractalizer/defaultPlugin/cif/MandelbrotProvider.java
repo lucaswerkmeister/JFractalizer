@@ -36,9 +36,4 @@ public class MandelbrotProvider extends CifProvider {
 	public void onProviderChange(Object... params) {
 		// Don't do anything
 	}
-
-	@Override
-	public void handleCommandLineOption(String option) {
-		// TODO implement
-	}
 }
