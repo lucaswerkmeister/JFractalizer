@@ -109,15 +109,14 @@ public class MenuListener implements ActionListener {
 				fileChooser.removeChoosableFileFilter(f);
 			fileChooser.addChoosableFileFilter(fractXml);
 			result = fileChooser.showSaveDialog(MainFrame.getInstance());
-			if (result == JFileChooser.APPROVE_OPTION)
-				try {
-					File selectedFile = fileChooser.getSelectedFile();
-					if (!(selectedFile.getName().endsWith("xml") || selectedFile
-							.getName().endsWith("Xml")))
-						selectedFile = new File(selectedFile.getAbsolutePath()
-								+ ".fractXml");
-					final OutputStream out = new BufferedOutputStream(
-							new FileOutputStream(selectedFile));
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File selectedFile = fileChooser.getSelectedFile();
+				if (!(selectedFile.getName().endsWith("xml") || selectedFile
+						.getName().endsWith("Xml")))
+					selectedFile = new File(selectedFile.getAbsolutePath()
+							+ ".fractXml");
+				try (final OutputStream out = new BufferedOutputStream(
+						new FileOutputStream(selectedFile))) {
 					final StreamResult streamResult = new StreamResult(out);
 					final SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
 							.newInstance();
@@ -130,11 +129,11 @@ public class MenuListener implements ActionListener {
 					hd.startDocument();
 					Core.getCurrentProvider().saveFractXml(hd);
 					hd.endDocument();
-					out.close();
 				} catch (TransformerConfigurationException | SAXException
 						| IOException e) {
 					e.printStackTrace();
 				}
+			}
 			break;
 		case "Load Setup":
 			fractXml = new FileNameExtensionFilter("Fractal XML", "fractXml",
