@@ -22,17 +22,19 @@ import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
 
 public class FractXmlSimplePaletteLoader extends FractXmlPaletteLoader {
 	LinkedList<String> elementQNames = new LinkedList<>();
-	Color currentStartColor = Color.black, currentEndColor = Color.black, currentCoreColor = Color.black;
+	Color currentStartColor = Color.black, currentEndColor = Color.black,
+			currentCoreColor = Color.black;
 	int currentLength = 0;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String,
-	 * org.xml.sax.Attributes)
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+	 * java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	@Override
-	public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+	public void startElement(final String uri, final String localName,
+			final String qName, final Attributes attributes)
 			throws SAXException {
 		elementQNames.addLast(qName);
 	}
@@ -40,10 +42,12 @@ public class FractXmlSimplePaletteLoader extends FractXmlPaletteLoader {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+	public void endElement(final String uri, final String localName,
+			final String qName) throws SAXException {
 		if (!elementQNames.isEmpty())
 			elementQNames.removeLast();
 	}
@@ -54,59 +58,95 @@ public class FractXmlSimplePaletteLoader extends FractXmlPaletteLoader {
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	@Override
-	public void characters(final char[] ch, final int start, final int length) throws SAXException {
+	public void characters(final char[] ch, final int start, final int length)
+			throws SAXException {
 		final String asString = new String(ch).substring(start, start + length);
-		if (elementQNames.size() >= 2 && elementQNames.get(elementQNames.size() - 2).equals("startColor"))
+		if (elementQNames.size() >= 2
+				&& elementQNames.get(elementQNames.size() - 2).equals(
+						"startColor"))
 			switch (elementQNames.getLast()) {
 			case "red":
-				currentStartColor = new Color(Integer.parseInt(asString), currentStartColor.getGreen(),
-						currentStartColor.getBlue(), currentStartColor.getAlpha());
+				currentStartColor = new Color(Integer.parseInt(asString),
+						currentStartColor.getGreen(),
+						currentStartColor.getBlue(),
+						currentStartColor.getAlpha());
+				break;
 			case "green":
-				currentStartColor = new Color(currentStartColor.getRed(), Integer.parseInt(asString),
-						currentStartColor.getBlue(), currentStartColor.getAlpha());
+				currentStartColor = new Color(currentStartColor.getRed(),
+						Integer.parseInt(asString),
+						currentStartColor.getBlue(),
+						currentStartColor.getAlpha());
+				break;
 			case "blue":
-				currentStartColor = new Color(currentStartColor.getRed(), currentStartColor.getGreen(),
-						Integer.parseInt(asString), currentStartColor.getAlpha());
+				currentStartColor = new Color(currentStartColor.getRed(),
+						currentStartColor.getGreen(),
+						Integer.parseInt(asString),
+						currentStartColor.getAlpha());
+				break;
 			case "alpha":
-				currentStartColor = new Color(currentStartColor.getRed(), currentStartColor.getGreen(),
+				currentStartColor = new Color(currentStartColor.getRed(),
+						currentStartColor.getGreen(),
 						currentStartColor.getBlue(), Integer.parseInt(asString));
+				break;
 			}
-		else if (elementQNames.size() >= 2 && elementQNames.get(elementQNames.size() - 2).equals("endColor"))
+		else if (elementQNames.size() >= 2
+				&& elementQNames.get(elementQNames.size() - 2).equals(
+						"endColor"))
 			switch (elementQNames.getLast()) {
 			case "red":
-				currentEndColor = new Color(Integer.parseInt(asString), currentEndColor.getGreen(),
-						currentEndColor.getBlue(), currentEndColor.getAlpha());
+				currentEndColor = new Color(Integer.parseInt(asString),
+						currentEndColor.getGreen(), currentEndColor.getBlue(),
+						currentEndColor.getAlpha());
+				break;
 			case "green":
-				currentEndColor = new Color(currentEndColor.getRed(), Integer.parseInt(asString),
-						currentEndColor.getBlue(), currentEndColor.getAlpha());
+				currentEndColor = new Color(currentEndColor.getRed(),
+						Integer.parseInt(asString), currentEndColor.getBlue(),
+						currentEndColor.getAlpha());
+				break;
 			case "blue":
-				currentEndColor = new Color(currentEndColor.getRed(), currentEndColor.getGreen(),
-						Integer.parseInt(asString), currentEndColor.getAlpha());
+				currentEndColor = new Color(currentEndColor.getRed(),
+						currentEndColor.getGreen(), Integer.parseInt(asString),
+						currentEndColor.getAlpha());
+				break;
 			case "alpha":
-				currentEndColor = new Color(currentEndColor.getRed(), currentEndColor.getGreen(),
-						currentEndColor.getBlue(), Integer.parseInt(asString));
+				currentEndColor = new Color(currentEndColor.getRed(),
+						currentEndColor.getGreen(), currentEndColor.getBlue(),
+						Integer.parseInt(asString));
+				break;
 			}
-		else if (elementQNames.size() >= 2 && elementQNames.get(elementQNames.size() - 2).equals("coreColor"))
+		else if (elementQNames.size() >= 2
+				&& elementQNames.get(elementQNames.size() - 2).equals(
+						"coreColor"))
 			switch (elementQNames.getLast()) {
 			case "red":
-				currentCoreColor = new Color(Integer.parseInt(asString), currentCoreColor.getGreen(),
+				currentCoreColor = new Color(Integer.parseInt(asString),
+						currentCoreColor.getGreen(),
 						currentCoreColor.getBlue(), currentCoreColor.getAlpha());
+				break;
 			case "green":
-				currentCoreColor = new Color(currentCoreColor.getRed(), Integer.parseInt(asString),
-						currentCoreColor.getBlue(), currentCoreColor.getAlpha());
+				currentCoreColor = new Color(currentCoreColor.getRed(),
+						Integer.parseInt(asString), currentCoreColor.getBlue(),
+						currentCoreColor.getAlpha());
+				break;
 			case "blue":
-				currentCoreColor = new Color(currentCoreColor.getRed(), currentCoreColor.getGreen(),
+				currentCoreColor = new Color(currentCoreColor.getRed(),
+						currentCoreColor.getGreen(),
 						Integer.parseInt(asString), currentCoreColor.getAlpha());
+				break;
 			case "alpha":
-				currentCoreColor = new Color(currentCoreColor.getRed(), currentCoreColor.getGreen(),
+				currentCoreColor = new Color(currentCoreColor.getRed(),
+						currentCoreColor.getGreen(),
 						currentCoreColor.getBlue(), Integer.parseInt(asString));
+				break;
 			}
-		else if (!elementQNames.isEmpty() && elementQNames.getLast().equals("colorSteps"))
+		else if (!elementQNames.isEmpty()
+				&& elementQNames.getLast().equals("colorSteps"))
 			currentLength = Integer.parseInt(asString);
 	}
 
 	@Override
 	public ColorPalette getPalette() {
-		return new SimplePalette(currentCoreColor, currentStartColor, currentEndColor, currentLength);
+		return new SimplePalette(currentCoreColor, currentStartColor,
+				currentEndColor, currentLength);
 	}
 }
