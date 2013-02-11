@@ -87,7 +87,8 @@ public final class Core {
 	 * Stops the currently running calculation.
 	 */
 	public static void stopCalculation() {
-		getCurrentProvider().stopCalculation();
+		if (currentProvider != null)
+			currentProvider.stopCalculation();
 	}
 
 	/**
