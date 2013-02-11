@@ -244,23 +244,23 @@ public final class Core {
 					warn("Warning: You are trying to read a file which is apparently not a FractXML file!");
 				try {
 					loadFile(file);
-					return;
 				} catch (SAXException | IOException
 						| ParserConfigurationException e) {
 					fatalError(
 							"Something went wrong while loading FractXML file \""
 									+ optionContent + "\"!", e);
 				}
+				return;
 			case "stdin":
 				try {
 					load(System.in);
-					return;
 				} catch (SAXException | IOException
 						| ParserConfigurationException e) {
 					fatalError(
 							"Something went wrong while reading FractXML stream from stdin!",
 							e);
 				}
+				return;
 			case "fractal":
 				Class<?> fractalClass;
 				try {
@@ -310,6 +310,7 @@ public final class Core {
 									+ optionContent + "\"!");
 				}
 			}
+			return;
 		case "fractArgs":
 			Core.getCurrentProvider().handleCommandLineOption(option,
 					optionName, optionContent);
