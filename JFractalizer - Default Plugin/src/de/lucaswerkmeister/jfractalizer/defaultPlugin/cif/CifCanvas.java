@@ -435,10 +435,12 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		maxImag = params.maxImag;
 		maxPasses = params.maxPasses;
 		superSamplingFactor = params.superSamplingFactor;
-		if (addToHistory)
-			history.add(params);
-		provider.undoMenuItem.setEnabled(history.canUndo());
-		provider.redoMenuItem.setEnabled(history.canRedo());
+		if (getParent() != null) {
+			if (addToHistory)
+				history.add(params);
+			provider.undoMenuItem.setEnabled(history.canUndo());
+			provider.redoMenuItem.setEnabled(history.canRedo());
+		}
 	}
 
 	public void setImageSize(Dimension d) {

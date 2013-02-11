@@ -249,6 +249,6 @@ public abstract class CifProvider implements FractalProvider {
 							+ getClass().getSimpleName()
 							+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
 		}
-		canvas.setParams(params);
+		canvas.setParams(params, false);
 	}
 }
