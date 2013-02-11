@@ -194,6 +194,7 @@ public final class Core {
 					System.exit(0);
 				}
 			});
+			break;
 		case "film":
 			calculationFinishedListeners.add(new ActionListener() {
 				@Override
@@ -208,6 +209,7 @@ public final class Core {
 						}
 				}
 			});
+			break;
 		}
 	}
 
