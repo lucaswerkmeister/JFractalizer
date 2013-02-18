@@ -178,6 +178,19 @@ public class SimplePalette implements ColorPalette {
 
 	@Override
 	public void handleCommandLineOption(String option, String optionName, String optionContent) {
-
+		switch (optionName) {
+			case "start":
+				startColor = Color.decode(optionContent);
+				break;
+			case "end":
+				endColor = Color.decode(optionContent);
+				break;
+			case "core":
+				coreColor = Color.decode(optionContent);
+				break;
+			case "steps":
+				colorSteps = Integer.parseInt(optionContent);
+				break;
+		}
 	}
 }
