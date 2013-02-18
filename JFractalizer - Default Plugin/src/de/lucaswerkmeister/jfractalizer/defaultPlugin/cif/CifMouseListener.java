@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
@@ -17,13 +19,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class CifMouseListener extends MouseAdapter {
-	private final CifCanvas canvas;
-	private Point clickStart;
-	private static final boolean keepRatio = true; // TODO make this
+	private final CifCanvas<?>		canvas;
+	private Point					clickStart;
+	private static final boolean	keepRatio	= true; // TODO make this
 
 	// configurable
 
-	public CifMouseListener(final CifCanvas canvas) {
+	public CifMouseListener(final CifCanvas<?> canvas) {
 		this.canvas = canvas;
 	}
 
@@ -80,7 +82,8 @@ public class CifMouseListener extends MouseAdapter {
 			else
 				return positiveRectangle(new Rectangle(clickStart.x,
 						clickStart.y, dX, (int) (cHeight * xRatio)));
-		} else
+		}
+		else
 			return new Rectangle(clickStart.x, clickStart.y, dX, dY);
 	}
 
@@ -90,7 +93,8 @@ public class CifMouseListener extends MouseAdapter {
 				return r;
 			else
 				return new Rectangle(r.x, r.y + r.height, r.width, -r.height);
-		} else if (r.height > 0)
+		}
+		else if (r.height > 0)
 			return new Rectangle(r.x + r.width, r.y, -r.width, r.height);
 		else
 			return new Rectangle(r.x + r.width, r.y + r.height, -r.width,
