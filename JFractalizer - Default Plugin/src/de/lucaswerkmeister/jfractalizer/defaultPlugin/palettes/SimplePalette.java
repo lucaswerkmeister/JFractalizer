@@ -151,6 +151,25 @@ public class SimplePalette implements ColorPalette {
 				&& endColor.equals(otherPalette.endColor) && coreColor.equals(otherPalette.coreColor);
 	}
 
+	@Override
+	public void handleCommandLineOption(String option, String optionName, String optionContent) {
+		switch (optionName) {
+			case "start":
+				startColor = Color.decode(optionContent);
+				break;
+			case "end":
+				endColor = Color.decode(optionContent);
+				break;
+			case "core":
+				coreColor = Color.decode(optionContent);
+				break;
+			case "steps":
+				colorSteps = Integer.parseInt(optionContent);
+				break;
+		}
+		makeFastStorage();
+	}
+
 	class SimplePaletteMenuListener implements ActionListener {
 		private final FractalProvider	provider;
 		private final Frame				owner;
@@ -173,24 +192,6 @@ public class SimplePalette implements ColorPalette {
 				provider.setColorPalette(start);
 				provider.startCalculation();
 			}
-		}
-	}
-
-	@Override
-	public void handleCommandLineOption(String option, String optionName, String optionContent) {
-		switch (optionName) {
-			case "start":
-				startColor = Color.decode(optionContent);
-				break;
-			case "end":
-				endColor = Color.decode(optionContent);
-				break;
-			case "core":
-				coreColor = Color.decode(optionContent);
-				break;
-			case "steps":
-				colorSteps = Integer.parseInt(optionContent);
-				break;
 		}
 	}
 }

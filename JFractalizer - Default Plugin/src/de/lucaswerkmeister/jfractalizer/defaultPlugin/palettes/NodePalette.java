@@ -165,6 +165,7 @@ public class NodePalette implements ColorPalette {
 		else {
 			coreColor = Color.decode(option);
 		}
+		makeFastStorage();
 	}
 
 	class NodePaletteMenuListener implements ActionListener {
