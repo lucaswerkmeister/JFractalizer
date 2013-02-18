@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
@@ -22,12 +24,12 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 public class ColorNode extends Panel implements ActionListener {
-	private static final long serialVersionUID = -5555238254555730578L;
-	private Color startColor, endColor;
-	private int length;
-	private final SelectableColor startC, endC;
-	private final JSpinner lengthC;
-	private ColorNode linkedNode;
+	private static final long	serialVersionUID	= -5555238254555730578L;
+	private Color				startColor, endColor;
+	private int					length;
+	private final SelectableColor	startC, endC;
+	private final JSpinner			lengthC;
+	private ColorNode				linkedNode;
 
 	/**
 	 * Creates a new ColorNode with the specified parameters.
@@ -56,15 +58,37 @@ public class ColorNode extends Panel implements ActionListener {
 		add(lengthC);
 	}
 
+	/**
+	 * Creates a new {@link ColorNode} with the specified parameters.
+	 * <p>
+	 * The colors are decoded with {@link Color#decode(String)} and must match its requirements. (Typically, the colors
+	 * will be given in hex format: #00FF77)
+	 * 
+	 * @param startColor
+	 *            The starting color of the new ColorNode.
+	 * @param endColor
+	 *            The ending color of the new ColorNode.
+	 * @param length
+	 *            The length of the new ColorNode.
+	 */
+	public ColorNode(String startColor, String endColor, int length) {
+		this(Color.decode(startColor), Color.decode(endColor), length);
+	}
+
 	@Override
 	public String toString() {
 		return startColor.toString() + "..." + length + "..."
 				+ endColor.toString();
 	}
 
-	public boolean equals(final ColorNode otherNode) {
-		return length == otherNode.length && startColor == otherNode.startColor
-				&& endColor == otherNode.endColor;
+	@Override
+	public boolean equals(final Object other) {
+		if (other instanceof ColorNode) {
+			ColorNode otherNode = (ColorNode) other;
+			return length == otherNode.length && startColor == otherNode.startColor
+					&& endColor == otherNode.endColor;
+		}
+		return false;
 	}
 
 	/**

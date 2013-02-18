@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
@@ -33,11 +35,11 @@ import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
 import de.lucaswerkmeister.jfractalizer.FractalProvider;
 
 public class SimplePalette implements ColorPalette {
-	Color coreColor;
-	Color startColor;
-	Color endColor;
-	int colorSteps;
-	private final List<Color> fastColorStorage;
+	Color						coreColor;
+	Color						startColor;
+	Color						endColor;
+	int							colorSteps;
+	private final List<Color>	fastColorStorage;
 
 	public SimplePalette() {
 		this(Color.black, Color.red, Color.yellow, 16);
@@ -58,7 +60,8 @@ public class SimplePalette implements ColorPalette {
 			return coreColor;
 		try {
 			return fastColorStorage.get(passes % colorSteps);
-		} catch (final Exception e) {
+		}
+		catch (final Exception e) {
 			makeFastStorage();
 			return fastColorStorage.get(passes % colorSteps);
 		}
@@ -148,10 +151,29 @@ public class SimplePalette implements ColorPalette {
 				&& endColor.equals(otherPalette.endColor) && coreColor.equals(otherPalette.coreColor);
 	}
 
+	@Override
+	public void handleCommandLineOption(String option, String optionName, String optionContent) {
+		switch (optionName) {
+			case "start":
+				startColor = Color.decode(optionContent);
+				break;
+			case "end":
+				endColor = Color.decode(optionContent);
+				break;
+			case "core":
+				coreColor = Color.decode(optionContent);
+				break;
+			case "steps":
+				colorSteps = Integer.parseInt(optionContent);
+				break;
+		}
+		makeFastStorage();
+	}
+
 	class SimplePaletteMenuListener implements ActionListener {
-		private final FractalProvider provider;
-		private final Frame owner;
-		private SimplePalette start;
+		private final FractalProvider	provider;
+		private final Frame				owner;
+		private SimplePalette			start;
 
 		public SimplePaletteMenuListener(final FractalProvider provider, final Frame owner, final SimplePalette start) {
 			this.provider = provider;
@@ -171,10 +193,5 @@ public class SimplePalette implements ColorPalette {
 				provider.startCalculation();
 			}
 		}
-	}
-
-	@Override
-	public void handleCommandLineOption(String option) {
-		// TODO implement
 	}
 }

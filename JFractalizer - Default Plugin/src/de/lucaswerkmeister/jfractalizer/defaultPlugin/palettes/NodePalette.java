@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
@@ -33,11 +35,13 @@ import org.xml.sax.helpers.AttributesImpl;
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
 import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 
 public class NodePalette implements ColorPalette {
-	final List<ColorNode> nodes;
-	final List<Color> fastColorStorage;
-	Color coreColor;
+	final List<ColorNode>	nodes;
+	final List<Color>		fastColorStorage;
+	Color					coreColor;
+	boolean					fromCommandLine	= false;
 
 	public NodePalette(final ColorNode[] nodes, final Color coreColor) {
 		this(Arrays.asList(nodes), coreColor);
@@ -64,7 +68,8 @@ public class NodePalette implements ColorPalette {
 			return coreColor;
 		try {
 			return fastColorStorage.get(passes % fastColorStorage.size());
-		} catch (final Exception e) {
+		}
+		catch (final Exception e) {
 			makeFastStorage();
 			return fastColorStorage.get(passes % fastColorStorage.size());
 		}
@@ -144,10 +149,29 @@ public class NodePalette implements ColorPalette {
 		return otherPalette.coreColor == coreColor;
 	}
 
+	@Override
+	public void handleCommandLineOption(String option, String optionName, String optionContent) {
+		if (option.contains("-") ^ option.contains(":"))
+			throw new IllegalCommandLineException("Unknown NodePalette argument \"" + option + "\"!");
+		if (option.contains("-")) {
+			if (!fromCommandLine) {
+				nodes.clear();
+				fromCommandLine = true;
+			}
+			String[] parts = option.split(":");
+			String[] colors = parts[0].split("-");
+			nodes.add(new ColorNode(colors[0], colors[1], Integer.parseInt(parts[1])));
+		}
+		else {
+			coreColor = Color.decode(option);
+		}
+		makeFastStorage();
+	}
+
 	class NodePaletteMenuListener implements ActionListener {
-		private final FractalProvider provider;
-		private final Frame owner;
-		private NodePalette start;
+		private final FractalProvider	provider;
+		private final Frame				owner;
+		private NodePalette				start;
 
 		public NodePaletteMenuListener(final FractalProvider provider, final Frame owner, final NodePalette start) {
 			this.provider = provider;
@@ -167,10 +191,5 @@ public class NodePalette implements ColorPalette {
 				provider.startCalculation();
 			}
 		}
-	}
-
-	@Override
-	public void handleCommandLineOption(String option) {
-		// TODO implement
 	}
 }

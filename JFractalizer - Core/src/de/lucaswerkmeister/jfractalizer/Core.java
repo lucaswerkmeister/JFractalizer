@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer;
 
@@ -37,22 +39,21 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 /**
- * Acts as a wrapper for all functions that plugins may wish to invoke on the
- * core.
+ * Acts as a wrapper for all functions that plugins may wish to invoke on the core.
  * 
  * @author Lucas Werkmeister
  * @version 1.0
  */
 public final class Core {
-	private static FractalProvider currentProvider;
-	private static ColorPalette currentColorPalette;
+	private static FractalProvider		currentProvider;
+	private static ColorPalette			currentColorPalette;
 
-	private static boolean showGui = true;
-	private static MainFrame gui;
-	private static boolean running = false;
-	private static String currentFormat = "raw-RGB";
-	private static Set<Output> outputs = new HashSet<>();
-	private static Set<ActionListener> calculationFinishedListeners = new HashSet<>();
+	private static boolean				showGui							= true;
+	private static MainFrame			gui;
+	private static boolean				running							= false;
+	private static String				currentFormat					= "raw-RGB";
+	private static Set<Output>			outputs							= new HashSet<>();
+	private static Set<ActionListener>	calculationFinishedListeners	= new HashSet<>();
 
 	/**
 	 * <code>private</code> constructor so the class can't be instantiated.
@@ -61,8 +62,7 @@ public final class Core {
 	}
 
 	/**
-	 * Gets the image currently displayed by the main window, whether it is
-	 * completely calculated or not.
+	 * Gets the image currently displayed by the main window, whether it is completely calculated or not.
 	 * 
 	 * @return The image currently displayed by the main window.
 	 */
@@ -112,8 +112,7 @@ public final class Core {
 	}
 
 	/**
-	 * Sets the text displayed by the status bar of the JFractalizer and its
-	 * color.
+	 * Sets the text displayed by the status bar of the JFractalizer and its color.
 	 * 
 	 * @param status
 	 *            The new status.
@@ -181,35 +180,37 @@ public final class Core {
 
 	private static void startRealm(String name) {
 		switch (name) {
-		case "image":
-			calculationFinishedListeners.add(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent event) {
-					for (Output o : outputs)
-						try {
-							o.writeImage(getCurrentProvider().getImage(), 0);
-						} catch (IOException e) {
-							fatalError("Couldn't write image, aborting!", e);
-						}
-					System.exit(0);
-				}
-			});
-			break;
-		case "film":
-			calculationFinishedListeners.add(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent event) {
-					for (Output o : outputs)
-						try {
-							o.writeImage(getCurrentProvider().getImage(),
-									getFrameCount());
-						} catch (IOException e) {
-							fatalError("Couldn't write image no. "
-									+ getFrameCount() + ", aborting!", e);
-						}
-				}
-			});
-			break;
+			case "image":
+				calculationFinishedListeners.add(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						for (Output o : outputs)
+							try {
+								o.writeImage(getCurrentProvider().getImage(), 0);
+							}
+							catch (IOException e) {
+								fatalError("Couldn't write image, aborting!", e);
+							}
+						System.exit(0);
+					}
+				});
+				break;
+			case "film":
+				calculationFinishedListeners.add(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						for (Output o : outputs)
+							try {
+								o.writeImage(getCurrentProvider().getImage(),
+										getFrameCount());
+							}
+							catch (IOException e) {
+								fatalError("Couldn't write image no. "
+										+ getFrameCount() + ", aborting!", e);
+							}
+					}
+				});
+				break;
 		}
 	}
 
@@ -221,125 +222,134 @@ public final class Core {
 			optionContent = option.substring(option.indexOf('=') + 1);
 		}
 		switch (realm) {
-		case "":
-			throw new IllegalCommandLineException("No realm specified!");
-		case "ui":
-			switch (optionName) {
-			case "no-gui":
-				showGui = false;
+			case "":
+				throw new IllegalCommandLineException("No realm specified!");
+			case "ui":
+				switch (optionName) {
+					case "no-gui":
+						showGui = false;
+						return;
+				}
+				throw new IllegalCommandLineException("Unknown option \"" + option
+						+ "\" in realm \"" + realm + "\"!");
+			case "input":
+				switch (optionName) {
+					case "file":
+						File file = new File(optionContent);
+						if (!file.exists())
+							throw new IllegalCommandLineException("File \""
+									+ optionContent
+									+ "\" does not exist! (Assumed absolute path: \""
+									+ file.getAbsolutePath() + "\")");
+						if (!optionContent.endsWith(".fractXml"))
+							warn("Warning: You are trying to read a file which is apparently not a FractXML file!");
+						try {
+							loadFile(file);
+						}
+						catch (SAXException | IOException
+								| ParserConfigurationException e) {
+							fatalError(
+									"Something went wrong while loading FractXML file \""
+											+ optionContent + "\"!", e);
+						}
+						return;
+					case "stdin":
+						try {
+							load(System.in);
+						}
+						catch (SAXException | IOException
+								| ParserConfigurationException e) {
+							fatalError(
+									"Something went wrong while reading FractXML stream from stdin!",
+									e);
+						}
+						return;
+					case "fractal":
+						Class<?> fractalClass;
+						try {
+							fractalClass = Class.forName(optionContent);
+						}
+						catch (ClassNotFoundException e) {
+							throw new IllegalCommandLineException("Class \""
+									+ optionContent + "\" was not found!");
+						}
+						if (!FractalProvider.class.isAssignableFrom(fractalClass))
+							throw new IllegalCommandLineException("\"" + optionContent
+									+ "\" is not a FractalProvider class!");
+						try {
+							Core.setCurrentProvider((FractalProvider) fractalClass
+									.newInstance());
+							return;
+						}
+						catch (InstantiationException e) {
+							throw new IllegalCommandLineException(
+									"An error occured while creating instance of class \""
+											+ optionContent + "\"!", e);
+						}
+						catch (IllegalAccessException e) {
+							throw new IllegalCommandLineException(
+									"Can't access default constructor of class \""
+											+ optionContent + "\"!");
+						}
+					case "palette":
+						Class<?> paletteClass;
+						try {
+							paletteClass = Class.forName(optionContent);
+						}
+						catch (ClassNotFoundException e) {
+							throw new IllegalCommandLineException("Class \""
+									+ optionContent + "\" was not found!");
+						}
+						if (!ColorPalette.class.isAssignableFrom(paletteClass))
+							throw new IllegalCommandLineException("\"" + optionContent
+									+ "\" is not a ColorPalette class!");
+						try {
+							Core.setCurrentColorPalette((ColorPalette) paletteClass
+									.newInstance());
+							return;
+						}
+						catch (InstantiationException e) {
+							throw new IllegalCommandLineException(
+									"An error occured while creating instance of class \""
+											+ optionContent + "\"!", e);
+						}
+						catch (IllegalAccessException e) {
+							throw new IllegalCommandLineException(
+									"Can't access default constructor of class \""
+											+ optionContent + "\"!");
+						}
+				}
 				return;
-			}
-			throw new IllegalCommandLineException("Unknown option \"" + option
-					+ "\" in realm \"" + realm + "\"!");
-		case "input":
-			switch (optionName) {
-			case "file":
-				File file = new File(optionContent);
-				if (!file.exists())
-					throw new IllegalCommandLineException("File \""
-							+ optionContent
-							+ "\" does not exist! (Assumed absolute path: \""
-							+ file.getAbsolutePath() + "\")");
-				if (!optionContent.endsWith(".fractXml"))
-					warn("Warning: You are trying to read a file which is apparently not a FractXML file!");
-				try {
-					loadFile(file);
-				} catch (SAXException | IOException
-						| ParserConfigurationException e) {
-					fatalError(
-							"Something went wrong while loading FractXML file \""
+			case "fractArgs":
+				Core.getCurrentProvider().handleCommandLineOption(option,
+						optionName, optionContent);
+				return;
+			case "paletteArgs":
+				Core.getCurrentColorPalette().handleCommandLineOption(option, optionName, optionContent);
+				return;
+			case "output":
+				switch (optionName) {
+					case "format":
+						currentFormat = optionContent;
+						return;
+					case "file":
+						try {
+							outputs.add(new SingleFileOutput(currentFormat,
+									optionContent));
+						}
+						catch (IOException e) {
+							error("An error occured while preparing output file \""
 									+ optionContent + "\"!", e);
+						}
+						return;
+					case "files":
+						outputs.add(new MultipleFilesOutput(currentFormat,
+								optionContent));
+						return;
+					case "stdout":
+						outputs.add(new StdoutOutput(currentFormat));
+						return;
 				}
-				return;
-			case "stdin":
-				try {
-					load(System.in);
-				} catch (SAXException | IOException
-						| ParserConfigurationException e) {
-					fatalError(
-							"Something went wrong while reading FractXML stream from stdin!",
-							e);
-				}
-				return;
-			case "fractal":
-				Class<?> fractalClass;
-				try {
-					fractalClass = Class.forName(optionContent);
-				} catch (ClassNotFoundException e) {
-					throw new IllegalCommandLineException("Class \""
-							+ optionContent + "\" was not found!");
-				}
-				if (!FractalProvider.class.isAssignableFrom(fractalClass))
-					throw new IllegalCommandLineException("\"" + optionContent
-							+ "\" is not a FractalProvider class!");
-				try {
-					Core.setCurrentProvider((FractalProvider) fractalClass
-							.newInstance());
-					return;
-				} catch (InstantiationException e) {
-					throw new IllegalCommandLineException(
-							"An error occured while creating instance of class \""
-									+ optionContent + "\"!", e);
-				} catch (IllegalAccessException e) {
-					throw new IllegalCommandLineException(
-							"Can't access default constructor of class \""
-									+ optionContent + "\"!");
-				}
-			case "palette":
-				Class<?> paletteClass;
-				try {
-					paletteClass = Class.forName(optionContent);
-				} catch (ClassNotFoundException e) {
-					throw new IllegalCommandLineException("Class \""
-							+ optionContent + "\" was not found!");
-				}
-				if (!ColorPalette.class.isAssignableFrom(paletteClass))
-					throw new IllegalCommandLineException("\"" + optionContent
-							+ "\" is not a ColorPalette class!");
-				try {
-					Core.setCurrentColorPalette((ColorPalette) paletteClass
-							.newInstance());
-					return;
-				} catch (InstantiationException e) {
-					throw new IllegalCommandLineException(
-							"An error occured while creating instance of class \""
-									+ optionContent + "\"!", e);
-				} catch (IllegalAccessException e) {
-					throw new IllegalCommandLineException(
-							"Can't access default constructor of class \""
-									+ optionContent + "\"!");
-				}
-			}
-			return;
-		case "fractArgs":
-			Core.getCurrentProvider().handleCommandLineOption(option,
-					optionName, optionContent);
-			return;
-		case "paletteArgs":
-			Core.getCurrentColorPalette().handleCommandLineOption(option);
-			return;
-		case "output":
-			switch (optionName) {
-			case "format":
-				currentFormat = optionContent;
-				return;
-			case "file":
-				try {
-					outputs.add(new SingleFileOutput(currentFormat,
-							optionContent));
-				} catch (IOException e) {
-					error("An error occured while preparing output file \""
-							+ optionContent + "\"!", e);
-				}
-				return;
-			case "files":
-				outputs.add(new MultipleFilesOutput(currentFormat,
-						optionContent));
-				return;
-			case "stdout":
-				outputs.add(new StdoutOutput(currentFormat));
-				return;
-			}
 		}
 	}
 
@@ -402,7 +412,8 @@ public final class Core {
 				endRealm(realm);
 				realm = arg.substring("--".length());
 				startRealm(realm);
-			} else
+			}
+			else
 				handleOption(realm, arg);
 		if (!showGui
 				&& (currentProvider == null || currentColorPalette == null))
@@ -421,7 +432,7 @@ public final class Core {
 }
 
 abstract class Output {
-	protected final String format;
+	protected final String	format;
 
 	protected Output(String format) {
 		if (!Arrays.asList("png", "jpg", "raw-ARGB", "raw-BGR")
@@ -437,38 +448,38 @@ abstract class Output {
 	protected void write(BufferedImage image, OutputStream stream)
 			throws IOException {
 		switch (format) {
-		case "png":
-		case "jpg":
-			ImageIO.write(image, format, stream);
-			break;
-		case "raw-ARGB": {
-			BufferedImage newImage = new BufferedImage(image.getWidth(),
-					image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			newImage.getGraphics().drawImage(image, 0, 0, null);
-			DataBufferInt buffer = (DataBufferInt) newImage.getRaster()
-					.getDataBuffer();
-			int[] data = buffer.getData();
-			ByteBuffer bbuf = ByteBuffer.allocate(data.length * 4);
-			bbuf.asIntBuffer().put(data);
-			stream.write(bbuf.array());
-			break;
-		}
-		case "raw-BGR": {
-			BufferedImage newImage = new BufferedImage(image.getWidth(),
-					image.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-			newImage.getGraphics().drawImage(image, 0, 0, null);
-			DataBufferByte buffer = (DataBufferByte) newImage.getRaster()
-					.getDataBuffer();
-			byte[] data = buffer.getData();
-			stream.write(data);
-			break;
-		}
+			case "png":
+			case "jpg":
+				ImageIO.write(image, format, stream);
+				break;
+			case "raw-ARGB": {
+				BufferedImage newImage = new BufferedImage(image.getWidth(),
+						image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				newImage.getGraphics().drawImage(image, 0, 0, null);
+				DataBufferInt buffer = (DataBufferInt) newImage.getRaster()
+						.getDataBuffer();
+				int[] data = buffer.getData();
+				ByteBuffer bbuf = ByteBuffer.allocate(data.length * 4);
+				bbuf.asIntBuffer().put(data);
+				stream.write(bbuf.array());
+				break;
+			}
+			case "raw-BGR": {
+				BufferedImage newImage = new BufferedImage(image.getWidth(),
+						image.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+				newImage.getGraphics().drawImage(image, 0, 0, null);
+				DataBufferByte buffer = (DataBufferByte) newImage.getRaster()
+						.getDataBuffer();
+				byte[] data = buffer.getData();
+				stream.write(data);
+				break;
+			}
 		}
 	}
 }
 
 class SingleFileOutput extends Output {
-	private OutputStream stream;
+	private OutputStream	stream;
 
 	public SingleFileOutput(String format, String filename) throws IOException {
 		super(format);
@@ -490,7 +501,7 @@ class SingleFileOutput extends Output {
 }
 
 class MultipleFilesOutput extends Output {
-	private String filename;
+	private String	filename;
 
 	public MultipleFilesOutput(String format, String filename) {
 		super(format);
