@@ -35,11 +35,13 @@ import org.xml.sax.helpers.AttributesImpl;
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
 import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 
 public class NodePalette implements ColorPalette {
 	final List<ColorNode>	nodes;
 	final List<Color>		fastColorStorage;
 	Color					coreColor;
+	boolean					fromCommandLine	= false;
 
 	public NodePalette(final ColorNode[] nodes, final Color coreColor) {
 		this(Arrays.asList(nodes), coreColor);
@@ -147,6 +149,24 @@ public class NodePalette implements ColorPalette {
 		return otherPalette.coreColor == coreColor;
 	}
 
+	@Override
+	public void handleCommandLineOption(String option, String optionName, String optionContent) {
+		if (option.contains("-") ^ option.contains(":"))
+			throw new IllegalCommandLineException("Unknown NodePalette argument \"" + option + "\"!");
+		if (option.contains("-")) {
+			if (!fromCommandLine) {
+				nodes.clear();
+				fromCommandLine = true;
+			}
+			String[] parts = option.split(":");
+			String[] colors = parts[0].split("-");
+			nodes.add(new ColorNode(colors[0], colors[1], Integer.parseInt(parts[1])));
+		}
+		else {
+			coreColor = Color.decode(option);
+		}
+	}
+
 	class NodePaletteMenuListener implements ActionListener {
 		private final FractalProvider	provider;
 		private final Frame				owner;
@@ -170,10 +190,5 @@ public class NodePalette implements ColorPalette {
 				provider.startCalculation();
 			}
 		}
-	}
-
-	@Override
-	public void handleCommandLineOption(String option, String optionName, String optionContent) {
-
 	}
 }
