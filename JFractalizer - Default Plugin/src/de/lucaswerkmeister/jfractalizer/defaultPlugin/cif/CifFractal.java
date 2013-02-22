@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
@@ -34,9 +36,9 @@ import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
 
 public abstract class CifFractal implements ZoomableFractal {
-	CifCanvas<?> canvas;
-	CifMenuListener menuListener;
-	MenuItem undoMenuItem, redoMenuItem;
+	CifCanvas<?>	canvas;
+	CifMenuListener	menuListener;
+	MenuItem		undoMenuItem, redoMenuItem;
 
 	@Override
 	public Canvas getCanvas() {
@@ -49,12 +51,10 @@ public abstract class CifFractal implements ZoomableFractal {
 	}
 
 	@Override
-	public void saveFractXml(final TransformerHandler handler)
-			throws SAXException {
+	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
 		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass()
-				.getCanonicalName());
+		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
 		handler.startElement("", "", "fractal", atts);
 
 		handler.startElement("", "", "width", noAtts);
@@ -63,44 +63,37 @@ public abstract class CifFractal implements ZoomableFractal {
 		handler.endElement("", "", "width");
 
 		handler.startElement("", "", "height", noAtts);
-		final char[] height = Integer.toString(canvas.getHeight())
-				.toCharArray();
+		final char[] height = Integer.toString(canvas.getHeight()).toCharArray();
 		handler.characters(height, 0, height.length);
 		handler.endElement("", "", "height");
 
 		handler.startElement("", "", "minReal", noAtts);
-		final char[] minReal = Double.toString(canvas.getMinReal())
-				.toCharArray();
+		final char[] minReal = Double.toString(canvas.getMinReal()).toCharArray();
 		handler.characters(minReal, 0, minReal.length);
 		handler.endElement("", "", "minReal");
 
 		handler.startElement("", "", "maxReal", noAtts);
-		final char[] maxReal = Double.toString(canvas.getMaxReal())
-				.toCharArray();
+		final char[] maxReal = Double.toString(canvas.getMaxReal()).toCharArray();
 		handler.characters(maxReal, 0, maxReal.length);
 		handler.endElement("", "", "maxReal");
 
 		handler.startElement("", "", "minImag", noAtts);
-		final char[] minImag = Double.toString(canvas.getMinImag())
-				.toCharArray();
+		final char[] minImag = Double.toString(canvas.getMinImag()).toCharArray();
 		handler.characters(minImag, 0, minImag.length);
 		handler.endElement("", "", "minImag");
 
 		handler.startElement("", "", "maxImag", noAtts);
-		final char[] maxImag = Double.toString(canvas.getMaxImag())
-				.toCharArray();
+		final char[] maxImag = Double.toString(canvas.getMaxImag()).toCharArray();
 		handler.characters(maxImag, 0, maxImag.length);
 		handler.endElement("", "", "maxImag");
 
 		handler.startElement("", "", "maxPasses", noAtts);
-		final char[] maxPasses = Integer.toString(canvas.getMaxPasses())
-				.toCharArray();
+		final char[] maxPasses = Integer.toString(canvas.getMaxPasses()).toCharArray();
 		handler.characters(maxPasses, 0, maxPasses.length);
 		handler.endElement("", "", "maxPasses");
 
 		handler.startElement("", "", "superSamplingFactor", noAtts);
-		final char[] superSamplingFactor = Byte.toString(
-				canvas.getSuperSamplingFactor()).toCharArray();
+		final char[] superSamplingFactor = Byte.toString(canvas.getSuperSamplingFactor()).toCharArray();
 		handler.characters(superSamplingFactor, 0, superSamplingFactor.length);
 		handler.endElement("", "", "superSamplingFactor");
 
@@ -130,18 +123,14 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void initMenu(final Menu fractalMenu) {
-		final MenuItem recalculate = new MenuItem("Recalculate",
-				new MenuShortcut(KeyEvent.VK_R));
+		final MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
 		recalculate.addActionListener(menuListener);
 		fractalMenu.add(recalculate);
 		fractalMenu.addSeparator();
-		final MenuItem editBoundaries = new MenuItem("Edit boundaries...",
-				new MenuShortcut(KeyEvent.VK_E));
+		final MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
 		editBoundaries.addActionListener(menuListener);
 		fractalMenu.add(editBoundaries);
-		final MenuItem additionalParams = new MenuItem(
-				"Edit additional parameters...",
-				new MenuShortcut(KeyEvent.VK_A));
+		final MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));
 		additionalParams.addActionListener(menuListener);
 		fractalMenu.add(additionalParams);
 		fractalMenu.addSeparator();
@@ -174,10 +163,8 @@ public abstract class CifFractal implements ZoomableFractal {
 	public void zoom(final int x, final int y, final double factor) {
 		final double currentWidth = (canvas.getMaxReal() - canvas.getMinReal());
 		final double currentHeight = (canvas.getMaxImag() - canvas.getMinImag());
-		final double centerR = canvas.getMinReal() + currentWidth
-				* ((double) x / canvas.getWidth());
-		final double centerI = canvas.getMinImag() + currentHeight
-				* (1 - ((double) y / canvas.getHeight()));
+		final double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getWidth());
+		final double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getHeight()));
 		final double halfSizeR = currentWidth * factor / 2;
 		final double halfSizeI = currentHeight * factor / 2;
 		canvas.setMinReal(centerR - halfSizeR);
@@ -205,49 +192,40 @@ public abstract class CifFractal implements ZoomableFractal {
 	}
 
 	@Override
-	public void handleCommandLineOption(String option, String optionName,
-			String optionContent) {
+	public void handleCommandLineOption(String option, String optionName, String optionContent) {
 		CifParams params = canvas.getParams();
 		switch (optionName) {
-		case "width":
-			canvas.setImageSize(new Dimension(Integer.parseInt(optionContent),
-					canvas.getImageSize().height));
-			return;
-		case "height":
-			canvas.setImageSize(new Dimension(canvas.getImageSize().width,
-					Integer.parseInt(optionContent)));
-			return;
-		case "minReal":
-			params = params
-					.copyChangeMinReal(Double.parseDouble(optionContent));
-			break;
-		case "maxReal":
-			params = params
-					.copyChangeMaxReal(Double.parseDouble(optionContent));
-			break;
-		case "minImag":
-			params = params
-					.copyChangeMinImag(Double.parseDouble(optionContent));
-			break;
-		case "maxImag":
-			params = params
-					.copyChangeMaxImag(Double.parseDouble(optionContent));
-			break;
-		case "maxPasses":
-			params = params
-					.copyChangeMaxPasses(Integer.parseInt(optionContent));
-			break;
-		case "superSamplingFactor":
-			params = params.copyChangeSuperSamplingFactor(Byte
-					.parseByte(optionContent));
-			break;
-		default:
-			throw new IllegalCommandLineException(
-					"Unknown option \""
-							+ optionName
-							+ "\" for fractal fractal "
-							+ getClass().getSimpleName()
-							+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
+			case "width":
+				canvas.setImageSize(new Dimension(Integer.parseInt(optionContent), canvas.getImageSize().height));
+				return;
+			case "height":
+				canvas.setImageSize(new Dimension(canvas.getImageSize().width, Integer.parseInt(optionContent)));
+				return;
+			case "minReal":
+				params = params.copyChangeMinReal(Double.parseDouble(optionContent));
+				break;
+			case "maxReal":
+				params = params.copyChangeMaxReal(Double.parseDouble(optionContent));
+				break;
+			case "minImag":
+				params = params.copyChangeMinImag(Double.parseDouble(optionContent));
+				break;
+			case "maxImag":
+				params = params.copyChangeMaxImag(Double.parseDouble(optionContent));
+				break;
+			case "maxPasses":
+				params = params.copyChangeMaxPasses(Integer.parseInt(optionContent));
+				break;
+			case "superSamplingFactor":
+				params = params.copyChangeSuperSamplingFactor(Byte.parseByte(optionContent));
+				break;
+			default:
+				throw new IllegalCommandLineException(
+						"Unknown option \""
+								+ optionName
+								+ "\" for fractal fractal "
+								+ getClass().getSimpleName()
+								+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
 		}
 		canvas.setParams(params, false);
 	}

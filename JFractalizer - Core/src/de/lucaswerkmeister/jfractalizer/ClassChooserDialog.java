@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer;
 
@@ -27,16 +29,14 @@ import java.util.ServiceLoader;
 
 import de.lucaswerkmeister.jfractalizer.SelectableService;
 
-public class ClassChooserDialog<S extends SelectableService> extends Dialog
-		implements ActionListener, WindowListener {
-	private static final long serialVersionUID = -4629788833444189716L;
-	private final ServiceLoader<S> serviceLoader;
-	private final Map<String, S> services;
-	private final List implList;
-	private S selectedService;
+public class ClassChooserDialog<S extends SelectableService> extends Dialog implements ActionListener, WindowListener {
+	private static final long		serialVersionUID	= -4629788833444189716L;
+	private final ServiceLoader<S>	serviceLoader;
+	private final Map<String, S>	services;
+	private final List				implList;
+	private S						selectedService;
 
-	public ClassChooserDialog(final Frame owner, final String title,
-			final Class<S> baseInterface) {
+	public ClassChooserDialog(final Frame owner, final String title, final Class<S> baseInterface) {
 		super(owner, title, true);
 		addWindowListener(this);
 		final Label topText = new Label("Searching for implementations...");
@@ -53,15 +53,13 @@ public class ClassChooserDialog<S extends SelectableService> extends Dialog
 		for (final S service : serviceLoader) {
 			final String name = service.getName();
 			if (services.containsKey(name))
-				System.out
-						.println("WARNING: Several services with same name found!");
+				System.out.println("WARNING: Several services with same name found!");
 			services.put(name, service);
 			implList.add(name);
 			hasService = true;
 		}
 		if (!hasService) {
-			System.out.println("No implementations for "
-					+ baseInterface.getCanonicalName() + " found, exiting.");
+			System.out.println("No implementations for " + baseInterface.getCanonicalName() + " found, exiting.");
 			System.exit(1);
 		}
 		topText.setText("Choose an implementation.");

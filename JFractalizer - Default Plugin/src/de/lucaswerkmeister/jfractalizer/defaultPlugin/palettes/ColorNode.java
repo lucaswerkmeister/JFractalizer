@@ -41,8 +41,7 @@ public class ColorNode extends Panel implements ActionListener {
 	 * @param length
 	 *            The length of the new ColorNode.
 	 */
-	public ColorNode(final Color startColor, final Color endColor,
-			final int length) {
+	public ColorNode(final Color startColor, final Color endColor, final int length) {
 		super(new GridLayout(3, 0));
 		this.startColor = startColor;
 		this.endColor = endColor;
@@ -51,8 +50,7 @@ public class ColorNode extends Panel implements ActionListener {
 		endC = new SelectableColor(endColor);
 		endC.addActionListener(this);
 		lengthC = new JSpinner(new SpinnerNumberModel(length, 1, null, 1));
-		lengthC.setPreferredSize(new Dimension(40,
-				lengthC.getPreferredSize().height));
+		lengthC.setPreferredSize(new Dimension(40, lengthC.getPreferredSize().height));
 		add(startC);
 		add(endC);
 		add(lengthC);
@@ -77,16 +75,14 @@ public class ColorNode extends Panel implements ActionListener {
 
 	@Override
 	public String toString() {
-		return startColor.toString() + "..." + length + "..."
-				+ endColor.toString();
+		return startColor.toString() + "..." + length + "..." + endColor.toString();
 	}
 
 	@Override
 	public boolean equals(final Object other) {
 		if (other instanceof ColorNode) {
 			ColorNode otherNode = (ColorNode) other;
-			return length == otherNode.length && startColor == otherNode.startColor
-					&& endColor == otherNode.endColor;
+			return length == otherNode.length && startColor == otherNode.startColor && endColor == otherNode.endColor;
 		}
 		return false;
 	}

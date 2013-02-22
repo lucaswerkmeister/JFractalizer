@@ -32,13 +32,13 @@ import java.awt.event.WindowEvent;
 import javax.swing.JColorChooser;
 
 public class MainFrame extends Frame {
-	private static final long serialVersionUID = 8587484082717377870L;
-	private static MainFrame instance;
-	MenuBar menuBar;
-	Menu fileMenu, fractalMenu, colorPaletteMenu;
-	JColorChooser colorChooser;
-	int zoomMenuX, zoomMenuY;
-	private final Label statusBar;
+	private static final long	serialVersionUID	= 8587484082717377870L;
+	private static MainFrame	instance;
+	MenuBar						menuBar;
+	Menu						fileMenu, fractalMenu, colorPaletteMenu;
+	JColorChooser				colorChooser;
+	int							zoomMenuX, zoomMenuY;
+	private final Label			statusBar;
 
 	MainFrame(boolean askForFractalClass, boolean askForPaletteClass) {
 		super("JFractalizer");
@@ -49,20 +49,20 @@ public class MainFrame extends Frame {
 		setLayout(new BorderLayout());
 		if (askForFractalClass) {
 			// Let the user choose the fractal
-			final ClassChooserDialog<Fractal> fractalChooserDialog = new ClassChooserDialog<>(
-					this, "Choose Fractal", Fractal.class);
+			final ClassChooserDialog<Fractal> fractalChooserDialog = new ClassChooserDialog<>(this, "Choose Fractal",
+					Fractal.class);
 			fractalChooserDialog.setVisible(true);
 			try {
-				Core.setCurrentFractal(fractalChooserDialog
-						.getSelectedService());
-			} catch (final NullPointerException e) {
+				Core.setCurrentFractal(fractalChooserDialog.getSelectedService());
+			}
+			catch (final NullPointerException e) {
 				// Do nothing, currentColorPalette wasn't set
 			}
 		}
 		if (askForPaletteClass) {
 			// Let the user choose the color palette
-			final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(
-					this, "Choose Color Palette", ColorPalette.class);
+			final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this,
+					"Choose Color Palette", ColorPalette.class);
 			colorPaletteDialog.setVisible(true);
 			Core.setCurrentColorPalette(colorPaletteDialog.getSelectedService());
 		}
@@ -86,16 +86,13 @@ public class MainFrame extends Frame {
 		menuBar = new MenuBar();
 
 		fileMenu = new Menu("File");
-		final MenuItem saveSetup = new MenuItem("Save Setup", new MenuShortcut(
-				KeyEvent.VK_S));
+		final MenuItem saveSetup = new MenuItem("Save Setup", new MenuShortcut(KeyEvent.VK_S));
 		saveSetup.addActionListener(listener);
 		fileMenu.add(saveSetup);
-		final MenuItem loadSetup = new MenuItem("Load Setup", new MenuShortcut(
-				KeyEvent.VK_O));
+		final MenuItem loadSetup = new MenuItem("Load Setup", new MenuShortcut(KeyEvent.VK_O));
 		loadSetup.addActionListener(listener);
 		fileMenu.add(loadSetup);
-		final MenuItem saveImage = new MenuItem("Save Image", new MenuShortcut(
-				KeyEvent.VK_P));
+		final MenuItem saveImage = new MenuItem("Save Image", new MenuShortcut(KeyEvent.VK_P));
 		saveImage.addActionListener(listener);
 		fileMenu.add(saveImage);
 		fileMenu.addSeparator();
@@ -105,25 +102,22 @@ public class MainFrame extends Frame {
 		menuBar.add(fileMenu);
 
 		fractalMenu = new Menu("Fractal");
-		final MenuItem chooseFractal = new MenuItem("Choose Fractal...",
-				new MenuShortcut(KeyEvent.VK_C));
+		final MenuItem chooseFractal = new MenuItem("Choose Fractal...", new MenuShortcut(KeyEvent.VK_C));
 		chooseFractal.addActionListener(listener);
 		fractalMenu.add(chooseFractal);
 		fractalMenu.addSeparator();
 		menuBar.add(fractalMenu);
 
 		colorPaletteMenu = new Menu("Color Palette");
-		final MenuItem chooseColorPalette = new MenuItem(
-				"Choose Color Palette...",
-				new MenuShortcut(KeyEvent.VK_C, true));
+		final MenuItem chooseColorPalette = new MenuItem("Choose Color Palette...", new MenuShortcut(KeyEvent.VK_C,
+				true));
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
 		colorPaletteMenu.addSeparator();
 		menuBar.add(colorPaletteMenu);
 
 		Core.getCurrentFractal().initMenu(fractalMenu);
-		Core.getCurrentColorPalette().initMenu(colorPaletteMenu,
-				Core.getCurrentFractal(), this);
+		Core.getCurrentColorPalette().initMenu(colorPaletteMenu, Core.getCurrentFractal(), this);
 
 		setMenuBar(menuBar);
 	}
@@ -136,11 +130,9 @@ public class MainFrame extends Frame {
 			final short[] zooms = new short[] { 1, 2, 5, 10, 25, 50, 100 };
 			final Menu zoomIn = new Menu(ZoomMenuListener.ZOOM_IN);
 			final Menu zoomOut = new Menu(ZoomMenuListener.ZOOM_OUT);
-			final Menu zoomInCurrentPos = new Menu(
-					ZoomMenuListener.USE_COORDINATES);
+			final Menu zoomInCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
 			final Menu zoomInCenter = new Menu(ZoomMenuListener.USE_CENTER);
-			final Menu zoomOutCurrentPos = new Menu(
-					ZoomMenuListener.USE_COORDINATES);
+			final Menu zoomOutCurrentPos = new Menu(ZoomMenuListener.USE_COORDINATES);
 			final Menu zoomOutCenter = new Menu(ZoomMenuListener.USE_CENTER);
 			MenuItem m;
 			final ZoomMenuListener listener = new ZoomMenuListener();
@@ -169,7 +161,8 @@ public class MainFrame extends Frame {
 			center.addActionListener(listener);
 			menu.add(center);
 			menu.addSeparator();
-		} else
+		}
+		else
 			center = null;
 		final Canvas c = Core.getCurrentFractal().getCanvas();
 		c.add(menu);

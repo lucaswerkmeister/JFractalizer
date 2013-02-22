@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer;
 
@@ -30,9 +32,8 @@ public interface Fractal extends SelectableService {
 	/**
 	 * Returns a {@link Canvas} that displays the fractal.
 	 * <p>
-	 * The JFractalizer will add a context menu; to amend to that, use
-	 * {@link #initContextMenu(PopupMenu)}. Any other user interaction (select
-	 * to zoom etc.) should be managed by the plugin.
+	 * The JFractalizer will add a context menu; to amend to that, use {@link #initContextMenu(PopupMenu)}. Any other
+	 * user interaction (select to zoom etc.) should be managed by the plugin.
 	 * 
 	 * @return A Canvas displaying the fractal.
 	 */
@@ -88,20 +89,17 @@ public interface Fractal extends SelectableService {
 	public void initContextMenu(PopupMenu contextMenu);
 
 	/**
-	 * By a call of this method, the JFractalizer informs the fractal fractal
-	 * that it was switched to on request from another Fractal, and
-	 * passes any received arguments on to it. The Fractal may ignore
-	 * this completely, if wanted.
+	 * By a call of this method, the JFractalizer informs the fractal fractal that it was switched to on request from
+	 * another Fractal, and passes any received arguments on to it. The Fractal may ignore this completely, if wanted.
 	 * 
 	 * @param params
-	 *            The parameters that the other Fractal wished to pass
-	 *            on to this Fractal.
+	 *            The parameters that the other Fractal wished to pass on to this Fractal.
 	 */
 	public void onFractalChange(Object... params);
 
 	/**
-	 * If the JFractalizer was started with command line arguments, some of them
-	 * are passed to the fractal fractal (one by one) via this method.
+	 * If the JFractalizer was started with command line arguments, some of them are passed to the fractal fractal (one
+	 * by one) via this method.
 	 * 
 	 * @param args
 	 *            A string that contains a single option.
@@ -110,8 +108,7 @@ public interface Fractal extends SelectableService {
 	 * @param optionContent
 	 *            The content of the option. Given purely for convenience.
 	 */
-	public void handleCommandLineOption(String option, String optionName,
-			String optionContent);
+	public void handleCommandLineOption(String option, String optionName, String optionContent);
 
 	/**
 	 * Blocks until calculation is either stopped or finished.
@@ -119,8 +116,7 @@ public interface Fractal extends SelectableService {
 	public void awaitCalculation();
 
 	/**
-	 * Adds an {@link ActionListener} that will be notified when the calculation
-	 * is finished.
+	 * Adds an {@link ActionListener} that will be notified when the calculation is finished.
 	 * 
 	 * @param listener
 	 *            The action listener.

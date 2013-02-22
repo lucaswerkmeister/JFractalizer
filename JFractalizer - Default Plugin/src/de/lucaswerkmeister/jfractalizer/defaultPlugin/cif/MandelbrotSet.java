@@ -6,8 +6,7 @@ import java.awt.PopupMenu;
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 
 public class MandelbrotSet extends CifFractal {
-	private final MandelbrotMenuListener listener = new MandelbrotMenuListener(
-			this);
+	private final MandelbrotMenuListener	listener	= new MandelbrotMenuListener(this);
 
 	public MandelbrotSet() {
 		canvas = new CifCanvas<>(this, MandelbrotImageMaker_NoHoles.class);

@@ -134,8 +134,7 @@ public class CifMenuListener implements ActionListener {
 				additionalParamsDialog.add(ssf);
 				additionalParamsDialog.add(new Label("Calculation depth", Label.RIGHT));
 				final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(canvas.getMaxPasses(), 1,
-						Integer.MAX_VALUE,
-						1));
+						Integer.MAX_VALUE, 1));
 				additionalParamsDialog.add(maxPasses);
 				ok = new Button("OK");
 				ok.addActionListener(this);

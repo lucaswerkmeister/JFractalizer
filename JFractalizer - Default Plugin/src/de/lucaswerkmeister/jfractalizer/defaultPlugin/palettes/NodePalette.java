@@ -38,10 +38,10 @@ import de.lucaswerkmeister.jfractalizer.Fractal;
 import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 
 public class NodePalette implements ColorPalette {
-	final List<ColorNode> nodes;
-	final List<Color> fastColorStorage;
-	Color coreColor;
-	boolean fromCommandLine = false;
+	final List<ColorNode>	nodes;
+	final List<Color>		fastColorStorage;
+	Color					coreColor;
+	boolean					fromCommandLine	= false;
 
 	public NodePalette(final ColorNode[] nodes, final Color coreColor) {
 		this(Arrays.asList(nodes), coreColor);
@@ -50,8 +50,7 @@ public class NodePalette implements ColorPalette {
 	public NodePalette(final List<ColorNode> nodes, final Color coreColor) {
 		this.nodes = nodes;
 		this.coreColor = coreColor;
-		fastColorStorage = new ArrayList<>(nodes.size()
-				* nodes.get(0).getLength());
+		fastColorStorage = new ArrayList<>(nodes.size() * nodes.get(0).getLength());
 		makeFastStorage();
 	}
 
@@ -69,7 +68,8 @@ public class NodePalette implements ColorPalette {
 			return coreColor;
 		try {
 			return fastColorStorage.get(passes % fastColorStorage.size());
-		} catch (final Exception e) {
+		}
+		catch (final Exception e) {
 			makeFastStorage();
 			return fastColorStorage.get(passes % fastColorStorage.size());
 		}
@@ -81,24 +81,18 @@ public class NodePalette implements ColorPalette {
 			for (short s = 0; s < node.getLength(); s++) {
 				final double endFactor = (double) s / (node.getLength() - 1);
 				final double startFactor = 1 - endFactor;
-				fastColorStorage.add(new Color((int) Math.round(startFactor
-						* node.getStartColor().getRed() + endFactor
-						* node.getEndColor().getRed()), (int) Math
-						.round(startFactor * node.getStartColor().getGreen()
-								+ endFactor * node.getEndColor().getGreen()),
-						(int) Math.round(startFactor
-								* node.getStartColor().getBlue() + endFactor
-								* node.getEndColor().getBlue())));
+				fastColorStorage.add(new Color((int) Math.round(startFactor * node.getStartColor().getRed() + endFactor
+						* node.getEndColor().getRed()), (int) Math.round(startFactor * node.getStartColor().getGreen()
+						+ endFactor * node.getEndColor().getGreen()), (int) Math.round(startFactor
+						* node.getStartColor().getBlue() + endFactor * node.getEndColor().getBlue())));
 			}
 	}
 
 	@Override
-	public void saveFractXml(final TransformerHandler handler)
-			throws SAXException {
+	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
 		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass()
-				.getCanonicalName());
+		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
 		handler.startElement("", "", "palette", atts);
 
 		handler.startElement("", "", "nodes", noAtts);
@@ -114,8 +108,7 @@ public class NodePalette implements ColorPalette {
 			handler.endElement("", "", "endColor");
 
 			handler.startElement("", "", "length", noAtts);
-			final char[] length = Integer.toString(node.getLength())
-					.toCharArray();
+			final char[] length = Integer.toString(node.getLength()).toCharArray();
 			handler.characters(length, 0, length.length);
 			handler.endElement("", "", "length");
 
@@ -141,12 +134,9 @@ public class NodePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(final Menu colorPaletteMenu, final Fractal fractal,
-			final Frame owner) {
-		final MenuItem edit = new MenuItem("Edit Color Palette...",
-				new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new NodePaletteMenuListener(fractal, owner,
-				this));
+	public void initMenu(final Menu colorPaletteMenu, final Fractal fractal, final Frame owner) {
+		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
+		edit.addActionListener(new NodePaletteMenuListener(fractal, owner, this));
 		colorPaletteMenu.add(edit);
 	}
 
@@ -160,11 +150,9 @@ public class NodePalette implements ColorPalette {
 	}
 
 	@Override
-	public void handleCommandLineOption(String option, String optionName,
-			String optionContent) {
+	public void handleCommandLineOption(String option, String optionName, String optionContent) {
 		if (option.contains("-") ^ option.contains(":"))
-			throw new IllegalCommandLineException(
-					"Unknown NodePalette argument \"" + option + "\"!");
+			throw new IllegalCommandLineException("Unknown NodePalette argument \"" + option + "\"!");
 		if (option.contains("-")) {
 			if (!fromCommandLine) {
 				nodes.clear();
@@ -172,21 +160,20 @@ public class NodePalette implements ColorPalette {
 			}
 			String[] parts = option.split(":");
 			String[] colors = parts[0].split("-");
-			nodes.add(new ColorNode(colors[0], colors[1], Integer
-					.parseInt(parts[1])));
-		} else {
+			nodes.add(new ColorNode(colors[0], colors[1], Integer.parseInt(parts[1])));
+		}
+		else {
 			coreColor = Color.decode(option);
 		}
 		makeFastStorage();
 	}
 
 	class NodePaletteMenuListener implements ActionListener {
-		private final Fractal fractal;
-		private final Frame owner;
-		private NodePalette start;
+		private final Fractal	fractal;
+		private final Frame		owner;
+		private NodePalette		start;
 
-		public NodePaletteMenuListener(final Fractal fractal,
-				final Frame owner, final NodePalette start) {
+		public NodePaletteMenuListener(final Fractal fractal, final Frame owner, final NodePalette start) {
 			this.fractal = fractal;
 			this.owner = owner;
 			this.start = start;
@@ -194,8 +181,7 @@ public class NodePalette implements ColorPalette {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final NodePaletteEditDialog d = new NodePaletteEditDialog(owner,
-					start);
+			final NodePaletteEditDialog d = new NodePaletteEditDialog(owner, start);
 			d.setVisible(true);
 			final NodePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette)) {
