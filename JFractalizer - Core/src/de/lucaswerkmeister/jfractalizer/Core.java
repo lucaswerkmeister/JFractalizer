@@ -46,7 +46,7 @@ import org.xml.sax.SAXException;
  * @version 1.0
  */
 public final class Core {
-	private static Fractal currentProvider;
+	private static Fractal currentFractal;
 	private static ColorPalette currentColorPalette;
 
 	private static boolean showGui = true;
@@ -71,7 +71,7 @@ public final class Core {
 	public static BufferedImage getImage() {
 		if (MainFrame.getInstance() == null)
 			return null;
-		return getCurrentProvider().getImage();
+		return getCurrentFractal().getImage();
 	}
 
 	/**
@@ -89,8 +89,8 @@ public final class Core {
 	 * Stops the currently running calculation.
 	 */
 	public static void stopCalculation() {
-		if (currentProvider != null)
-			currentProvider.stopCalculation();
+		if (currentFractal != null)
+			currentFractal.stopCalculation();
 	}
 
 	/**
@@ -98,7 +98,7 @@ public final class Core {
 	 */
 	public static void startCalculation() {
 		if (running)
-			getCurrentProvider().startCalculation();
+			getCurrentFractal().startCalculation();
 	}
 
 	/**
@@ -129,37 +129,37 @@ public final class Core {
 	}
 
 	/**
-	 * Changes the current provider to the specified type.
+	 * Changes the current fractal to the specified type.
 	 * 
-	 * @param fractalProviderClass
-	 *            The class of the new provider type.
+	 * @param fractalClass
+	 *            The class of the new fractal type.
 	 * @param params
-	 *            Any parameters that will be passed to the new provider.
+	 *            Any parameters that will be passed to the new fractal.
 	 * @throws ReflectiveOperationException
-	 *             If anything goes wrong instantiating the new provider.
+	 *             If anything goes wrong instantiating the new fractal.
 	 */
-	public static void changeProvider(
-			Class<? extends Fractal> fractalProviderClass, Object... params)
-			throws ReflectiveOperationException, IllegalArgumentException {
+	public static void changeFractal(Class<? extends Fractal> fractalClass,
+			Object... params) throws ReflectiveOperationException,
+			IllegalArgumentException {
 		stopCalculation();
-		setCurrentProvider(fractalProviderClass.newInstance());
-		getCurrentProvider().onProviderChange(params);
+		setCurrentFractal(fractalClass.newInstance());
+		getCurrentFractal().onFractalChange(params);
 		startCalculation();
 	}
 
 	/**
-	 * @return the currentProvider
+	 * @return The current fractal.
 	 */
-	static Fractal getCurrentProvider() {
-		return currentProvider;
+	static Fractal getCurrentFractal() {
+		return currentFractal;
 	}
 
 	/**
-	 * @param newProvider
-	 *            the currentProvider to set
+	 * @param newFractal
+	 *            The new fractal.
 	 */
-	static void setCurrentProvider(final Fractal newProvider) {
-		currentProvider = newProvider;
+	static void setCurrentFractal(final Fractal newFractal) {
+		currentFractal = newFractal;
 		if (showGui && gui != null)
 			gui.reset();
 	}
@@ -176,7 +176,7 @@ public final class Core {
 		if (showGui && gui != null)
 			gui.initMenu();
 		stopCalculation();
-		currentProvider.setColorPalette(newPalette);
+		currentFractal.setColorPalette(newPalette);
 		startCalculation();
 	}
 
@@ -188,7 +188,7 @@ public final class Core {
 				public void actionPerformed(ActionEvent event) {
 					for (Output o : outputs)
 						try {
-							o.writeImage(getCurrentProvider().getImage(), 0);
+							o.writeImage(getCurrentFractal().getImage(), 0);
 						} catch (IOException e) {
 							fatalError("Couldn't write image, aborting!", e);
 						}
@@ -202,7 +202,7 @@ public final class Core {
 				public void actionPerformed(ActionEvent event) {
 					for (Output o : outputs)
 						try {
-							o.writeImage(getCurrentProvider().getImage(),
+							o.writeImage(getCurrentFractal().getImage(),
 									getFrameCount());
 						} catch (IOException e) {
 							fatalError("Couldn't write image no. "
@@ -272,10 +272,9 @@ public final class Core {
 				}
 				if (!Fractal.class.isAssignableFrom(fractalClass))
 					throw new IllegalCommandLineException("\"" + optionContent
-							+ "\" is not a FractalProvider class!");
+							+ "\" is not a Fractal class!");
 				try {
-					Core.setCurrentProvider((Fractal) fractalClass
-							.newInstance());
+					Core.setCurrentFractal((Fractal) fractalClass.newInstance());
 					return;
 				} catch (InstantiationException e) {
 					throw new IllegalCommandLineException(
@@ -313,7 +312,7 @@ public final class Core {
 			}
 			return;
 		case "fractArgs":
-			Core.getCurrentProvider().handleCommandLineOption(option,
+			Core.getCurrentFractal().handleCommandLineOption(option,
 					optionName, optionContent);
 			return;
 		case "paletteArgs":
@@ -390,7 +389,7 @@ public final class Core {
 				.newSAXParser();
 		final FractXmlLoader loader = new FractalClassReader();
 		saxParser.parse(stream, loader);
-		Core.setCurrentProvider(loader.getProvider());
+		Core.setCurrentFractal(loader.getFractal());
 		final FractXmlPaletteLoader colorPaletteLoader = new PaletteClassReader();
 		saxParser.parse(stream, colorPaletteLoader);
 		Core.setCurrentColorPalette(colorPaletteLoader.getPalette());
@@ -406,19 +405,18 @@ public final class Core {
 				startRealm(realm);
 			} else
 				handleOption(realm, arg);
-		if (!showGui
-				&& (currentProvider == null || currentColorPalette == null))
+		if (!showGui && (currentFractal == null || currentColorPalette == null))
 			throw new IllegalCommandLineException(
-					"If running without GUI, fractal provider and color palette must be provided!");
+					"If running without GUI, fractal fractal and color palette must be provided!");
 		// Create GUI
 		if (showGui)
-			gui = new MainFrame(currentProvider == null,
+			gui = new MainFrame(currentFractal == null,
 					currentColorPalette == null);
 		// Start
 		running = true;
 		startCalculation();
 		for (ActionListener l : calculationFinishedListeners)
-			currentProvider.addCalculationFinishedListener(l);
+			currentFractal.addCalculationFinishedListener(l);
 	}
 }
 

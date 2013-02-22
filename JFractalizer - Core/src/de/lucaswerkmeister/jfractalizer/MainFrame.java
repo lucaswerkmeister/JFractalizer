@@ -61,7 +61,7 @@ public class MainFrame extends Frame {
 					"Choose Fractal", Fractal.class);
 			fractalChooserDialog.setVisible(true);
 			try {
-				Core.setCurrentProvider(fractalChooserDialog.getSelectedService());
+				Core.setCurrentFractal(fractalChooserDialog.getSelectedService());
 			}
 			catch (final NullPointerException e) {
 				// Do nothing, currentColorPalette wasn't set
@@ -80,7 +80,7 @@ public class MainFrame extends Frame {
 				System.exit(0);
 			}
 		});
-		add(Core.getCurrentProvider().getCanvas(), BorderLayout.CENTER);
+		add(Core.getCurrentFractal().getCanvas(), BorderLayout.CENTER);
 		add(statusBar, BorderLayout.SOUTH);
 		initMenu();
 		initContextMenu();
@@ -124,8 +124,8 @@ public class MainFrame extends Frame {
 		colorPaletteMenu.addSeparator();
 		menuBar.add(colorPaletteMenu);
 
-		Core.getCurrentProvider().initMenu(fractalMenu);
-		Core.getCurrentColorPalette().initMenu(colorPaletteMenu, Core.getCurrentProvider(), this);
+		Core.getCurrentFractal().initMenu(fractalMenu);
+		Core.getCurrentColorPalette().initMenu(colorPaletteMenu, Core.getCurrentFractal(), this);
 
 		setMenuBar(menuBar);
 	}
@@ -169,7 +169,7 @@ public class MainFrame extends Frame {
 		center.addActionListener(listener);
 		menu.add(center);
 
-		final Canvas c = Core.getCurrentProvider().getCanvas();
+		final Canvas c = Core.getCurrentFractal().getCanvas();
 		c.add(menu);
 		c.addMouseListener(new MouseAdapter() {
 			@Override
@@ -192,7 +192,7 @@ public class MainFrame extends Frame {
 		});
 
 		menu.addSeparator();
-		Core.getCurrentProvider().initContextMenu(menu);
+		Core.getCurrentFractal().initContextMenu(menu);
 		if (!menu.getItem(menu.getItemCount() - 2).equals(center)) // if the last item before the separator is the
 																	// "center" MenuItem, then the Fractal
 																	// didn't add any MenuItems, and we don't need the
@@ -214,7 +214,7 @@ public class MainFrame extends Frame {
 
 	public void reset() {
 		removeAll();
-		add(Core.getCurrentProvider().getCanvas(), BorderLayout.CENTER);
+		add(Core.getCurrentFractal().getCanvas(), BorderLayout.CENTER);
 		add(statusBar, BorderLayout.SOUTH);
 		initMenu();
 		initContextMenu();

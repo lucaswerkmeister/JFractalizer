@@ -55,7 +55,7 @@ public abstract class CifProvider implements ZoomableFractal {
 		final AttributesImpl atts = new AttributesImpl();
 		atts.addAttribute("", "", "canonicalName", "CDATA", getClass()
 				.getCanonicalName());
-		handler.startElement("", "", "provider", atts);
+		handler.startElement("", "", "fractal", atts);
 
 		handler.startElement("", "", "width", noAtts);
 		final char[] width = Integer.toString(canvas.getWidth()).toCharArray();
@@ -106,7 +106,7 @@ public abstract class CifProvider implements ZoomableFractal {
 
 		canvas.getPalette().saveFractXml(handler);
 
-		handler.endElement("", "", "provider");
+		handler.endElement("", "", "fractal");
 	}
 
 	public void setCanvas(final CifCanvas<?> newCanvas) {
@@ -245,7 +245,7 @@ public abstract class CifProvider implements ZoomableFractal {
 			throw new IllegalCommandLineException(
 					"Unknown option \""
 							+ optionName
-							+ "\" for fractal provider "
+							+ "\" for fractal fractal "
 							+ getClass().getSimpleName()
 							+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
 		}

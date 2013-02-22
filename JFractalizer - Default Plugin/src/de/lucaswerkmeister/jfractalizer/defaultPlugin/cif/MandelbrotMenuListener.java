@@ -29,13 +29,21 @@ public class MandelbrotMenuListener implements ActionListener {
 		switch (e.getActionCommand()) {
 		case "Switch to according Julia Set": {
 			try {
-				Core.changeProvider(JuliaProvider.class,
-						provider.canvas.getMinReal() + (provider.canvas.getMaxReal() - provider.canvas.getMinReal())
-								* provider.canvas.getMousePosition().x / provider.canvas.getWidth(),
-						provider.canvas.getMinImag() + (provider.canvas.getMaxImag() - provider.canvas.getMinImag())
-								* (provider.canvas.getHeight() - provider.canvas.getMousePosition().y)
+				Core.changeFractal(
+						JuliaProvider.class,
+						provider.canvas.getMinReal()
+								+ (provider.canvas.getMaxReal() - provider.canvas
+										.getMinReal())
+								* provider.canvas.getMousePosition().x
+								/ provider.canvas.getWidth(),
+						provider.canvas.getMinImag()
+								+ (provider.canvas.getMaxImag() - provider.canvas
+										.getMinImag())
+								* (provider.canvas.getHeight() - provider.canvas
+										.getMousePosition().y)
 								/ provider.canvas.getHeight());
-			} catch (HeadlessException | IllegalArgumentException | ReflectiveOperationException e1) {
+			} catch (HeadlessException | IllegalArgumentException
+					| ReflectiveOperationException e1) {
 				e1.printStackTrace();
 			}
 		}

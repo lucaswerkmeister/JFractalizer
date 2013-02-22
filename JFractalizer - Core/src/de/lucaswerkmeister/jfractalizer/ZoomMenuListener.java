@@ -27,7 +27,7 @@ public class ZoomMenuListener implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		final String actionCommand = e.getActionCommand();
 		final MainFrame i = MainFrame.getInstance();
-		final Fractal fract = Core.getCurrentProvider();
+		final Fractal fract = Core.getCurrentFractal();
 		if (!(fract instanceof ZoomableFractal))
 			throw new UnsupportedOperationException(
 					"Can't zoom on current fractal!");

@@ -57,8 +57,8 @@ public class MandelbrotImageMaker_CalcAll extends CifImageMaker {
 	 *            image will be written.
 	 * @param superSamplingFactor
 	 *            The AntiAliasing SuperSampling factor.
-	 * @param provider
-	 *            The fractal provider.
+	 * @param fractal
+	 *            The fractal fractal.
 	 */
 	public MandelbrotImageMaker_CalcAll(final int width, final int height,
 			final double minReal, final double maxReal, final double minImag,

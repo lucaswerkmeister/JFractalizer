@@ -127,7 +127,7 @@ public class MenuListener implements ActionListener {
 					serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 					hd.setResult(streamResult);
 					hd.startDocument();
-					Core.getCurrentProvider().saveFractXml(hd);
+					Core.getCurrentFractal().saveFractXml(hd);
 					hd.endDocument();
 				} catch (TransformerConfigurationException | SAXException
 						| IOException e) {
@@ -155,7 +155,7 @@ public class MenuListener implements ActionListener {
 					MainFrame.getInstance(), "Choose Fractal",
 					Fractal.class);
 			fractalChooserDialog.setVisible(true);
-			Core.setCurrentProvider(fractalChooserDialog.getSelectedService());
+			Core.setCurrentFractal(fractalChooserDialog.getSelectedService());
 			break;
 		case "Choose Color Palette...":
 			final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(

@@ -88,7 +88,7 @@ public interface Fractal extends SelectableService {
 	public void initContextMenu(PopupMenu contextMenu);
 
 	/**
-	 * By a call of this method, the JFractalizer informs the fractal provider
+	 * By a call of this method, the JFractalizer informs the fractal fractal
 	 * that it was switched to on request from another Fractal, and
 	 * passes any received arguments on to it. The Fractal may ignore
 	 * this completely, if wanted.
@@ -97,11 +97,11 @@ public interface Fractal extends SelectableService {
 	 *            The parameters that the other Fractal wished to pass
 	 *            on to this Fractal.
 	 */
-	public void onProviderChange(Object... params);
+	public void onFractalChange(Object... params);
 
 	/**
 	 * If the JFractalizer was started with command line arguments, some of them
-	 * are passed to the fractal provider (one by one) via this method.
+	 * are passed to the fractal fractal (one by one) via this method.
 	 * 
 	 * @param args
 	 *            A string that contains a single option.

@@ -65,8 +65,8 @@ public abstract class CifImageMaker extends Thread {
 	 *            image will be written.
 	 * @param superSamplingFactor
 	 *            The AntiAliasing SuperSampling factor.
-	 * @param provider
-	 *            The fractal provider for this image maker.
+	 * @param fractal
+	 *            The fractal fractal for this image maker.
 	 */
 	public CifImageMaker(final int width, final int height,
 			final double minReal, final double maxReal, final double minImag,

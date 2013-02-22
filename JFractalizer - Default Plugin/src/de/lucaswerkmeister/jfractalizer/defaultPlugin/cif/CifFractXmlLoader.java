@@ -21,7 +21,7 @@ import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public class CifFractXmlLoader extends FractXmlLoader {
-	CifProvider provider;
+	CifProvider fractal;
 
 	String currentQName = null;
 	Attributes currentAttributes = null;
@@ -30,8 +30,8 @@ public class CifFractXmlLoader extends FractXmlLoader {
 
 	public CifFractXmlLoader(Class<? extends CifProvider> providerClass) {
 		try {
-			provider = providerClass.newInstance();
-			newCanvas = (CifCanvas<?>) provider.getCanvas();
+			fractal = providerClass.newInstance();
+			newCanvas = (CifCanvas<?>) fractal.getCanvas();
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -59,12 +59,12 @@ public class CifFractXmlLoader extends FractXmlLoader {
 		if (asString.equals("\n"))
 			return;
 		if (currentQName.equals("width")) {
-			Dimension d = new Dimension(Integer.parseInt(asString), provider
+			Dimension d = new Dimension(Integer.parseInt(asString), fractal
 					.getCanvas().getHeight());
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
 		} else if (currentQName.equals("height")) {
-			Dimension d = new Dimension(provider.getCanvas().getWidth(),
+			Dimension d = new Dimension(fractal.getCanvas().getWidth(),
 					Integer.parseInt(asString));
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
@@ -84,11 +84,11 @@ public class CifFractXmlLoader extends FractXmlLoader {
 
 	@Override
 	public void endDocument() throws SAXException {
-		provider.setCanvas(newCanvas);
+		fractal.setCanvas(newCanvas);
 	}
 
 	@Override
-	public Fractal getProvider() {
-		return provider;
+	public Fractal getFractal() {
+		return fractal;
 	}
 }

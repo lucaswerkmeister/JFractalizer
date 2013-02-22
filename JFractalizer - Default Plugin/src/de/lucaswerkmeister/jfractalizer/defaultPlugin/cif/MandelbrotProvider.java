@@ -6,7 +6,8 @@ import java.awt.PopupMenu;
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 
 public class MandelbrotProvider extends CifProvider {
-	private final MandelbrotMenuListener listener = new MandelbrotMenuListener(this);
+	private final MandelbrotMenuListener listener = new MandelbrotMenuListener(
+			this);
 
 	public MandelbrotProvider() {
 		canvas = new CifCanvas<>(this, MandelbrotImageMaker_NoHoles.class);
@@ -33,7 +34,7 @@ public class MandelbrotProvider extends CifProvider {
 	}
 
 	@Override
-	public void onProviderChange(Object... params) {
+	public void onFractalChange(Object... params) {
 		// Don't do anything
 	}
 }

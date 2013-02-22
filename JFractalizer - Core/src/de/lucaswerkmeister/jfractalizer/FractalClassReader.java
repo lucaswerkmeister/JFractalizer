@@ -23,8 +23,8 @@ public class FractalClassReader extends FractXmlLoader {
 	private FractXmlLoader innerLoader = null;
 
 	@Override
-	public Fractal getProvider() {
-		return innerLoader.getProvider();
+	public Fractal getFractal() {
+		return innerLoader.getFractal();
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class FractalClassReader extends FractXmlLoader {
 			throws SAXException {
 		if (innerLoader != null)
 			innerLoader.startElement(uri, localName, qName, attributes);
-		else if (qName.equals("provider"))
+		else if (qName.equals("fractal"))
 			try {
 				innerLoader = ((Fractal) Class.forName(
 						attributes.getValue("canonicalName")).newInstance())
@@ -95,7 +95,7 @@ public class FractalClassReader extends FractXmlLoader {
 	@Override
 	public void endElement(final String uri, final String localName,
 			final String qName) throws SAXException {
-		if (!qName.equals("provider") && innerLoader != null)
+		if (!qName.equals("fractal") && innerLoader != null)
 			innerLoader.endElement(uri, localName, qName);
 	}
 
