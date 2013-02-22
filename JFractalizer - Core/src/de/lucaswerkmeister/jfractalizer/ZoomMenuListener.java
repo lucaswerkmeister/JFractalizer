@@ -16,10 +16,6 @@ import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import de.lucaswerkmeister.jfractalizer.Core;
-import de.lucaswerkmeister.jfractalizer.Fractal;
-import de.lucaswerkmeister.jfractalizer.MainFrame;
-
 public class ZoomMenuListener implements ActionListener {
 	public static final String ZOOM_IN = "Zoom in";
 	public static final String ZOOM_OUT = "Zoom out";
@@ -31,18 +27,27 @@ public class ZoomMenuListener implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		final String actionCommand = e.getActionCommand();
 		final MainFrame i = MainFrame.getInstance();
-		final Fractal p = Core.getCurrentProvider();
+		final Fractal fract = Core.getCurrentProvider();
+		if (!(fract instanceof ZoomableFractal))
+			throw new UnsupportedOperationException(
+					"Can't zoom on current fractal!");
+		final ZoomableFractal p = (ZoomableFractal) fract;
 		final Canvas c = p.getCanvas();
 		p.stopCalculation();
 		if (actionCommand.equals(CENTER_NO_ZOOM))
 			p.zoom(i.zoomMenuX, i.zoomMenuY, 1.0);
 		else {
-			final short factorPercent = Short.parseShort(actionCommand.substring(0, actionCommand.length() - 1));
-			final boolean useCoordinates = i.zoomMenuX >= 0 && i.zoomMenuY >= 0
-					&& ((MenuItem) ((MenuItem) e.getSource()).getParent()).getLabel().equals(USE_COORDINATES);
-			final boolean zoomIn = ((MenuItem) ((MenuItem) ((MenuItem) e.getSource()).getParent()).getParent())
-					.getLabel().equals(ZOOM_IN);
-			final double factor = zoomIn ? 1 - factorPercent / 200.0 : 1 + factorPercent / 100.0;
+			final short factorPercent = Short.parseShort(actionCommand
+					.substring(0, actionCommand.length() - 1));
+			final boolean useCoordinates = i.zoomMenuX >= 0
+					&& i.zoomMenuY >= 0
+					&& ((MenuItem) ((MenuItem) e.getSource()).getParent())
+							.getLabel().equals(USE_COORDINATES);
+			final boolean zoomIn = ((MenuItem) ((MenuItem) ((MenuItem) e
+					.getSource()).getParent()).getParent()).getLabel().equals(
+					ZOOM_IN);
+			final double factor = zoomIn ? 1 - factorPercent / 200.0
+					: 1 + factorPercent / 100.0;
 			final int x = useCoordinates ? i.zoomMenuX : c.getWidth() / 2;
 			final int y = useCoordinates ? i.zoomMenuY : c.getHeight() / 2;
 			p.zoom(x, y, factor);

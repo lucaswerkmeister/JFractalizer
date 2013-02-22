@@ -30,10 +30,10 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.Core;
-import de.lucaswerkmeister.jfractalizer.Fractal;
 import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
 
-public abstract class CifProvider implements Fractal {
+public abstract class CifProvider implements ZoomableFractal {
 	CifCanvas<?> canvas;
 	CifMenuListener menuListener;
 	MenuItem undoMenuItem, redoMenuItem;

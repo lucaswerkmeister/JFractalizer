@@ -88,23 +88,6 @@ public interface Fractal extends SelectableService {
 	public void initContextMenu(PopupMenu contextMenu);
 
 	/**
-	 * Zooms the fractal to the specified center with the specified zoom factor.
-	 * 
-	 * @param x
-	 *            The x coordinate of the point that is to become the new
-	 *            center, in pixels.
-	 * @param y
-	 *            The y coordinate of the point that is to become the new
-	 *            center, in pixels.
-	 * @param factor
-	 *            The zoom factor as (width of new area) / (width of old area).
-	 *            <code>1</code> means no zoom (the image is centered on the new
-	 *            center), a greater factor means zoom out, a smaller factor
-	 *            means zoom in.
-	 */
-	public void zoom(int x, int y, double factor);
-
-	/**
 	 * By a call of this method, the JFractalizer informs the fractal provider
 	 * that it was switched to on request from another Fractal, and
 	 * passes any received arguments on to it. The Fractal may ignore
