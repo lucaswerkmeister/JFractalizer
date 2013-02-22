@@ -33,7 +33,7 @@ import de.lucaswerkmeister.jfractalizer.Core;
 import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
 
-public abstract class CifProvider implements ZoomableFractal {
+public abstract class CifFractal implements ZoomableFractal {
 	CifCanvas<?> canvas;
 	CifMenuListener menuListener;
 	MenuItem undoMenuItem, redoMenuItem;

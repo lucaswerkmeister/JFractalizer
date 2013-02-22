@@ -35,7 +35,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	private static final long serialVersionUID = -7909101981418946071L;
 	private static final boolean USE_MORE_THREADS_THAN_CORES = true;
 
-	private final CifProvider provider;
+	private final CifFractal fractal;
 	public static final int START_WIDTH = 960;
 	public static final int START_HEIGHT = 540;
 	private int width = START_WIDTH;
@@ -67,10 +67,10 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		inverter = new LookupOp(new ShortLookupTable(0, invertTable), null);
 	}
 
-	public CifCanvas(final CifProvider provider, Class<T> imageMakerClass) {
+	public CifCanvas(final CifFractal fractal, Class<T> imageMakerClass) {
 		this.imageMakerClass = imageMakerClass;
 		setPreferredSize(new Dimension(width, height));
-		this.provider = provider;
+		this.fractal = fractal;
 		mouseListener = new CifMouseListener(this);
 		addMouseListener(mouseListener);
 		addMouseMotionListener(mouseListener);
@@ -240,7 +240,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 										double.class, double.class, int.class,
 										BufferedImage.class, int.class,
 										int.class, ColorPalette.class,
-										byte.class, CifProvider.class)
+										byte.class, CifFractal.class)
 								.newInstance(
 										currentWidth,
 										currentHeight,
@@ -252,7 +252,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 												: minImag + (y + 1)
 														* imagHeight,
 										maxPasses, subImage, 0, 0, palette,
-										superSamplingFactor, provider);
+										superSamplingFactor, fractal);
 						runningTasks.add(executorService.submit(maker));
 						subImages[x * verSections + y] = new SubImage(x
 								* sectionWidth, (verSections - y - 1)
@@ -438,8 +438,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		if (getParent() != null) {
 			if (addToHistory)
 				history.add(params);
-			provider.undoMenuItem.setEnabled(history.canUndo());
-			provider.redoMenuItem.setEnabled(history.canRedo());
+			fractal.undoMenuItem.setEnabled(history.canUndo());
+			fractal.redoMenuItem.setEnabled(history.canRedo());
 		}
 	}
 

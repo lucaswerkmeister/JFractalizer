@@ -35,7 +35,7 @@ public abstract class CifImageMaker extends Thread {
 	final int targetY;
 	final ColorPalette palette;
 	final byte superSamplingFactor;
-	final CifProvider provider;
+	final CifFractal fractal;
 
 	/**
 	 * Creates a new instance of the CifImageMaker with specified bounds.
@@ -73,7 +73,7 @@ public abstract class CifImageMaker extends Thread {
 			final double maxImag, final int maxPasses,
 			final BufferedImage targetImage, final int targetX,
 			final int targetY, final ColorPalette palette,
-			final byte superSamplingFactor, CifProvider provider) {
+			final byte superSamplingFactor, CifFractal fractal) {
 		this.width = width;
 		this.height = height;
 		this.minReal = minReal;
@@ -86,7 +86,7 @@ public abstract class CifImageMaker extends Thread {
 		this.targetY = targetY;
 		this.palette = palette;
 		this.superSamplingFactor = superSamplingFactor;
-		this.provider = provider;
+		this.fractal = fractal;
 	}
 
 	protected static int mandelbrotPasses(final double cReal,

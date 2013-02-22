@@ -5,18 +5,18 @@ import java.awt.PopupMenu;
 
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 
-public class MandelbrotProvider extends CifProvider {
+public class MandelbrotSet extends CifFractal {
 	private final MandelbrotMenuListener listener = new MandelbrotMenuListener(
 			this);
 
-	public MandelbrotProvider() {
+	public MandelbrotSet() {
 		canvas = new CifCanvas<>(this, MandelbrotImageMaker_NoHoles.class);
 		menuListener = new CifMenuListener(this, canvas);
 	}
 
 	@Override
 	public FractXmlLoader getFractXmlLoader() {
-		return new CifFractXmlLoader(MandelbrotProvider.class);
+		return new CifFractXmlLoader(MandelbrotSet.class);
 	}
 
 	@Override

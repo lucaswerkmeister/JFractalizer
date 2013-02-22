@@ -13,14 +13,14 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 
-public class JuliaProvider extends CifProvider {
+public class JuliaSet extends CifFractal {
 	private double cReal, cImag;
 
-	public JuliaProvider() {
+	public JuliaSet() {
 		this(0.0, 0.0);
 	}
 
-	public JuliaProvider(final double cReal, final double cImag) {
+	public JuliaSet(final double cReal, final double cImag) {
 		canvas = new CifCanvas<>(this, JuliaImageMaker_CalcAll.class);
 		menuListener = new CifMenuListener(this, canvas);
 		this.cReal = cReal;
@@ -29,7 +29,7 @@ public class JuliaProvider extends CifProvider {
 
 	@Override
 	public FractXmlLoader getFractXmlLoader() {
-		return new CifFractXmlLoader(JuliaProvider.class);
+		return new CifFractXmlLoader(JuliaSet.class);
 	}
 
 	@Override

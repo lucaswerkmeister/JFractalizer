@@ -141,11 +141,11 @@ public class NodePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(final Menu colorPaletteMenu, final Fractal provider,
+	public void initMenu(final Menu colorPaletteMenu, final Fractal fractal,
 			final Frame owner) {
 		final MenuItem edit = new MenuItem("Edit Color Palette...",
 				new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new NodePaletteMenuListener(provider, owner,
+		edit.addActionListener(new NodePaletteMenuListener(fractal, owner,
 				this));
 		colorPaletteMenu.add(edit);
 	}
@@ -181,13 +181,13 @@ public class NodePalette implements ColorPalette {
 	}
 
 	class NodePaletteMenuListener implements ActionListener {
-		private final Fractal provider;
+		private final Fractal fractal;
 		private final Frame owner;
 		private NodePalette start;
 
-		public NodePaletteMenuListener(final Fractal provider,
+		public NodePaletteMenuListener(final Fractal fractal,
 				final Frame owner, final NodePalette start) {
-			this.provider = provider;
+			this.fractal = fractal;
 			this.owner = owner;
 			this.start = start;
 		}
@@ -200,9 +200,9 @@ public class NodePalette implements ColorPalette {
 			final NodePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette)) {
 				start = newPalette;
-				provider.stopCalculation();
-				provider.setColorPalette(start);
-				provider.startCalculation();
+				fractal.stopCalculation();
+				fractal.setColorPalette(start);
+				fractal.startCalculation();
 			}
 		}
 	}

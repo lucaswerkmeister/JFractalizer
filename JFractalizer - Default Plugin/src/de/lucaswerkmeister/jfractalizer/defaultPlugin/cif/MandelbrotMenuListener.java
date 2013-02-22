@@ -18,10 +18,10 @@ import java.awt.event.ActionListener;
 import de.lucaswerkmeister.jfractalizer.Core;
 
 public class MandelbrotMenuListener implements ActionListener {
-	private final CifProvider provider;
+	private final CifFractal fractal;
 
-	public MandelbrotMenuListener(CifProvider mandelbrotProvider) {
-		this.provider = mandelbrotProvider;
+	public MandelbrotMenuListener(CifFractal mandelbrotFractal) {
+		this.fractal = mandelbrotFractal;
 	}
 
 	@Override
@@ -30,18 +30,18 @@ public class MandelbrotMenuListener implements ActionListener {
 		case "Switch to according Julia Set": {
 			try {
 				Core.changeFractal(
-						JuliaProvider.class,
-						provider.canvas.getMinReal()
-								+ (provider.canvas.getMaxReal() - provider.canvas
+						JuliaSet.class,
+						fractal.canvas.getMinReal()
+								+ (fractal.canvas.getMaxReal() - fractal.canvas
 										.getMinReal())
-								* provider.canvas.getMousePosition().x
-								/ provider.canvas.getWidth(),
-						provider.canvas.getMinImag()
-								+ (provider.canvas.getMaxImag() - provider.canvas
+								* fractal.canvas.getMousePosition().x
+								/ fractal.canvas.getWidth(),
+						fractal.canvas.getMinImag()
+								+ (fractal.canvas.getMaxImag() - fractal.canvas
 										.getMinImag())
-								* (provider.canvas.getHeight() - provider.canvas
+								* (fractal.canvas.getHeight() - fractal.canvas
 										.getMousePosition().y)
-								/ provider.canvas.getHeight());
+								/ fractal.canvas.getHeight());
 			} catch (HeadlessException | IllegalArgumentException
 					| ReflectiveOperationException e1) {
 				e1.printStackTrace();

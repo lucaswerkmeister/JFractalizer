@@ -148,11 +148,11 @@ public class SimplePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(final Menu colorPaletteMenu, final Fractal provider,
+	public void initMenu(final Menu colorPaletteMenu, final Fractal fractal,
 			final Frame owner) {
 		final MenuItem edit = new MenuItem("Edit Color Palette...",
 				new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new SimplePaletteMenuListener(provider, owner,
+		edit.addActionListener(new SimplePaletteMenuListener(fractal, owner,
 				this));
 		colorPaletteMenu.add(edit);
 	}
@@ -185,13 +185,13 @@ public class SimplePalette implements ColorPalette {
 	}
 
 	class SimplePaletteMenuListener implements ActionListener {
-		private final Fractal provider;
+		private final Fractal fractal;
 		private final Frame owner;
 		private SimplePalette start;
 
-		public SimplePaletteMenuListener(final Fractal provider,
+		public SimplePaletteMenuListener(final Fractal fractal,
 				final Frame owner, final SimplePalette start) {
-			this.provider = provider;
+			this.fractal = fractal;
 			this.owner = owner;
 			this.start = start;
 		}
@@ -204,9 +204,9 @@ public class SimplePalette implements ColorPalette {
 			final SimplePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette)) {
 				start = newPalette;
-				provider.stopCalculation();
-				provider.setColorPalette(start);
-				provider.startCalculation();
+				fractal.stopCalculation();
+				fractal.setColorPalette(start);
+				fractal.startCalculation();
 			}
 		}
 	}

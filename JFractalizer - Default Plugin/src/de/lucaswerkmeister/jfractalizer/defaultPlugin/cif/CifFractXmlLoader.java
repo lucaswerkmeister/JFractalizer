@@ -21,16 +21,16 @@ import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public class CifFractXmlLoader extends FractXmlLoader {
-	CifProvider fractal;
+	CifFractal fractal;
 
 	String currentQName = null;
 	Attributes currentAttributes = null;
 	ColorPalette palette = null;
 	CifCanvas<?> newCanvas = null;
 
-	public CifFractXmlLoader(Class<? extends CifProvider> providerClass) {
+	public CifFractXmlLoader(Class<? extends CifFractal> fractalClass) {
 		try {
-			fractal = providerClass.newInstance();
+			fractal = fractalClass.newInstance();
 			newCanvas = (CifCanvas<?>) fractal.getCanvas();
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();

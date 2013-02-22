@@ -65,10 +65,10 @@ public class MandelbrotImageMaker_CalcAll extends CifImageMaker {
 			final double maxImag, final int maxPasses,
 			final BufferedImage target, final int targetX, final int targetY,
 			final ColorPalette palette, final byte superSamplingFactor,
-			final CifProvider provider) {
+			final CifFractal fractal) {
 		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses,
 				target, targetX, targetY, palette, superSamplingFactor,
-				provider);
+				fractal);
 		targetGraphics = target.createGraphics();
 	}
 

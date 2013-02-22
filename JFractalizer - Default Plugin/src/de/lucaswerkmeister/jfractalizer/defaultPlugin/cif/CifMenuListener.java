@@ -31,15 +31,15 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 public class CifMenuListener implements ActionListener {
-	private final CifProvider	provider;
+	private final CifFractal	fractal;
 	private final CifCanvas<?>	canvas;
 	private boolean				okClicked	= false;
 	Dialog						editBoundariesDialog	= null, additionalParamsDialog = null;	// initialize
 
 	// variable so the compiler doesn't complain
 
-	CifMenuListener(final CifProvider provider, final CifCanvas<?> canvas) {
-		this.provider = provider;
+	CifMenuListener(final CifFractal fractal, final CifCanvas<?> canvas) {
+		this.fractal = fractal;
 		this.canvas = canvas;
 	}
 
@@ -47,7 +47,7 @@ public class CifMenuListener implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		switch (e.getActionCommand()) {
 			case "Edit boundaries...":
-				editBoundariesDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
+				editBoundariesDialog = new Dialog((Frame) fractal.getCanvas().getParent(), true);
 				editBoundariesDialog.setLayout(new BorderLayout());
 				final Panel interval = new Panel(new BorderLayout());
 				final TextField maxImag = new TextField(((Double) canvas.getMaxImag()).toString());
@@ -100,8 +100,8 @@ public class CifMenuListener implements ActionListener {
 					canvas.setPreferredSize(d);
 					canvas.setSize(d);
 					((Frame) canvas.getParent()).pack();
-					provider.stopCalculation();
-					provider.startCalculation();
+					fractal.stopCalculation();
+					fractal.startCalculation();
 				}
 				editBoundariesDialog = null;
 				break;
@@ -126,7 +126,7 @@ public class CifMenuListener implements ActionListener {
 				}
 				break;
 			case "Edit additional parameters...":
-				additionalParamsDialog = new Dialog((Frame) provider.getCanvas().getParent(), true);
+				additionalParamsDialog = new Dialog((Frame) fractal.getCanvas().getParent(), true);
 				additionalParamsDialog.setLayout(new GridLayout(3, 2));
 				additionalParamsDialog.add(new Label("SuperSampling Factor", Label.RIGHT));
 				final JSpinner ssf = new JSpinner(new SpinnerNumberModel(canvas.getSuperSamplingFactor(), 1,
@@ -150,31 +150,31 @@ public class CifMenuListener implements ActionListener {
 					// additional (int) cast is necessary because casting from Integer to byte raises a
 					// ClassCastException
 					canvas.setMaxPasses((int) maxPasses.getValue());
-					provider.stopCalculation();
-					provider.startCalculation();
+					fractal.stopCalculation();
+					fractal.startCalculation();
 				}
 				break;
 			case "Recalculate":
-				provider.stopCalculation();
-				provider.startCalculation();
+				fractal.stopCalculation();
+				fractal.startCalculation();
 				break;
 			case "Undo":
 				if (canvas.history.canUndo()) {
-					provider.stopCalculation();
+					fractal.stopCalculation();
 					canvas.setParams((CifParams) canvas.history.undo(), false);
-					provider.startCalculation();
+					fractal.startCalculation();
 				}
-				provider.undoMenuItem.setEnabled(canvas.history.canUndo());
-				provider.redoMenuItem.setEnabled(canvas.history.canRedo());
+				fractal.undoMenuItem.setEnabled(canvas.history.canUndo());
+				fractal.redoMenuItem.setEnabled(canvas.history.canRedo());
 				break;
 			case "Redo":
 				if (canvas.history.canRedo()) {
-					provider.stopCalculation();
+					fractal.stopCalculation();
 					canvas.setParams((CifParams) canvas.history.redo(), false);
-					provider.startCalculation();
+					fractal.startCalculation();
 				}
-				provider.undoMenuItem.setEnabled(canvas.history.canUndo());
-				provider.redoMenuItem.setEnabled(canvas.history.canRedo());
+				fractal.undoMenuItem.setEnabled(canvas.history.canUndo());
+				fractal.redoMenuItem.setEnabled(canvas.history.canRedo());
 				break;
 			default:
 				System.out
