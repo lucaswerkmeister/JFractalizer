@@ -187,23 +187,9 @@ public class MainFrame extends Frame {
 		});
 
 		Core.getCurrentFractal().initContextMenu(menu);
-		if (!menu.getItem(menu.getItemCount() - 2).equals(center)) // if the
-																	// last item
-																	// before
-																	// the
-																	// separator
-																	// is the
-																	// "center"
-																	// MenuItem,
-																	// then the
-																	// Fractal
-																	// didn't
-																	// add any
-																	// MenuItems,
-																	// and we
-																	// don't
-																	// need the
-																	// second
+		if (!menu.getItem(menu.getItemCount() - 2).equals(center)) // if the last item before the separator is the
+																	// "center" MenuItem, then the Fractal didn't add
+																	// any MenuItems, and we don't need the second
 																	// separator.
 			menu.addSeparator();
 		menu.add("Cancel");
