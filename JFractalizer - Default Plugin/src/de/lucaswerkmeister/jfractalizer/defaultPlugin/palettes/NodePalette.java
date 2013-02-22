@@ -32,7 +32,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public class NodePalette implements ColorPalette {
 	final List<ColorNode> nodes;
@@ -46,7 +46,8 @@ public class NodePalette implements ColorPalette {
 	public NodePalette(final List<ColorNode> nodes, final Color coreColor) {
 		this.nodes = nodes;
 		this.coreColor = coreColor;
-		fastColorStorage = new ArrayList<>(nodes.size() * nodes.get(0).getLength());
+		fastColorStorage = new ArrayList<>(nodes.size()
+				* nodes.get(0).getLength());
 		makeFastStorage();
 	}
 
@@ -76,18 +77,24 @@ public class NodePalette implements ColorPalette {
 			for (short s = 0; s < node.getLength(); s++) {
 				final double endFactor = (double) s / (node.getLength() - 1);
 				final double startFactor = 1 - endFactor;
-				fastColorStorage.add(new Color((int) Math.round(startFactor * node.getStartColor().getRed() + endFactor
-						* node.getEndColor().getRed()), (int) Math.round(startFactor * node.getStartColor().getGreen()
-						+ endFactor * node.getEndColor().getGreen()), (int) Math.round(startFactor
-						* node.getStartColor().getBlue() + endFactor * node.getEndColor().getBlue())));
+				fastColorStorage.add(new Color((int) Math.round(startFactor
+						* node.getStartColor().getRed() + endFactor
+						* node.getEndColor().getRed()), (int) Math
+						.round(startFactor * node.getStartColor().getGreen()
+								+ endFactor * node.getEndColor().getGreen()),
+						(int) Math.round(startFactor
+								* node.getStartColor().getBlue() + endFactor
+								* node.getEndColor().getBlue())));
 			}
 	}
 
 	@Override
-	public void saveFractXml(final TransformerHandler handler) throws SAXException {
+	public void saveFractXml(final TransformerHandler handler)
+			throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
 		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
+		atts.addAttribute("", "", "canonicalName", "CDATA", getClass()
+				.getCanonicalName());
 		handler.startElement("", "", "palette", atts);
 
 		handler.startElement("", "", "nodes", noAtts);
@@ -103,7 +110,8 @@ public class NodePalette implements ColorPalette {
 			handler.endElement("", "", "endColor");
 
 			handler.startElement("", "", "length", noAtts);
-			final char[] length = Integer.toString(node.getLength()).toCharArray();
+			final char[] length = Integer.toString(node.getLength())
+					.toCharArray();
 			handler.characters(length, 0, length.length);
 			handler.endElement("", "", "length");
 
@@ -129,9 +137,12 @@ public class NodePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(final Menu colorPaletteMenu, final FractalProvider provider, final Frame owner) {
-		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new NodePaletteMenuListener(provider, owner, this));
+	public void initMenu(final Menu colorPaletteMenu, final Fractal provider,
+			final Frame owner) {
+		final MenuItem edit = new MenuItem("Edit Color Palette...",
+				new MenuShortcut(KeyEvent.VK_E, true));
+		edit.addActionListener(new NodePaletteMenuListener(provider, owner,
+				this));
 		colorPaletteMenu.add(edit);
 	}
 
@@ -145,11 +156,12 @@ public class NodePalette implements ColorPalette {
 	}
 
 	class NodePaletteMenuListener implements ActionListener {
-		private final FractalProvider provider;
+		private final Fractal provider;
 		private final Frame owner;
 		private NodePalette start;
 
-		public NodePaletteMenuListener(final FractalProvider provider, final Frame owner, final NodePalette start) {
+		public NodePaletteMenuListener(final Fractal provider,
+				final Frame owner, final NodePalette start) {
 			this.provider = provider;
 			this.owner = owner;
 			this.start = start;
@@ -157,7 +169,8 @@ public class NodePalette implements ColorPalette {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final NodePaletteEditDialog d = new NodePaletteEditDialog(owner, start);
+			final NodePaletteEditDialog d = new NodePaletteEditDialog(owner,
+					start);
 			d.setVisible(true);
 			final NodePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette)) {

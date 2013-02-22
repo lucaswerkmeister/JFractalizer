@@ -17,13 +17,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public class FractalClassReader extends FractXmlLoader {
 	private FractXmlLoader innerLoader = null;
 
 	@Override
-	public FractalProvider getProvider() {
+	public Fractal getProvider() {
 		return innerLoader.getProvider();
 	}
 
@@ -82,7 +82,7 @@ public class FractalClassReader extends FractXmlLoader {
 			innerLoader.startElement(uri, localName, qName, attributes);
 		else if (qName.equals("provider"))
 			try {
-				innerLoader = ((FractalProvider) Class.forName(
+				innerLoader = ((Fractal) Class.forName(
 						attributes.getValue("canonicalName")).newInstance())
 						.getFractXmlLoader();
 				innerLoader.startElement(uri, localName, qName, attributes);

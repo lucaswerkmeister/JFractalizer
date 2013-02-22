@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
  * @version 1.0
  */
 public final class Core {
-	private static FractalProvider currentProvider;
+	private static Fractal currentProvider;
 	private static ColorPalette currentColorPalette;
 
 	private static boolean showGui = true;
@@ -137,7 +137,7 @@ public final class Core {
 	 *             If anything goes wrong instantiating the new provider.
 	 */
 	public static void changeProvider(
-			Class<? extends FractalProvider> fractalProviderClass,
+			Class<? extends Fractal> fractalProviderClass,
 			Object... params) throws ReflectiveOperationException,
 			IllegalArgumentException {
 		stopCalculation();
@@ -149,7 +149,7 @@ public final class Core {
 	/**
 	 * @return the currentProvider
 	 */
-	static FractalProvider getCurrentProvider() {
+	static Fractal getCurrentProvider() {
 		return currentProvider;
 	}
 
@@ -157,7 +157,7 @@ public final class Core {
 	 * @param newProvider
 	 *            the currentProvider to set
 	 */
-	static void setCurrentProvider(final FractalProvider newProvider) {
+	static void setCurrentProvider(final Fractal newProvider) {
 		currentProvider = newProvider;
 		if (showGui && gui != null)
 			gui.reset();
@@ -269,11 +269,11 @@ public final class Core {
 					throw new IllegalCommandLineException("Class \""
 							+ optionContent + "\" was not found!");
 				}
-				if (!FractalProvider.class.isAssignableFrom(fractalClass))
+				if (!Fractal.class.isAssignableFrom(fractalClass))
 					throw new IllegalCommandLineException("\"" + optionContent
-							+ "\" is not a FractalProvider class!");
+							+ "\" is not a Fractal class!");
 				try {
-					Core.setCurrentProvider((FractalProvider) fractalClass
+					Core.setCurrentProvider((Fractal) fractalClass
 							.newInstance());
 					return;
 				} catch (InstantiationException e) {

@@ -151,9 +151,9 @@ public class MenuListener implements ActionListener {
 				}
 			break;
 		case "Choose Fractal...":
-			final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(
+			final ClassChooserDialog<Fractal> fractalChooserDialog = new ClassChooserDialog<>(
 					MainFrame.getInstance(), "Choose Fractal",
-					FractalProvider.class);
+					Fractal.class);
 			fractalChooserDialog.setVisible(true);
 			Core.setCurrentProvider(fractalChooserDialog.getSelectedService());
 			break;

@@ -17,7 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import de.lucaswerkmeister.jfractalizer.Core;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 import de.lucaswerkmeister.jfractalizer.MainFrame;
 
 public class ZoomMenuListener implements ActionListener {
@@ -31,7 +31,7 @@ public class ZoomMenuListener implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		final String actionCommand = e.getActionCommand();
 		final MainFrame i = MainFrame.getInstance();
-		final FractalProvider p = Core.getCurrentProvider();
+		final Fractal p = Core.getCurrentProvider();
 		final Canvas c = p.getCanvas();
 		p.stopCalculation();
 		if (actionCommand.equals(CENTER_NO_ZOOM))

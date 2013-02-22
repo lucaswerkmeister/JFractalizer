@@ -30,7 +30,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public class SimplePalette implements ColorPalette {
 	Color coreColor;
@@ -43,7 +43,8 @@ public class SimplePalette implements ColorPalette {
 		this(Color.black, Color.red, Color.yellow, 16);
 	}
 
-	public SimplePalette(final Color coreColor, final Color startColor, final Color endColor, final int colorSteps) {
+	public SimplePalette(final Color coreColor, final Color startColor,
+			final Color endColor, final int colorSteps) {
 		this.coreColor = coreColor;
 		this.startColor = startColor;
 		this.endColor = endColor;
@@ -68,18 +69,25 @@ public class SimplePalette implements ColorPalette {
 	public void makeFastStorage() {
 		final double lessColorSteps = colorSteps - 1;
 		for (short s = 0; s < colorSteps; s++)
-			fastColorStorage.add(new Color((int) Math.round(((colorSteps - 1 - s) / lessColorSteps)
-					* startColor.getRed() + (s / lessColorSteps) * endColor.getRed()), (int) Math
-					.round(((colorSteps - 1 - s) / lessColorSteps) * startColor.getGreen() + (s / lessColorSteps)
-							* endColor.getGreen()), (int) Math.round(((colorSteps - 1 - s) / lessColorSteps)
-					* startColor.getBlue() + (s / lessColorSteps) * endColor.getBlue())));
+			fastColorStorage.add(new Color((int) Math
+					.round(((colorSteps - 1 - s) / lessColorSteps)
+							* startColor.getRed() + (s / lessColorSteps)
+							* endColor.getRed()), (int) Math
+					.round(((colorSteps - 1 - s) / lessColorSteps)
+							* startColor.getGreen() + (s / lessColorSteps)
+							* endColor.getGreen()), (int) Math
+					.round(((colorSteps - 1 - s) / lessColorSteps)
+							* startColor.getBlue() + (s / lessColorSteps)
+							* endColor.getBlue())));
 	}
 
 	@Override
-	public void saveFractXml(final TransformerHandler handler) throws SAXException {
+	public void saveFractXml(final TransformerHandler handler)
+			throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
 		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
+		atts.addAttribute("", "", "canonicalName", "CDATA", getClass()
+				.getCanonicalName());
 		handler.startElement("", "", "palette", atts);
 
 		handler.startElement("", "", "startColor", noAtts);
@@ -102,7 +110,8 @@ public class SimplePalette implements ColorPalette {
 		handler.endElement("", "", "palette");
 	}
 
-	public static void saveColor(final TransformerHandler handler, final Color color) throws SAXException {
+	public static void saveColor(final TransformerHandler handler,
+			final Color color) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
 
 		handler.startElement("", "", "red", noAtts);
@@ -137,23 +146,29 @@ public class SimplePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(final Menu colorPaletteMenu, final FractalProvider provider, final Frame owner) {
-		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new SimplePaletteMenuListener(provider, owner, this));
+	public void initMenu(final Menu colorPaletteMenu, final Fractal provider,
+			final Frame owner) {
+		final MenuItem edit = new MenuItem("Edit Color Palette...",
+				new MenuShortcut(KeyEvent.VK_E, true));
+		edit.addActionListener(new SimplePaletteMenuListener(provider, owner,
+				this));
 		colorPaletteMenu.add(edit);
 	}
 
 	public boolean equals(final SimplePalette otherPalette) {
-		return colorSteps == otherPalette.colorSteps && startColor.equals(otherPalette.startColor)
-				&& endColor.equals(otherPalette.endColor) && coreColor.equals(otherPalette.coreColor);
+		return colorSteps == otherPalette.colorSteps
+				&& startColor.equals(otherPalette.startColor)
+				&& endColor.equals(otherPalette.endColor)
+				&& coreColor.equals(otherPalette.coreColor);
 	}
 
 	class SimplePaletteMenuListener implements ActionListener {
-		private final FractalProvider provider;
+		private final Fractal provider;
 		private final Frame owner;
 		private SimplePalette start;
 
-		public SimplePaletteMenuListener(final FractalProvider provider, final Frame owner, final SimplePalette start) {
+		public SimplePaletteMenuListener(final Fractal provider,
+				final Frame owner, final SimplePalette start) {
 			this.provider = provider;
 			this.owner = owner;
 			this.start = start;
@@ -161,7 +176,8 @@ public class SimplePalette implements ColorPalette {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			final SimplePaletteEditDialog d = new SimplePaletteEditDialog(owner, start);
+			final SimplePaletteEditDialog d = new SimplePaletteEditDialog(
+					owner, start);
 			d.setVisible(true);
 			final SimplePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette)) {

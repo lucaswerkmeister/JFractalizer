@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public class CifFractXmlLoader extends FractXmlLoader {
 	CifProvider provider;
@@ -38,29 +38,34 @@ public class CifFractXmlLoader extends FractXmlLoader {
 	}
 
 	@Override
-	public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+	public void startElement(final String uri, final String localName,
+			final String qName, final Attributes attributes)
 			throws SAXException {
 		currentQName = qName;
 		currentAttributes = attributes;
 	}
 
 	@Override
-	public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+	public void endElement(final String uri, final String localName,
+			final String qName) throws SAXException {
 		currentQName = null;
 		currentAttributes = null;
 	}
 
 	@Override
-	public void characters(final char[] ch, final int start, final int length) throws SAXException {
+	public void characters(final char[] ch, final int start, final int length)
+			throws SAXException {
 		final String asString = new String(ch).substring(start, start + length);
 		if (asString.equals("\n"))
 			return;
 		if (currentQName.equals("width")) {
-			Dimension d = new Dimension(Integer.parseInt(asString), provider.getCanvas().getHeight());
+			Dimension d = new Dimension(Integer.parseInt(asString), provider
+					.getCanvas().getHeight());
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
 		} else if (currentQName.equals("height")) {
-			Dimension d = new Dimension(provider.getCanvas().getWidth(), Integer.parseInt(asString));
+			Dimension d = new Dimension(provider.getCanvas().getWidth(),
+					Integer.parseInt(asString));
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
 		} else if (currentQName.equals("minReal"))
@@ -83,7 +88,7 @@ public class CifFractXmlLoader extends FractXmlLoader {
 	}
 
 	@Override
-	public FractalProvider getProvider() {
+	public Fractal getProvider() {
 		return provider;
 	}
 }

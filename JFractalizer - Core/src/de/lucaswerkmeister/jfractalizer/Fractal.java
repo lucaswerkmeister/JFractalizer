@@ -22,11 +22,11 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.xml.sax.SAXException;
 
 /**
- * A {@link FractalProvider} provides a fractal for the JFractalizer.
+ * A {@link Fractal} provides a fractal for the JFractalizer.
  * 
  * @author Lucas Werkmeister
  */
-public interface FractalProvider extends SelectableService {
+public interface Fractal extends SelectableService {
 	/**
 	 * Returns a {@link Canvas} that displays the fractal.
 	 * <p>
@@ -106,13 +106,13 @@ public interface FractalProvider extends SelectableService {
 
 	/**
 	 * By a call of this method, the JFractalizer informs the fractal provider
-	 * that it was switched to on request from another FractalProvider, and
-	 * passes any received arguments on to it. The FractalProvider may ignore
+	 * that it was switched to on request from another Fractal, and
+	 * passes any received arguments on to it. The Fractal may ignore
 	 * this completely, if wanted.
 	 * 
 	 * @param params
-	 *            The parameters that the other FractalProvider wished to pass
-	 *            on to this FractalProvider.
+	 *            The parameters that the other Fractal wished to pass
+	 *            on to this Fractal.
 	 */
 	public void onProviderChange(Object... params);
 

@@ -34,7 +34,7 @@ import javax.swing.JColorChooser;
 import de.lucaswerkmeister.jfractalizer.ClassChooserDialog;
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.Core;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 import de.lucaswerkmeister.jfractalizer.MainFrame;
 import de.lucaswerkmeister.jfractalizer.MenuListener;
 import de.lucaswerkmeister.jfractalizer.ZoomMenuListener;
@@ -57,8 +57,8 @@ public class MainFrame extends Frame {
 		setLayout(new BorderLayout());
 		if (askForFractalClass) {
 			// Let the user choose the fractal
-			final ClassChooserDialog<FractalProvider> fractalChooserDialog = new ClassChooserDialog<>(this,
-					"Choose Fractal", FractalProvider.class);
+			final ClassChooserDialog<Fractal> fractalChooserDialog = new ClassChooserDialog<>(this,
+					"Choose Fractal", Fractal.class);
 			fractalChooserDialog.setVisible(true);
 			try {
 				Core.setCurrentProvider(fractalChooserDialog.getSelectedService());
@@ -194,7 +194,7 @@ public class MainFrame extends Frame {
 		menu.addSeparator();
 		Core.getCurrentProvider().initContextMenu(menu);
 		if (!menu.getItem(menu.getItemCount() - 2).equals(center)) // if the last item before the separator is the
-																	// "center" MenuItem, then the FractalProvider
+																	// "center" MenuItem, then the Fractal
 																	// didn't add any MenuItems, and we don't need the
 																	// second separator.
 			menu.addSeparator();

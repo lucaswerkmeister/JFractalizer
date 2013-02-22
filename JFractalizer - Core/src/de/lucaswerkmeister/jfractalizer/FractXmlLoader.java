@@ -13,8 +13,8 @@ package de.lucaswerkmeister.jfractalizer;
 
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public abstract class FractXmlLoader extends DefaultHandler {
-	public abstract FractalProvider getProvider();
+	public abstract Fractal getProvider();
 }
