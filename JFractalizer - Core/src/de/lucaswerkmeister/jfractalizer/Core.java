@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer;
 
@@ -137,9 +139,8 @@ public final class Core {
 	 *             If anything goes wrong instantiating the new provider.
 	 */
 	public static void changeProvider(
-			Class<? extends Fractal> fractalProviderClass,
-			Object... params) throws ReflectiveOperationException,
-			IllegalArgumentException {
+			Class<? extends Fractal> fractalProviderClass, Object... params)
+			throws ReflectiveOperationException, IllegalArgumentException {
 		stopCalculation();
 		setCurrentProvider(fractalProviderClass.newInstance());
 		getCurrentProvider().onProviderChange(params);
@@ -271,7 +272,7 @@ public final class Core {
 				}
 				if (!Fractal.class.isAssignableFrom(fractalClass))
 					throw new IllegalCommandLineException("\"" + optionContent
-							+ "\" is not a Fractal class!");
+							+ "\" is not a FractalProvider class!");
 				try {
 					Core.setCurrentProvider((Fractal) fractalClass
 							.newInstance());
@@ -316,7 +317,8 @@ public final class Core {
 					optionName, optionContent);
 			return;
 		case "paletteArgs":
-			Core.getCurrentColorPalette().handleCommandLineOption(option);
+			Core.getCurrentColorPalette().handleCommandLineOption(option,
+					optionName, optionContent);
 			return;
 		case "output":
 			switch (optionName) {
