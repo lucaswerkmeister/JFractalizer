@@ -22,6 +22,7 @@ import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.xml.transform.sax.TransformerHandler;
@@ -229,4 +230,22 @@ public abstract class CifFractal implements ZoomableFractal {
 		}
 		canvas.setParams(params, false);
 	}
+
+	@Override
+	public double getZoomFactor() {
+		Rectangle2D.Double start = getStartArea();
+		double xZoomFactor = start.width / (canvas.getMaxReal() - canvas.getMinReal());
+		double yZoomFactor = start.height / (canvas.getMaxImag() - canvas.getMinImag());
+		return Math.max(xZoomFactor, yZoomFactor);
+	}
+
+	/**
+	 * Determines the area that should be included in the start area.
+	 * <p>
+	 * Due to different aspect ratios, the actual starting area will most likely be a superarea (never a subarea, or a
+	 * partially disjunct area) of this area.
+	 * 
+	 * @return A double-precision rectangle specifying the start area; x axis is real, and y axis is imaginary.
+	 */
+	protected abstract java.awt.geom.Rectangle2D.Double getStartArea();
 }

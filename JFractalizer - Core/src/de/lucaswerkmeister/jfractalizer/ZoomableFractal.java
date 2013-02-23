@@ -15,4 +15,14 @@ public interface ZoomableFractal extends Fractal {
 	 */
 	public void zoom(int x, int y, double factor);
 
+	/**
+	 * Determines how much the fractal is currently zoomed in from a starting image (not necessarily "the" starting
+	 * image because of aspect ratios etc.).
+	 * <p>
+	 * Calling <code>fractal.zoom(centerX, centerY, fractal.getZoomFactor())</code> should, rounding errors aside,
+	 * always yield a starting image.
+	 * 
+	 * @return The zoom factor as (width/height of start area) / (width/height of current area).
+	 */
+	public double getZoomFactor();
 }

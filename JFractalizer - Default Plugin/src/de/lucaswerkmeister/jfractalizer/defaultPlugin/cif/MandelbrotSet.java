@@ -2,6 +2,7 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
+import java.awt.geom.Rectangle2D;
 
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
 
@@ -35,5 +36,10 @@ public class MandelbrotSet extends CifFractal {
 	@Override
 	public void onFractalChange(Object... params) {
 		// Don't do anything
+	}
+
+	@Override
+	protected Rectangle2D.Double getStartArea() {
+		return new Rectangle2D.Double(-2.25, -1.25, 3.25, 2.5);
 	}
 }

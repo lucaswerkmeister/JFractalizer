@@ -18,6 +18,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
@@ -46,8 +47,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	ColorPalette					palette;
 	private byte					superSamplingFactor;
 	private ExecutorService			executorService;
-	private List<Future<?>>			runningTasks;											// <?> because no result is
-																							// returned
+	private List<Future<?>>			runningTasks;
 	private BufferedImage			tempImg;
 	private int						maxPasses;
 	private long					startTime, stopTime;
@@ -101,10 +101,24 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	void initDefaultValues() {
-		minReal = -3.2;
-		maxReal = 3.2;
-		minImag = -1.8;
-		maxImag = 1.8;
+		Rectangle2D.Double start = fractal.getStartArea();
+		Dimension imageSize = getImageSize();
+		double startAR = start.width / start.height;
+		double targetAR = imageSize.width / (double) imageSize.height;
+		if (startAR > targetAR) {
+			double startCenter = start.y + (start.height / 2);
+			start.height = start.width / targetAR;
+			start.y = startCenter - start.height / 2;
+		}
+		else if (targetAR > startAR) {
+			double startCenter = start.x + (start.width / 2);
+			start.width = targetAR * start.height;
+			start.x = startCenter - start.width / 2;
+		}
+		minReal = start.x;
+		maxReal = start.x + start.width;
+		minImag = start.y;
+		maxImag = start.y + start.height;
 		palette = new SimplePalette();
 		superSamplingFactor = 1;
 		maxPasses = 1000;

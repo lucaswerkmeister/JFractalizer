@@ -54,4 +54,9 @@ public class JuliaSet extends CifFractal {
 			cImag = (double) params[1];
 		}
 	}
+
+	@Override
+	protected java.awt.geom.Rectangle2D.Double getStartArea() {
+		return new java.awt.geom.Rectangle2D.Double(-1.1, -1.1, 2.2, 2.2);
+	}
 }
