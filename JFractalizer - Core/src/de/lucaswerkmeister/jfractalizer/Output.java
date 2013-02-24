@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 public abstract class Output {
 	protected final String		format;
 	private Iterator<Integer>	numbers	= new Iterator<Integer>() {
-											private int	current	= 0;
+											private int	current	= 1;
 
 											@Override
 											public boolean hasNext() {
@@ -76,5 +76,9 @@ public abstract class Output {
 
 	public Iterator<Integer> getNumbers() {
 		return numbers;
+	}
+
+	public void setNumbers(Iterator<Integer> numbers) {
+		this.numbers = numbers;
 	}
 }
