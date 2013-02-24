@@ -50,6 +50,7 @@ public final class Core {
 	private static String				currentFormat					= "raw-RGB";
 	private static Set<Output>			outputs							= new HashSet<>();
 	private static Set<ActionListener>	calculationFinishedListeners	= new HashSet<>();
+	private static Camera				camera;
 
 	/**
 	 * <code>private</code> constructor so the class can't be instantiated.
@@ -189,20 +190,6 @@ public final class Core {
 					}
 				});
 				break;
-			case "film":
-				calculationFinishedListeners.add(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						for (Output o : outputs)
-							try {
-								o.writeImage(getCurrentFractal().getImage());
-							}
-							catch (IOException e) {
-								fatalError("Couldn't write image, aborting!", e);
-							}
-					}
-				});
-				break;
 		}
 	}
 
@@ -294,12 +281,45 @@ public final class Core {
 						}
 				}
 				return;
+			case "film":
+				if (option.equals("camera")) {
+					Class<?> cameraClass;
+					try {
+						cameraClass = Class.forName(optionContent);
+					}
+					catch (ClassNotFoundException e) {
+						throw new IllegalCommandLineException("Class \"" + optionContent + "\" was not found!");
+					}
+					if (!Camera.class.isAssignableFrom(cameraClass))
+						throw new IllegalCommandLineException("\"" + optionContent + "\" is not a Camera class!");
+					try {
+						camera = (Camera) cameraClass.newInstance();
+						return;
+					}
+					catch (InstantiationException e) {
+						throw new IllegalCommandLineException("An error occured while creating instance of class \""
+								+ optionContent + "\"!", e);
+					}
+					catch (IllegalAccessException e) {
+						throw new IllegalCommandLineException("Can't access default constructor of class \""
+								+ optionContent + "\"!");
+					}
+				}
+				else
+					warn("Unknown option \"" + option + "\" in realm --film!");
+				break;
 			case "fractArgs":
 				Core.getCurrentFractal().handleCommandLineOption(option, optionName, optionContent);
 				return;
 			case "paletteArgs":
 				Core.getCurrentColorPalette().handleCommandLineOption(option, optionName, optionContent);
 				return;
+			case "camArgs":
+				if (camera == null)
+					warn("No camera specified, ignoring --camArgs option");
+				else
+					camera.handleCommandLineOption(option, optionName, optionContent);
+				break;
 			case "output":
 				switch (optionName) {
 					case "format":
