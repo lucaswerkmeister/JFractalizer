@@ -17,20 +17,16 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -184,7 +180,7 @@ public final class Core {
 					public void actionPerformed(ActionEvent event) {
 						for (Output o : outputs)
 							try {
-								o.writeImage(getCurrentFractal().getImage(), 0);
+								o.writeImage(getCurrentFractal().getImage());
 							}
 							catch (IOException e) {
 								fatalError("Couldn't write image, aborting!", e);
@@ -199,10 +195,10 @@ public final class Core {
 					public void actionPerformed(ActionEvent event) {
 						for (Output o : outputs)
 							try {
-								o.writeImage(getCurrentFractal().getImage(), getFrameCount());
+								o.writeImage(getCurrentFractal().getImage());
 							}
 							catch (IOException e) {
-								fatalError("Couldn't write image no. " + getFrameCount() + ", aborting!", e);
+								fatalError("Couldn't write image, aborting!", e);
 							}
 					}
 				});
@@ -330,11 +326,6 @@ public final class Core {
 	private static void endRealm(String name) {
 	}
 
-	protected static int getFrameCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	private static void warn(String warning) {
 		System.out.println(warning);
 	}
@@ -400,47 +391,6 @@ public final class Core {
 	}
 }
 
-abstract class Output {
-	protected final String	format;
-
-	protected Output(String format) {
-		if (!Arrays.asList("png", "jpg", "raw-ARGB", "raw-BGR").contains(format))
-			throw new IllegalCommandLineException("Unknown output format \"" + format + "\"!");
-		this.format = format;
-	}
-
-	public abstract void writeImage(BufferedImage BufferedImage, int count) throws IOException;
-
-	protected void write(BufferedImage image, OutputStream stream) throws IOException {
-		switch (format) {
-			case "png":
-			case "jpg":
-				ImageIO.write(image, format, stream);
-				break;
-			case "raw-ARGB": {
-				BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(),
-						BufferedImage.TYPE_INT_ARGB);
-				newImage.getGraphics().drawImage(image, 0, 0, null);
-				DataBufferInt buffer = (DataBufferInt) newImage.getRaster().getDataBuffer();
-				int[] data = buffer.getData();
-				ByteBuffer bbuf = ByteBuffer.allocate(data.length * 4);
-				bbuf.asIntBuffer().put(data);
-				stream.write(bbuf.array());
-				break;
-			}
-			case "raw-BGR": {
-				BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(),
-						BufferedImage.TYPE_3BYTE_BGR);
-				newImage.getGraphics().drawImage(image, 0, 0, null);
-				DataBufferByte buffer = (DataBufferByte) newImage.getRaster().getDataBuffer();
-				byte[] data = buffer.getData();
-				stream.write(data);
-				break;
-			}
-		}
-	}
-}
-
 class SingleFileOutput extends Output {
 	private OutputStream	stream;
 
@@ -451,8 +401,15 @@ class SingleFileOutput extends Output {
 		this.stream = new FileOutputStream(file);
 	}
 
+	public SingleFileOutput(String format, String filename, Iterator<Integer> numbers) throws IOException {
+		super(format, numbers);
+		File file = new File(filename);
+		file.createNewFile();
+		this.stream = new FileOutputStream(file);
+	}
+
 	@Override
-	public void writeImage(BufferedImage image, int count) throws IOException {
+	public void writeImage(BufferedImage image) throws IOException {
 		write(image, stream);
 	}
 
@@ -471,9 +428,14 @@ class MultipleFilesOutput extends Output {
 		this.filename = filename;
 	}
 
+	public MultipleFilesOutput(String format, String filename, Iterator<Integer> numbers) {
+		super(format, numbers);
+		this.filename = filename;
+	}
+
 	@Override
-	public void writeImage(BufferedImage image, int count) throws IOException {
-		write(image, new FileOutputStream(filename.replace("?", Integer.toString(count))));
+	public void writeImage(BufferedImage image) throws IOException {
+		write(image, new FileOutputStream(filename.replace("?", Integer.toString(getNumbers().next()))));
 	}
 }
 
@@ -483,7 +445,7 @@ class StdoutOutput extends Output {
 	}
 
 	@Override
-	public void writeImage(BufferedImage image, int count) throws IOException {
+	public void writeImage(BufferedImage image) throws IOException {
 		write(image, System.out);
 	}
 }
