@@ -224,7 +224,7 @@ public abstract class CifFractal implements ZoomableFractal {
 				throw new IllegalCommandLineException(
 						"Unknown option \""
 								+ optionName
-								+ "\" for fractal fractal "
+								+ "\" for fractal "
 								+ getClass().getSimpleName()
 								+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
 		}
