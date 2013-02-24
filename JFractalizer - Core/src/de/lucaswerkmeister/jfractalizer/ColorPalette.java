@@ -21,7 +21,7 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.xml.sax.SAXException;
 
-public interface ColorPalette extends SelectableService {
+public interface ColorPalette extends SelectableService, CommandLineConfigurable {
 	/**
 	 * Gets the color that the palette assigns to the specified number of passes.
 	 * 
@@ -42,17 +42,4 @@ public interface ColorPalette extends SelectableService {
 	public void makeFastStorage();
 
 	public void initMenu(Menu colorPaletteMenu, Fractal fractal, Frame owner);
-
-	/**
-	 * If the JFractalizer was started with command line arguments, some of them are passed to the color palette (one by
-	 * one) via this method.
-	 * 
-	 * @param args
-	 *            A String that contains a single option.
-	 * @param optionName
-	 *            The name of the option. Given purely for convenience.
-	 * @param optionContent
-	 *            The content of the option. Given purely for convenience.
-	 */
-	public void handleCommandLineOption(String option, String optionName, String optionContent);
 }

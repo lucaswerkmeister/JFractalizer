@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Lucas Werkmeister
  */
-public interface Fractal extends SelectableService {
+public interface Fractal extends SelectableService, CommandLineConfigurable {
 	/**
 	 * Returns a {@link Canvas} that displays the fractal.
 	 * <p>
@@ -96,19 +96,6 @@ public interface Fractal extends SelectableService {
 	 *            The parameters that the other Fractal wished to pass on to this Fractal.
 	 */
 	public void onFractalChange(Object... params);
-
-	/**
-	 * If the JFractalizer was started with command line arguments, some of them are passed to the fractal fractal (one
-	 * by one) via this method.
-	 * 
-	 * @param args
-	 *            A string that contains a single option.
-	 * @param optionName
-	 *            The name of the option. Given purely for convenience.
-	 * @param optionContent
-	 *            The content of the option. Given purely for convenience.
-	 */
-	public void handleCommandLineOption(String option, String optionName, String optionContent);
 
 	/**
 	 * Blocks until calculation is either stopped or finished.
