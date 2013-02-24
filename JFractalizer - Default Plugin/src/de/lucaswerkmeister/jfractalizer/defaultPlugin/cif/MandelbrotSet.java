@@ -27,7 +27,8 @@ public class MandelbrotSet extends CifFractal {
 	@Override
 	public void initContextMenu(PopupMenu contextMenu) {
 		super.initContextMenu(contextMenu);
-		contextMenu.addSeparator();
+		if (!contextMenu.getItem(contextMenu.getItemCount() - 1).getLabel().equals("-"))
+			contextMenu.addSeparator();
 		MenuItem gotoJulia = new MenuItem("Switch to according Julia Set");
 		gotoJulia.addActionListener(listener);
 		contextMenu.add(gotoJulia);

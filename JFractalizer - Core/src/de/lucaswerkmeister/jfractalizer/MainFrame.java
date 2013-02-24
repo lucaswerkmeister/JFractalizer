@@ -125,7 +125,7 @@ public class MainFrame extends Frame {
 	private void initContextMenu() {
 		final PopupMenu menu = new PopupMenu();
 
-		final MenuItem center;
+		MenuItem lastMenuItem = null;
 		if (Core.getCurrentFractal() instanceof ZoomableFractal) {
 			final short[] zooms = new short[] { 1, 2, 5, 10, 25, 50, 100 };
 			final Menu zoomIn = new Menu(ZoomMenuListener.ZOOM_IN);
@@ -157,13 +157,15 @@ public class MainFrame extends Frame {
 			zoomOut.add(zoomOutCenter);
 			menu.add(zoomIn);
 			menu.add(zoomOut);
-			center = new MenuItem(ZoomMenuListener.CENTER_NO_ZOOM);
+			final MenuItem center = new MenuItem(ZoomMenuListener.CENTER_NO_ZOOM);
 			center.addActionListener(listener);
 			menu.add(center);
+			final MenuItem goToStart = new MenuItem(ZoomMenuListener.START_IMAGE);
+			goToStart.addActionListener(listener);
+			menu.add(goToStart);
 			menu.addSeparator();
+			lastMenuItem = goToStart;
 		}
-		else
-			center = null;
 		final Canvas c = Core.getCurrentFractal().getCanvas();
 		c.add(menu);
 		c.addMouseListener(new MouseAdapter() {
@@ -187,10 +189,10 @@ public class MainFrame extends Frame {
 		});
 
 		Core.getCurrentFractal().initContextMenu(menu);
-		if (!menu.getItem(menu.getItemCount() - 2).equals(center)) // if the last item before the separator is the
-																	// "center" MenuItem, then the Fractal didn't add
-																	// any MenuItems, and we don't need the second
-																	// separator.
+		if (!menu.getItem(menu.getItemCount() - 2).equals(lastMenuItem)) // if the last item before the separator is our
+																			// last MenuItem, then the Fractal didn't
+																			// add any MenuItems, and we don't need the
+																			// second separator.
 			menu.addSeparator();
 		menu.add("Cancel");
 	}

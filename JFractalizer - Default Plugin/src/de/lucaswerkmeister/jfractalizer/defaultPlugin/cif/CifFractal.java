@@ -19,7 +19,6 @@ import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.PopupMenu;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
@@ -32,7 +31,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.Core;
 import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
 
@@ -147,17 +145,7 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void initContextMenu(final PopupMenu contextMenu) {
-		final MenuItem goToStart = new MenuItem("Show start image");
-		final CifCanvas<?> c = canvas;
-		goToStart.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				Core.stopCalculation();
-				c.initDefaultValues();
-				Core.startCalculation();
-			}
-		});
-		contextMenu.add(goToStart);
+		// do nothing
 	}
 
 	@Override
@@ -175,6 +163,58 @@ public abstract class CifFractal implements ZoomableFractal {
 		double maxPassesF = 1 / factor;
 		maxPassesF = ((maxPassesF - 1) / CifCanvas.maxPassesFactor) + 1;
 		canvas.setMaxPasses((int) Math.round(canvas.getMaxPasses() * maxPassesF));
+	}
+
+	@Override
+	public void zoomToStart(int x, int y, double factor) {
+		zoom(x, y, factor);
+		Rectangle2D.Double start = getStartArea();
+		double realSize = canvas.getMaxReal() - canvas.getMinReal();
+		double imagSize = canvas.getMaxImag() - canvas.getMinImag();
+		if (realSize < start.width) {
+			// move horizontally
+			if (canvas.getMaxReal() > start.getMaxX()) {
+				// clamp to east edge
+				canvas.setMaxReal(start.getMaxX());
+				canvas.setMinReal(start.getMaxX() - realSize);
+			}
+			else if (canvas.getMinReal() < start.getMinX()) {
+				// clamp to west edge
+				canvas.setMinReal(start.getMinX());
+				canvas.setMaxReal(start.getMinX() + realSize);
+			}
+		}
+		else {
+			// center horizontally
+			canvas.setMinReal(start.getCenterX() - realSize / 2);
+			canvas.setMaxReal(start.getCenterX() + realSize / 2);
+		}
+		if (imagSize < start.height) {
+			// move vertically
+			if (canvas.getMaxImag() > start.getMaxY()) {
+				// clamp to north edge
+				canvas.setMaxImag(start.getMaxY());
+				canvas.setMinImag(start.getMaxY() - imagSize);
+			}
+			else if (canvas.getMinImag() < start.getMinY()) {
+				// clamp to south edge
+				canvas.setMinImag(start.getMinY());
+				canvas.setMaxImag(start.getMinY() + imagSize);
+			}
+		}
+		else {
+			// center vertically
+			canvas.setMinImag(start.getCenterY() - imagSize / 2);
+			canvas.setMaxImag(start.getCenterY() + imagSize / 2);
+		}
+	}
+
+	@Override
+	public double getZoomFactor() {
+		Rectangle2D.Double start = getStartArea();
+		double xZoomFactor = start.width / (canvas.getMaxReal() - canvas.getMinReal());
+		double yZoomFactor = start.height / (canvas.getMaxImag() - canvas.getMinImag());
+		return Math.max(xZoomFactor, yZoomFactor);
 	}
 
 	@Override
@@ -229,14 +269,6 @@ public abstract class CifFractal implements ZoomableFractal {
 								+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
 		}
 		canvas.setParams(params, false);
-	}
-
-	@Override
-	public double getZoomFactor() {
-		Rectangle2D.Double start = getStartArea();
-		double xZoomFactor = start.width / (canvas.getMaxReal() - canvas.getMinReal());
-		double yZoomFactor = start.height / (canvas.getMaxImag() - canvas.getMinImag());
-		return Math.max(xZoomFactor, yZoomFactor);
 	}
 
 	/**

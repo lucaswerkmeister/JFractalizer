@@ -24,6 +24,7 @@ public class ZoomMenuListener implements ActionListener {
 	public static final String	USE_COORDINATES	= "On mouse location";
 	public static final String	USE_CENTER		= "On center";
 	public static final String	CENTER_NO_ZOOM	= "Center on mouse location";
+	public static final String	START_IMAGE		= "Show start image";
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
@@ -37,6 +38,8 @@ public class ZoomMenuListener implements ActionListener {
 		p.stopCalculation();
 		if (actionCommand.equals(CENTER_NO_ZOOM))
 			p.zoom(i.zoomMenuX, i.zoomMenuY, 1.0);
+		else if (actionCommand.equals(START_IMAGE))
+			p.zoomToStart(c.getWidth() / 2, c.getHeight() / 2, p.getZoomFactor());
 		else {
 			final short factorPercent = Short.parseShort(actionCommand.substring(0, actionCommand.length() - 1));
 			final boolean useCoordinates = i.zoomMenuX >= 0 && i.zoomMenuY >= 0
