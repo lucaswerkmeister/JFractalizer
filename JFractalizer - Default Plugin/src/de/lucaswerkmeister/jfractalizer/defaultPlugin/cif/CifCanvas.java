@@ -56,6 +56,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	History<CifParams>				history;
 	private final Class<T>			imageMakerClass;
 	SubImage[]						subImages;
+	private int						imageType					= BufferedImage.TYPE_INT_ARGB;
 
 	private static final LookupOp	inverter;
 	// this defines how fast the maxPasses will grow with increasing zoom.
@@ -98,6 +99,10 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		if (getParent() == null)
 			constructImage();
 		return tempImg;
+	}
+
+	public void setImageType(int imageType) {
+		this.imageType = imageType;
 	}
 
 	void initDefaultValues() {
@@ -243,8 +248,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 						// errors due to limited computational accuracy
 						int currentWidth = x == horSections - 1 ? sectionWidth + width % horSections : sectionWidth;
 						int currentHeight = y == 0 ? sectionHeight + height % verSections : sectionHeight;
-						BufferedImage subImage = new BufferedImage(currentWidth, currentHeight,
-								BufferedImage.TYPE_INT_ARGB);
+						BufferedImage subImage = new BufferedImage(currentWidth, currentHeight, imageType);
 						final CifImageMaker maker = imageMakerClass.getConstructor(int.class, int.class, double.class,
 								double.class, double.class, double.class, int.class, BufferedImage.class, int.class,
 								int.class, ColorPalette.class, byte.class, CifFractal.class).newInstance(currentWidth,

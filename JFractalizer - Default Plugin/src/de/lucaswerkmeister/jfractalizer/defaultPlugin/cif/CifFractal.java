@@ -50,6 +50,11 @@ public abstract class CifFractal implements ZoomableFractal {
 	}
 
 	@Override
+	public void suggestImageType(int imageType) {
+		canvas.setImageType(imageType);
+	}
+
+	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
 		final AttributesImpl atts = new AttributesImpl();

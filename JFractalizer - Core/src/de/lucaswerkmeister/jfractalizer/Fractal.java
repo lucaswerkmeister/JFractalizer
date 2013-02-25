@@ -46,6 +46,16 @@ public interface Fractal extends SelectableService, CommandLineConfigurable {
 	 */
 	public BufferedImage getImage();
 
+	/**
+	 * Suggests that the fractal use the specified image type for future {@link BufferedImage BufferedImages}.
+	 * <p>
+	 * Following this suggestion is optional, but can improve performance for film calculation.
+	 * 
+	 * @param imageType
+	 *            The image type.
+	 */
+	public void suggestImageType(int imageType);
+
 	public void saveFractXml(TransformerHandler handler) throws SAXException;
 
 	public FractXmlLoader getFractXmlLoader();
