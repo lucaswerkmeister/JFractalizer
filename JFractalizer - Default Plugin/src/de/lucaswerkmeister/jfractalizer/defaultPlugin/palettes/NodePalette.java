@@ -91,9 +91,6 @@ public class NodePalette implements ColorPalette {
 	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
-		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
-		handler.startElement("", "", "palette", atts);
 
 		handler.startElement("", "", "nodes", noAtts);
 		for (final ColorNode node : nodes) {
@@ -119,8 +116,6 @@ public class NodePalette implements ColorPalette {
 		handler.startElement("", "", "coreColor", noAtts);
 		SimplePalette.saveColor(handler, coreColor);
 		handler.endElement("", "", "coreColor");
-
-		handler.endElement("", "", "palette");
 	}
 
 	@Override

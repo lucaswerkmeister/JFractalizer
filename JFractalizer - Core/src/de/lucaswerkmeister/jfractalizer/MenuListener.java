@@ -121,10 +121,20 @@ public class MenuListener implements ActionListener {
 						hd.setResult(streamResult);
 						hd.startDocument();
 						AttributesImpl atts = new AttributesImpl();
-						atts.addAttribute("", "", "version", "CDATA", "1");
+						atts.addAttribute("", "", "version", "CDATA", "2");
 						hd.startElement("", "", "fractXML", atts);
+						atts.clear();
+						atts.addAttribute("", "", "canonicalName", "CDATA", Core.getCurrentFractal().getClass()
+								.getCanonicalName());
+						hd.startElement("", "", "fractal", atts);
 						Core.getCurrentFractal().saveFractXml(hd);
+						hd.endElement("", "", "fractal");
+						atts.clear();
+						atts.addAttribute("", "", "canonicalName", "CDATA", Core.getCurrentColorPalette().getClass()
+								.getCanonicalName());
+						hd.startElement("", "", "palette", atts);
 						Core.getCurrentColorPalette().saveFractXml(hd);
+						hd.endElement("", "", "palette");
 						hd.endElement("", "", "fractXML");
 						hd.endDocument();
 					}

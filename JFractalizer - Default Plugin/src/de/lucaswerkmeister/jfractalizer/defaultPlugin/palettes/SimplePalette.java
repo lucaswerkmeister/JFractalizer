@@ -81,9 +81,6 @@ public class SimplePalette implements ColorPalette {
 	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
-		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
-		handler.startElement("", "", "palette", atts);
 
 		handler.startElement("", "", "startColor", noAtts);
 		saveColor(handler, startColor);
@@ -101,8 +98,6 @@ public class SimplePalette implements ColorPalette {
 		final char[] colSteps = Integer.toString(colorSteps).toCharArray();
 		handler.characters(colSteps, 0, colSteps.length);
 		handler.endElement("", "", "colorSteps");
-
-		handler.endElement("", "", "palette");
 	}
 
 	public static void saveColor(final TransformerHandler handler, final Color color) throws SAXException {

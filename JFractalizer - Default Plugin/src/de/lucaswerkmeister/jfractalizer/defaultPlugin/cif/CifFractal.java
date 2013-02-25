@@ -57,9 +57,6 @@ public abstract class CifFractal implements ZoomableFractal {
 	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
-		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
-		handler.startElement("", "", "fractal", atts);
 
 		handler.startElement("", "", "width", noAtts);
 		final char[] width = Integer.toString(canvas.getWidth()).toCharArray();
@@ -100,8 +97,6 @@ public abstract class CifFractal implements ZoomableFractal {
 		final char[] superSamplingFactor = Byte.toString(canvas.getSuperSamplingFactor()).toCharArray();
 		handler.characters(superSamplingFactor, 0, superSamplingFactor.length);
 		handler.endElement("", "", "superSamplingFactor");
-
-		handler.endElement("", "", "fractal");
 	}
 
 	public void setCanvas(final CifCanvas<?> newCanvas) {
