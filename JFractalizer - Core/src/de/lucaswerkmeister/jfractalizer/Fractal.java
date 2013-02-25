@@ -109,4 +109,9 @@ public interface Fractal extends SelectableService, CommandLineConfigurable {
 	 *            The action listener.
 	 */
 	public void addCalculationFinishedListener(ActionListener listener);
+
+	/**
+	 * Shuts down the fractal. This causes the fractal to cancel all calculation and stop all running threads.
+	 */
+	public void shutdown();
 }

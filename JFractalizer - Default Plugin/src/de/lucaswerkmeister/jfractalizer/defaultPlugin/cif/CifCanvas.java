@@ -455,10 +455,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		}
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		System.out.println("Hi");
-		super.finalize();
+	public void shutdown() {
 		executorService.shutdown();
 	}
 }

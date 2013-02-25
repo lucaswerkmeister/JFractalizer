@@ -280,4 +280,9 @@ public abstract class CifFractal implements ZoomableFractal {
 	 * @return A double-precision rectangle specifying the start area; x axis is real, and y axis is imaginary.
 	 */
 	protected abstract java.awt.geom.Rectangle2D.Double getStartArea();
+
+	@Override
+	public void shutdown() {
+		canvas.shutdown();
+	}
 }
