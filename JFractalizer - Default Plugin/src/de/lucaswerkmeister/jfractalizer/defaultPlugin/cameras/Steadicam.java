@@ -61,7 +61,7 @@ public class Steadicam implements Camera {
 					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					fractal.zoom(centerX, centerY, zoom);
+					fractal.zoomToStart(centerX, centerY, zoom);
 					fractal.startCalculation();
 					fractal.awaitCalculation();
 					countdown.next();
