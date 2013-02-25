@@ -90,9 +90,11 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	public void stopCalculation() {
-		if (runningTasks != null)
+		if (runningTasks != null) {
 			for (Future<?> f : runningTasks)
 				f.cancel(true);
+			runningTasks.clear();
+		}
 	}
 
 	public BufferedImage getImage() {
