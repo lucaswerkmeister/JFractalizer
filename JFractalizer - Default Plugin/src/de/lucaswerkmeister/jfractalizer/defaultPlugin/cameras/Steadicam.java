@@ -17,6 +17,8 @@ import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
 public class Steadicam implements Camera {
 	private final Set<Output>	outputs	= new HashSet<>();
 	private double				zoom	= 1.05;
+	private int					frame	= 0;
+	private int					modulus	= 1;
 	private Thread				zoomer;
 
 	@Override
@@ -26,10 +28,37 @@ public class Steadicam implements Camera {
 
 	@Override
 	public void handleCommandLineOption(String option, String optionName, String optionContent) {
-		if (optionName.equals("zoom"))
-			zoom = Double.parseDouble(optionContent);
-		else
-			throw new IllegalCommandLineException("Unknown option \"" + option + "\" for Steadicam!");
+		switch (optionName) {
+			case "zoom":
+				try {
+					zoom = Double.parseDouble(optionContent);
+					return;
+				}
+				catch (NumberFormatException e) {
+					throw new IllegalCommandLineException("Illegal value \"" + optionContent
+							+ "\"for option \"zoom\", was expecting a number!", e);
+				}
+			case "frames":
+				if (optionContent.contains("%")) {
+					String[] parts = optionContent.split("%");
+					if (parts.length > 2)
+						throw new IllegalCommandLineException(
+								"Wrong usage of option \"frames\", must contain exactly one '%' character!");
+					try {
+						frame = Integer.parseInt(parts[0]);
+						modulus = Integer.parseInt(parts[1]);
+						break;
+					}
+					catch (NumberFormatException e) {
+						throw new IllegalCommandLineException("Could not parse \"frames\" option!", e);
+					}
+				}
+				else
+					throw new IllegalCommandLineException(
+							"Wrong usage of option \"frames\", must contain a '%' character!");
+			default:
+				throw new IllegalCommandLineException("Unknown option \"" + option + "\" for Steadicam!");
+		}
 	}
 
 	@Override
@@ -47,13 +76,16 @@ public class Steadicam implements Camera {
 			public void run() {
 				final int framesCount = (int) Math.ceil(Math.log(fractal.getZoomFactor()) / Math.log(zoom));
 				for (Output o : outputs)
-					o.setNumbers(getCountdown(framesCount));
+					o.setNumbers(getCountdown(framesCount, frame, modulus));
 				fractal.startCalculation();
-				fractal.awaitCalculation();
+				fractal.stopCalculation();
 				BufferedImage img = fractal.getImage();
 				int centerX = img.getWidth() / 2;
 				int centerY = img.getHeight() / 2;
-				Iterator<Integer> countdown = getCountdown(framesCount);
+				for (int i = 0; i < frame; i++)
+					fractal.zoomToStart(centerX, centerY, zoom);
+				double myZoom = Math.pow(zoom, modulus);
+				Iterator<Integer> countdown = getCountdown(framesCount, frame, modulus);
 				while (countdown.hasNext()) {
 					try {
 						images.put(fractal.getImage());
@@ -61,7 +93,7 @@ public class Steadicam implements Camera {
 					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					fractal.zoomToStart(centerX, centerY, zoom);
+					fractal.zoomToStart(centerX, centerY, myZoom);
 					fractal.startCalculation();
 					fractal.awaitCalculation();
 					countdown.next();
@@ -102,9 +134,9 @@ public class Steadicam implements Camera {
 		sender.start();
 	}
 
-	private Iterator<Integer> getCountdown(final int start) {
+	private static Iterator<Integer> getCountdown(final int start, final int offset, final int modulus) {
 		return new Iterator<Integer>() {
-			int	current	= start;
+			int	current	= start - offset + modulus;
 
 			@Override
 			public void remove() {
@@ -113,12 +145,12 @@ public class Steadicam implements Camera {
 
 			@Override
 			public Integer next() {
-				return current--;
+				return current -= modulus;
 			}
 
 			@Override
 			public boolean hasNext() {
-				return current > 1;
+				return current > modulus;
 			}
 		};
 	}
