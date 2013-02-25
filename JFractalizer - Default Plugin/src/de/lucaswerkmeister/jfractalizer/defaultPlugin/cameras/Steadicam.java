@@ -79,7 +79,7 @@ public class Steadicam implements Camera {
 		final Thread sender = new Thread("sender") {
 			@Override
 			public void run() {
-				while (!images.isEmpty()) {
+				while (true) {
 					BufferedImage image;
 					try {
 						image = images.take();
