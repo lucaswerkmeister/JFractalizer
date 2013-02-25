@@ -403,11 +403,18 @@ public final class Core {
 		// Create GUI
 		if (showGui)
 			gui = new MainFrame(currentFractal == null, currentColorPalette == null);
-		// Start
-		running = true;
-		startCalculation();
-		for (ActionListener l : calculationFinishedListeners)
-			currentFractal.addCalculationFinishedListener(l);
+		if (camera != null) {
+			for (Output o : outputs)
+				camera.addOutput(o);
+			camera.startFilming((ZoomableFractal) currentFractal);
+		}
+		else {
+			// Start regularly
+			running = true;
+			startCalculation();
+			for (ActionListener l : calculationFinishedListeners)
+				currentFractal.addCalculationFinishedListener(l);
+		}
 	}
 }
 
