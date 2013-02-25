@@ -282,7 +282,7 @@ public final class Core {
 				}
 				return;
 			case "film":
-				if (option.equals("camera")) {
+				if (optionName.equals("camera")) {
 					Class<?> cameraClass;
 					try {
 						cameraClass = Class.forName(optionContent);
