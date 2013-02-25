@@ -1,5 +1,6 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cameras;
 
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
 public class Steadicam implements Camera {
 	private final Set<Output>	outputs	= new HashSet<>();
 	private double				zoom	= 1.05;
+	private Thread				zoomer;
 
 	@Override
 	public String getName() {
@@ -40,11 +42,7 @@ public class Steadicam implements Camera {
 		final BlockingQueue<BufferedImage> images = new LinkedBlockingQueue<>();
 		final BufferedImage lastImage = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
 
-		// The Steadicam uses three threads:
-		// The zoomer zooms on the fractal and puts images into the images queue.
-		// The sender takes images from the queue and sends them to the outputs.
-		// The waiter resets the "working" flag, which is read by the sender, after the zoomer has finished.
-		final Thread zoomer = new Thread("zoomer") {
+		zoomer = new Thread("zoomer") {
 			@Override
 			public void run() {
 				final int framesCount = (int) Math.ceil(Math.log(fractal.getZoomFactor()) / Math.log(zoom));
@@ -123,5 +121,27 @@ public class Steadicam implements Camera {
 				return current > 1;
 			}
 		};
+	}
+
+	@Override
+	public void awaitCalculation() {
+		if (zoomer != null)
+			try {
+				zoomer.join();
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+	}
+
+	@Override
+	public void addCalculationFinishedListener(final ActionListener listener) {
+		new Thread() {
+			@Override
+			public void run() {
+				awaitCalculation();
+				listener.actionPerformed(null);
+			}
+		}.start();
 	}
 }
