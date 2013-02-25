@@ -26,5 +26,5 @@ public interface Camera extends SelectableService, CommandLineConfigurable {
 	 * @param fractal
 	 *            The fractal which to film.
 	 */
-	public void startFilming(Fractal fractal);
+	public void startFilming(ZoomableFractal fractal);
 }
