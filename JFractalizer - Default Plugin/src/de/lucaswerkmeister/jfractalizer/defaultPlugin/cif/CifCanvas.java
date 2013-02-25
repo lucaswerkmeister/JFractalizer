@@ -263,7 +263,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 			}
 		}
 		else {
-			System.out.println("Invalid values!");
+			throw new IllegalStateException("Invalid values!");
 		}
 	}
 
@@ -453,6 +453,13 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		catch (InterruptedException | ExecutionException e) {
 			// do nothing
 		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		System.out.println("Hi");
+		super.finalize();
+		executorService.shutdown();
 	}
 }
 

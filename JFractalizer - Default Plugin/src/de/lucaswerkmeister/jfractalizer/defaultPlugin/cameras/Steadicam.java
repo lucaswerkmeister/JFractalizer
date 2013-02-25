@@ -16,7 +16,6 @@ import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
 public class Steadicam implements Camera {
 	private final Set<Output>	outputs	= new HashSet<>();
 	private double				zoom	= 1.05;
-	private volatile boolean	working	= false;
 
 	@Override
 	public String getName() {
@@ -39,42 +38,53 @@ public class Steadicam implements Camera {
 	@Override
 	public void startFilming(final ZoomableFractal fractal) {
 		final BlockingQueue<BufferedImage> images = new LinkedBlockingQueue<>();
+		final BufferedImage lastImage = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
 
 		// The Steadicam uses three threads:
 		// The zoomer zooms on the fractal and puts images into the images queue.
 		// The sender takes images from the queue and sends them to the outputs.
 		// The waiter resets the "working" flag, which is read by the sender, after the zoomer has finished.
-		final Thread zoomer = new Thread() {
+		final Thread zoomer = new Thread("zoomer") {
 			@Override
 			public void run() {
 				final int framesCount = (int) Math.ceil(Math.log(fractal.getZoomFactor()) / Math.log(zoom));
 				for (Output o : outputs)
 					o.setNumbers(getCountdown(framesCount));
+				fractal.startCalculation();
+				fractal.awaitCalculation();
 				BufferedImage img = fractal.getImage();
 				int centerX = img.getWidth() / 2;
 				int centerY = img.getHeight() / 2;
 				Iterator<Integer> countdown = getCountdown(framesCount);
 				while (countdown.hasNext()) {
-					fractal.zoom(centerX, centerY, zoom);
-					fractal.startCalculation();
-					fractal.awaitCalculation();
 					try {
 						images.put(fractal.getImage());
 					}
 					catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+					fractal.zoom(centerX, centerY, zoom);
+					fractal.startCalculation();
+					fractal.awaitCalculation();
 					countdown.next();
+				}
+				try {
+					images.put(lastImage);
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		};
-		final Thread sender = new Thread() {
+		final Thread sender = new Thread("sender") {
 			@Override
 			public void run() {
-				while (working || !images.isEmpty()) {
+				while (!images.isEmpty()) {
 					BufferedImage image;
 					try {
 						image = images.take();
+						if (image == lastImage)
+							return;
 						for (Output o : outputs)
 							try {
 								o.writeImage(image);
@@ -89,22 +99,8 @@ public class Steadicam implements Camera {
 				}
 			};
 		};
-		final Thread waiter = new Thread() {
-			@Override
-			public void run() {
-				working = true;
-				try {
-					zoomer.join();
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				working = false;
-			};
-		};
 
 		zoomer.start();
-		waiter.start();
 		sender.start();
 	}
 

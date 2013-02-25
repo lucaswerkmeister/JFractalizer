@@ -152,8 +152,8 @@ public abstract class CifFractal implements ZoomableFractal {
 	public void zoom(final int x, final int y, final double factor) {
 		final double currentWidth = (canvas.getMaxReal() - canvas.getMinReal());
 		final double currentHeight = (canvas.getMaxImag() - canvas.getMinImag());
-		final double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getWidth());
-		final double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getHeight()));
+		final double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getImageSize().width);
+		final double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getImageSize().height));
 		final double halfSizeR = currentWidth * factor / 2;
 		final double halfSizeI = currentHeight * factor / 2;
 		canvas.setMinReal(centerR - halfSizeR);
