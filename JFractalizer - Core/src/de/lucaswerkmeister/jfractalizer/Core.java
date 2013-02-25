@@ -404,9 +404,11 @@ public final class Core {
 		if (showGui)
 			gui = new MainFrame(currentFractal == null, currentColorPalette == null);
 		if (camera != null) {
+			// Film
 			for (Output o : outputs)
 				camera.addOutput(o);
 			camera.startFilming((ZoomableFractal) currentFractal);
+			camera.awaitCalculation();
 		}
 		else {
 			// Start regularly
@@ -414,7 +416,10 @@ public final class Core {
 			startCalculation();
 			for (ActionListener l : calculationFinishedListeners)
 				currentFractal.addCalculationFinishedListener(l);
+			currentFractal.awaitCalculation();
 		}
+		if (!showGui)
+			currentFractal.shutdown();
 	}
 }
 
