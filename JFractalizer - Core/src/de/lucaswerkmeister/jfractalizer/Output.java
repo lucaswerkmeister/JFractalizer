@@ -52,8 +52,9 @@ public abstract class Output {
 				ImageIO.write(image, format, stream);
 				break;
 			case "raw-ARGB": {
-				BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(),
-						BufferedImage.TYPE_INT_ARGB);
+				BufferedImage newImage = image;
+				if (image.getType() != BufferedImage.TYPE_INT_ARGB)
+					newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 				newImage.getGraphics().drawImage(image, 0, 0, null);
 				DataBufferInt buffer = (DataBufferInt) newImage.getRaster().getDataBuffer();
 				int[] data = buffer.getData();
@@ -63,8 +64,9 @@ public abstract class Output {
 				break;
 			}
 			case "raw-BGR": {
-				BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(),
-						BufferedImage.TYPE_3BYTE_BGR);
+				BufferedImage newImage = image;
+				if (image.getType() != BufferedImage.TYPE_3BYTE_BGR)
+					newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 				newImage.getGraphics().drawImage(image, 0, 0, null);
 				DataBufferByte buffer = (DataBufferByte) newImage.getRaster().getDataBuffer();
 				byte[] data = buffer.getData();

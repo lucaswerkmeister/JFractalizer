@@ -401,6 +401,17 @@ public final class Core {
 		// Create GUI
 		if (showGui)
 			gui = new MainFrame(currentFractal == null, currentColorPalette == null);
+		if (outputs.size() == 1) {
+			Output o = outputs.iterator().next();
+			switch (o.format) {
+				case "raw-ARGB":
+					currentFractal.suggestImageType(BufferedImage.TYPE_INT_ARGB);
+					break;
+				case "raw-BGR":
+					currentFractal.suggestImageType(BufferedImage.TYPE_3BYTE_BGR);
+					break;
+			}
+		}
 		if (camera != null) {
 			// Film
 			for (Output o : outputs)
