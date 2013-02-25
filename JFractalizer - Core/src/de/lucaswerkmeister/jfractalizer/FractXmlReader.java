@@ -17,16 +17,19 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
+public class FractXmlReader extends DefaultHandler {
+	private DefaultHandler			innerLoader	= null;
+	private FractXmlLoader			fractal		= null;
+	private FractXmlPaletteLoader	palette		= null;
 
-public class PaletteClassReader extends FractXmlPaletteLoader {
-	private FractXmlPaletteLoader	innerLoader	= null;	;
+	public Fractal getFractal() {
+		return fractal.getFractal();
+	}
 
-	@Override
 	public ColorPalette getPalette() {
-		return innerLoader.getPalette();
+		return palette.getPalette();
 	}
 
 	@Override
@@ -77,11 +80,22 @@ public class PaletteClassReader extends FractXmlPaletteLoader {
 			throws SAXException {
 		if (innerLoader != null)
 			innerLoader.startElement(uri, localName, qName, attributes);
+		else if (qName.equals("fractal"))
+			try {
+				innerLoader = ((Fractal) Class.forName(attributes.getValue("canonicalName")).newInstance())
+						.getFractXmlLoader();
+				innerLoader.startElement(uri, localName, qName, attributes);
+				fractal = (FractXmlLoader) innerLoader;
+			}
+			catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		else if (qName.equals("palette"))
 			try {
 				innerLoader = ((ColorPalette) Class.forName(attributes.getValue("canonicalName")).newInstance())
 						.getFractXmlLoader();
 				innerLoader.startElement(uri, localName, qName, attributes);
+				palette = (FractXmlPaletteLoader) innerLoader;
 			}
 			catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				e.printStackTrace();
@@ -92,6 +106,8 @@ public class PaletteClassReader extends FractXmlPaletteLoader {
 	public void endElement(final String uri, final String localName, final String qName) throws SAXException {
 		if (innerLoader != null)
 			innerLoader.endElement(uri, localName, qName);
+		if (qName.equals("palette") || qName.equals("fractal"))
+			innerLoader = null;
 	}
 
 	@Override

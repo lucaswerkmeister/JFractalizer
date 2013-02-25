@@ -378,12 +378,10 @@ public final class Core {
 
 	static void load(InputStream stream) throws SAXException, IOException, ParserConfigurationException {
 		final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-		final FractXmlLoader loader = new FractalClassReader();
-		saxParser.parse(stream, loader);
-		Core.setCurrentFractal(loader.getFractal());
-		final FractXmlPaletteLoader colorPaletteLoader = new PaletteClassReader();
-		saxParser.parse(stream, colorPaletteLoader);
-		Core.setCurrentColorPalette(colorPaletteLoader.getPalette());
+		final FractXmlReader reader = new FractXmlReader();
+		saxParser.parse(stream, reader);
+		Core.setCurrentFractal(reader.getFractal());
+		Core.setCurrentColorPalette(reader.getPalette());
 	}
 
 	public static void main(String[] args) throws IOException {

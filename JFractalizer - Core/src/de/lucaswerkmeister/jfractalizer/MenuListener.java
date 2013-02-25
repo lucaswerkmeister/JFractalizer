@@ -35,6 +35,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 public class MenuListener implements ActionListener {
 	JFileChooser	fileChooser;
@@ -119,7 +120,12 @@ public class MenuListener implements ActionListener {
 						serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 						hd.setResult(streamResult);
 						hd.startDocument();
+						AttributesImpl atts = new AttributesImpl();
+						atts.addAttribute("", "", "version", "CDATA", "1");
+						hd.startElement("", "", "fractXML", atts);
 						Core.getCurrentFractal().saveFractXml(hd);
+						Core.getCurrentColorPalette().saveFractXml(hd);
+						hd.endElement("", "", "fractXML");
 						hd.endDocument();
 					}
 					catch (TransformerConfigurationException | SAXException | IOException e) {

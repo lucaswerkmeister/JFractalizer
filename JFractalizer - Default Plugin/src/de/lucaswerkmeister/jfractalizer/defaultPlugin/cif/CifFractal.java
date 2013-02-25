@@ -96,8 +96,6 @@ public abstract class CifFractal implements ZoomableFractal {
 		handler.characters(superSamplingFactor, 0, superSamplingFactor.length);
 		handler.endElement("", "", "superSamplingFactor");
 
-		canvas.getPalette().saveFractXml(handler);
-
 		handler.endElement("", "", "fractal");
 	}
 
