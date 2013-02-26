@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
@@ -18,18 +20,16 @@ import java.awt.image.BufferedImage;
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 
 public class JuliaImageMaker_CalcAll extends CifImageMaker {
-	private final double cReal, cImag;
-	final Graphics targetGraphics;
+	private final double	cReal, cImag;
+	final Graphics			targetGraphics;
 
-	public JuliaImageMaker_CalcAll(int width, int height, double minReal,
-			double maxReal, double minImag, double maxImag, int maxPasses,
-			BufferedImage target, int targetX, int targetY,
-			ColorPalette palette, byte superSamplingFactor, CifProvider provider) {
-		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses,
-				target, targetX, targetY, palette, superSamplingFactor,
-				provider);
-		cReal = ((JuliaProvider) provider).getCReal();
-		cImag = ((JuliaProvider) provider).getCImag();
+	public JuliaImageMaker_CalcAll(int width, int height, double minReal, double maxReal, double minImag,
+			double maxImag, int maxPasses, BufferedImage target, int targetX, int targetY, ColorPalette palette,
+			byte superSamplingFactor, CifFractal fractal) {
+		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, target, targetX, targetY, palette,
+				superSamplingFactor, fractal);
+		cReal = ((JuliaSet) fractal).getCReal();
+		cImag = ((JuliaSet) fractal).getCImag();
 		targetGraphics = target.createGraphics();
 	}
 
@@ -90,8 +90,8 @@ public class JuliaImageMaker_CalcAll extends CifImageMaker {
 					}
 				tX = x + targetX;
 				tY = y + targetY;
-				c = new Color(averageR / averageDenominator, averageG
-						/ averageDenominator, averageB / averageDenominator);
+				c = new Color(averageR / averageDenominator, averageG / averageDenominator, averageB
+						/ averageDenominator);
 				targetGraphics.setColor(c);
 				targetGraphics.drawLine(tX, tY, tX, tY);
 			}

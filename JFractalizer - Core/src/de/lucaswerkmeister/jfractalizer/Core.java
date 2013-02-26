@@ -17,20 +17,16 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -45,7 +41,7 @@ import org.xml.sax.SAXException;
  * @version 1.0
  */
 public final class Core {
-	private static FractalProvider		currentProvider;
+	private static Fractal				currentFractal;
 	private static ColorPalette			currentColorPalette;
 
 	private static boolean				showGui							= true;
@@ -54,6 +50,7 @@ public final class Core {
 	private static String				currentFormat					= "raw-RGB";
 	private static Set<Output>			outputs							= new HashSet<>();
 	private static Set<ActionListener>	calculationFinishedListeners	= new HashSet<>();
+	private static Camera				camera;
 
 	/**
 	 * <code>private</code> constructor so the class can't be instantiated.
@@ -69,7 +66,7 @@ public final class Core {
 	public static BufferedImage getImage() {
 		if (MainFrame.getInstance() == null)
 			return null;
-		return getCurrentProvider().getImage();
+		return getCurrentFractal().getImage();
 	}
 
 	/**
@@ -87,8 +84,8 @@ public final class Core {
 	 * Stops the currently running calculation.
 	 */
 	public static void stopCalculation() {
-		if (currentProvider != null)
-			currentProvider.stopCalculation();
+		if (currentFractal != null)
+			currentFractal.stopCalculation();
 	}
 
 	/**
@@ -96,7 +93,7 @@ public final class Core {
 	 */
 	public static void startCalculation() {
 		if (running)
-			getCurrentProvider().startCalculation();
+			getCurrentFractal().startCalculation();
 	}
 
 	/**
@@ -126,38 +123,36 @@ public final class Core {
 	}
 
 	/**
-	 * Changes the current provider to the specified type.
+	 * Changes the current fractal to the specified type.
 	 * 
-	 * @param fractalProviderClass
-	 *            The class of the new provider type.
+	 * @param fractalClass
+	 *            The class of the new fractal type.
 	 * @param params
-	 *            Any parameters that will be passed to the new provider.
+	 *            Any parameters that will be passed to the new fractal.
 	 * @throws ReflectiveOperationException
-	 *             If anything goes wrong instantiating the new provider.
+	 *             If anything goes wrong instantiating the new fractal.
 	 */
-	public static void changeProvider(
-			Class<? extends FractalProvider> fractalProviderClass,
-			Object... params) throws ReflectiveOperationException,
-			IllegalArgumentException {
+	public static void changeFractal(Class<? extends Fractal> fractalClass, Object... params)
+			throws ReflectiveOperationException, IllegalArgumentException {
 		stopCalculation();
-		setCurrentProvider(fractalProviderClass.newInstance());
-		getCurrentProvider().onProviderChange(params);
+		setCurrentFractal(fractalClass.newInstance());
+		getCurrentFractal().onFractalChange(params);
 		startCalculation();
 	}
 
 	/**
-	 * @return the currentProvider
+	 * @return The current fractal.
 	 */
-	static FractalProvider getCurrentProvider() {
-		return currentProvider;
+	static Fractal getCurrentFractal() {
+		return currentFractal;
 	}
 
 	/**
-	 * @param newProvider
-	 *            the currentProvider to set
+	 * @param newFractal
+	 *            The new fractal.
 	 */
-	static void setCurrentProvider(final FractalProvider newProvider) {
-		currentProvider = newProvider;
+	static void setCurrentFractal(final Fractal newFractal) {
+		currentFractal = newFractal;
 		if (showGui && gui != null)
 			gui.reset();
 	}
@@ -174,7 +169,7 @@ public final class Core {
 		if (showGui && gui != null)
 			gui.initMenu();
 		stopCalculation();
-		currentProvider.setColorPalette(newPalette);
+		currentFractal.setColorPalette(newPalette);
 		startCalculation();
 	}
 
@@ -186,28 +181,12 @@ public final class Core {
 					public void actionPerformed(ActionEvent event) {
 						for (Output o : outputs)
 							try {
-								o.writeImage(getCurrentProvider().getImage(), 0);
+								o.writeImage(getCurrentFractal().getImage());
 							}
 							catch (IOException e) {
 								fatalError("Couldn't write image, aborting!", e);
 							}
 						System.exit(0);
-					}
-				});
-				break;
-			case "film":
-				calculationFinishedListeners.add(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						for (Output o : outputs)
-							try {
-								o.writeImage(getCurrentProvider().getImage(),
-										getFrameCount());
-							}
-							catch (IOException e) {
-								fatalError("Couldn't write image no. "
-										+ getFrameCount() + ", aborting!", e);
-							}
 					}
 				});
 				break;
@@ -230,38 +209,29 @@ public final class Core {
 						showGui = false;
 						return;
 				}
-				throw new IllegalCommandLineException("Unknown option \"" + option
-						+ "\" in realm \"" + realm + "\"!");
+				throw new IllegalCommandLineException("Unknown option \"" + option + "\" in realm \"" + realm + "\"!");
 			case "input":
 				switch (optionName) {
 					case "file":
 						File file = new File(optionContent);
 						if (!file.exists())
-							throw new IllegalCommandLineException("File \""
-									+ optionContent
-									+ "\" does not exist! (Assumed absolute path: \""
-									+ file.getAbsolutePath() + "\")");
+							throw new IllegalCommandLineException("File \"" + optionContent
+									+ "\" does not exist! (Assumed absolute path: \"" + file.getAbsolutePath() + "\")");
 						if (!optionContent.endsWith(".fractXml"))
 							warn("Warning: You are trying to read a file which is apparently not a FractXML file!");
 						try {
 							loadFile(file);
 						}
-						catch (SAXException | IOException
-								| ParserConfigurationException e) {
-							fatalError(
-									"Something went wrong while loading FractXML file \""
-											+ optionContent + "\"!", e);
+						catch (SAXException | IOException | ParserConfigurationException e) {
+							fatalError("Something went wrong while loading FractXML file \"" + optionContent + "\"!", e);
 						}
 						return;
 					case "stdin":
 						try {
 							load(System.in);
 						}
-						catch (SAXException | IOException
-								| ParserConfigurationException e) {
-							fatalError(
-									"Something went wrong while reading FractXML stream from stdin!",
-									e);
+						catch (SAXException | IOException | ParserConfigurationException e) {
+							fatalError("Something went wrong while reading FractXML stream from stdin!", e);
 						}
 						return;
 					case "fractal":
@@ -270,26 +240,21 @@ public final class Core {
 							fractalClass = Class.forName(optionContent);
 						}
 						catch (ClassNotFoundException e) {
-							throw new IllegalCommandLineException("Class \""
-									+ optionContent + "\" was not found!");
+							throw new IllegalCommandLineException("Class \"" + optionContent + "\" was not found!");
 						}
-						if (!FractalProvider.class.isAssignableFrom(fractalClass))
-							throw new IllegalCommandLineException("\"" + optionContent
-									+ "\" is not a FractalProvider class!");
+						if (!Fractal.class.isAssignableFrom(fractalClass))
+							throw new IllegalCommandLineException("\"" + optionContent + "\" is not a Fractal class!");
 						try {
-							Core.setCurrentProvider((FractalProvider) fractalClass
-									.newInstance());
+							Core.setCurrentFractal((Fractal) fractalClass.newInstance());
 							return;
 						}
 						catch (InstantiationException e) {
 							throw new IllegalCommandLineException(
-									"An error occured while creating instance of class \""
-											+ optionContent + "\"!", e);
+									"An error occured while creating instance of class \"" + optionContent + "\"!", e);
 						}
 						catch (IllegalAccessException e) {
-							throw new IllegalCommandLineException(
-									"Can't access default constructor of class \""
-											+ optionContent + "\"!");
+							throw new IllegalCommandLineException("Can't access default constructor of class \""
+									+ optionContent + "\"!");
 						}
 					case "palette":
 						Class<?> paletteClass;
@@ -297,36 +262,64 @@ public final class Core {
 							paletteClass = Class.forName(optionContent);
 						}
 						catch (ClassNotFoundException e) {
-							throw new IllegalCommandLineException("Class \""
-									+ optionContent + "\" was not found!");
+							throw new IllegalCommandLineException("Class \"" + optionContent + "\" was not found!");
 						}
 						if (!ColorPalette.class.isAssignableFrom(paletteClass))
 							throw new IllegalCommandLineException("\"" + optionContent
 									+ "\" is not a ColorPalette class!");
 						try {
-							Core.setCurrentColorPalette((ColorPalette) paletteClass
-									.newInstance());
+							Core.setCurrentColorPalette((ColorPalette) paletteClass.newInstance());
 							return;
 						}
 						catch (InstantiationException e) {
 							throw new IllegalCommandLineException(
-									"An error occured while creating instance of class \""
-											+ optionContent + "\"!", e);
+									"An error occured while creating instance of class \"" + optionContent + "\"!", e);
 						}
 						catch (IllegalAccessException e) {
-							throw new IllegalCommandLineException(
-									"Can't access default constructor of class \""
-											+ optionContent + "\"!");
+							throw new IllegalCommandLineException("Can't access default constructor of class \""
+									+ optionContent + "\"!");
 						}
 				}
 				return;
+			case "film":
+				if (optionName.equals("camera")) {
+					Class<?> cameraClass;
+					try {
+						cameraClass = Class.forName(optionContent);
+					}
+					catch (ClassNotFoundException e) {
+						throw new IllegalCommandLineException("Class \"" + optionContent + "\" was not found!");
+					}
+					if (!Camera.class.isAssignableFrom(cameraClass))
+						throw new IllegalCommandLineException("\"" + optionContent + "\" is not a Camera class!");
+					try {
+						camera = (Camera) cameraClass.newInstance();
+						return;
+					}
+					catch (InstantiationException e) {
+						throw new IllegalCommandLineException("An error occured while creating instance of class \""
+								+ optionContent + "\"!", e);
+					}
+					catch (IllegalAccessException e) {
+						throw new IllegalCommandLineException("Can't access default constructor of class \""
+								+ optionContent + "\"!");
+					}
+				}
+				else
+					warn("Unknown option \"" + option + "\" in realm --film!");
+				break;
 			case "fractArgs":
-				Core.getCurrentProvider().handleCommandLineOption(option,
-						optionName, optionContent);
+				Core.getCurrentFractal().handleCommandLineOption(option, optionName, optionContent);
 				return;
 			case "paletteArgs":
 				Core.getCurrentColorPalette().handleCommandLineOption(option, optionName, optionContent);
 				return;
+			case "camArgs":
+				if (camera == null)
+					warn("No camera specified, ignoring --camArgs option");
+				else
+					camera.handleCommandLineOption(option, optionName, optionContent);
+				break;
 			case "output":
 				switch (optionName) {
 					case "format":
@@ -334,17 +327,14 @@ public final class Core {
 						return;
 					case "file":
 						try {
-							outputs.add(new SingleFileOutput(currentFormat,
-									optionContent));
+							outputs.add(new SingleFileOutput(currentFormat, optionContent));
 						}
 						catch (IOException e) {
-							error("An error occured while preparing output file \""
-									+ optionContent + "\"!", e);
+							error("An error occured while preparing output file \"" + optionContent + "\"!", e);
 						}
 						return;
 					case "files":
-						outputs.add(new MultipleFilesOutput(currentFormat,
-								optionContent));
+						outputs.add(new MultipleFilesOutput(currentFormat, optionContent));
 						return;
 					case "stdout":
 						outputs.add(new StdoutOutput(currentFormat));
@@ -354,11 +344,6 @@ public final class Core {
 	}
 
 	private static void endRealm(String name) {
-	}
-
-	protected static int getFrameCount() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	private static void warn(String warning) {
@@ -387,21 +372,16 @@ public final class Core {
 	 * @throws ParserConfigurationException
 	 *             If anything goes wrong while loading the file.
 	 */
-	static void loadFile(File file) throws SAXException, IOException,
-			ParserConfigurationException {
+	static void loadFile(File file) throws SAXException, IOException, ParserConfigurationException {
 		load(new FileInputStream(file));
 	}
 
-	static void load(InputStream stream) throws SAXException, IOException,
-			ParserConfigurationException {
-		final SAXParser saxParser = SAXParserFactory.newInstance()
-				.newSAXParser();
-		final FractXmlLoader loader = new FractalClassReader();
-		saxParser.parse(stream, loader);
-		Core.setCurrentProvider(loader.getProvider());
-		final FractXmlPaletteLoader colorPaletteLoader = new PaletteClassReader();
-		saxParser.parse(stream, colorPaletteLoader);
-		Core.setCurrentColorPalette(colorPaletteLoader.getPalette());
+	static void load(InputStream stream) throws SAXException, IOException, ParserConfigurationException {
+		final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+		final FractXmlReader reader = new FractXmlReader();
+		saxParser.parse(stream, reader);
+		Core.setCurrentFractal(reader.getFractal());
+		Core.setCurrentColorPalette(reader.getPalette());
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -415,66 +395,40 @@ public final class Core {
 			}
 			else
 				handleOption(realm, arg);
-		if (!showGui
-				&& (currentProvider == null || currentColorPalette == null))
+		if (!showGui && (currentFractal == null || currentColorPalette == null))
 			throw new IllegalCommandLineException(
-					"If running without GUI, fractal provider and color palette must be provided!");
+					"If running without GUI, fractal fractal and color palette must be provided!");
 		// Create GUI
 		if (showGui)
-			gui = new MainFrame(currentProvider == null,
-					currentColorPalette == null);
-		// Start
-		running = true;
-		startCalculation();
-		for (ActionListener l : calculationFinishedListeners)
-			currentProvider.addCalculationFinishedListener(l);
-	}
-}
-
-abstract class Output {
-	protected final String	format;
-
-	protected Output(String format) {
-		if (!Arrays.asList("png", "jpg", "raw-ARGB", "raw-BGR")
-				.contains(format))
-			throw new IllegalCommandLineException("Unknown output format \""
-					+ format + "\"!");
-		this.format = format;
-	}
-
-	public abstract void writeImage(BufferedImage BufferedImage, int count)
-			throws IOException;
-
-	protected void write(BufferedImage image, OutputStream stream)
-			throws IOException {
-		switch (format) {
-			case "png":
-			case "jpg":
-				ImageIO.write(image, format, stream);
-				break;
-			case "raw-ARGB": {
-				BufferedImage newImage = new BufferedImage(image.getWidth(),
-						image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-				newImage.getGraphics().drawImage(image, 0, 0, null);
-				DataBufferInt buffer = (DataBufferInt) newImage.getRaster()
-						.getDataBuffer();
-				int[] data = buffer.getData();
-				ByteBuffer bbuf = ByteBuffer.allocate(data.length * 4);
-				bbuf.asIntBuffer().put(data);
-				stream.write(bbuf.array());
-				break;
-			}
-			case "raw-BGR": {
-				BufferedImage newImage = new BufferedImage(image.getWidth(),
-						image.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-				newImage.getGraphics().drawImage(image, 0, 0, null);
-				DataBufferByte buffer = (DataBufferByte) newImage.getRaster()
-						.getDataBuffer();
-				byte[] data = buffer.getData();
-				stream.write(data);
-				break;
+			gui = new MainFrame(currentFractal == null, currentColorPalette == null);
+		if (outputs.size() == 1) {
+			Output o = outputs.iterator().next();
+			switch (o.format) {
+				case "raw-ARGB":
+					currentFractal.suggestImageType(BufferedImage.TYPE_INT_ARGB);
+					break;
+				case "raw-BGR":
+					currentFractal.suggestImageType(BufferedImage.TYPE_3BYTE_BGR);
+					break;
 			}
 		}
+		if (camera != null) {
+			// Film
+			for (Output o : outputs)
+				camera.addOutput(o);
+			camera.startFilming((ZoomableFractal) currentFractal);
+			camera.awaitCalculation();
+		}
+		else {
+			// Start regularly
+			running = true;
+			startCalculation();
+			for (ActionListener l : calculationFinishedListeners)
+				currentFractal.addCalculationFinishedListener(l);
+			currentFractal.awaitCalculation();
+		}
+		if (!showGui)
+			currentFractal.shutdown();
 	}
 }
 
@@ -488,8 +442,15 @@ class SingleFileOutput extends Output {
 		this.stream = new FileOutputStream(file);
 	}
 
+	public SingleFileOutput(String format, String filename, Iterator<Integer> numbers) throws IOException {
+		super(format, numbers);
+		File file = new File(filename);
+		file.createNewFile();
+		this.stream = new FileOutputStream(file);
+	}
+
 	@Override
-	public void writeImage(BufferedImage image, int count) throws IOException {
+	public void writeImage(BufferedImage image) throws IOException {
 		write(image, stream);
 	}
 
@@ -508,11 +469,14 @@ class MultipleFilesOutput extends Output {
 		this.filename = filename;
 	}
 
+	public MultipleFilesOutput(String format, String filename, Iterator<Integer> numbers) {
+		super(format, numbers);
+		this.filename = filename;
+	}
+
 	@Override
-	public void writeImage(BufferedImage image, int count) throws IOException {
-		write(image,
-				new FileOutputStream(filename.replace("?",
-						Integer.toString(count))));
+	public void writeImage(BufferedImage image) throws IOException {
+		write(image, new FileOutputStream(filename.replace("?", Integer.toString(getNumbers().next()))));
 	}
 }
 
@@ -522,7 +486,7 @@ class StdoutOutput extends Output {
 	}
 
 	@Override
-	public void writeImage(BufferedImage image, int count) throws IOException {
+	public void writeImage(BufferedImage image) throws IOException {
 		write(image, System.out);
 	}
 }

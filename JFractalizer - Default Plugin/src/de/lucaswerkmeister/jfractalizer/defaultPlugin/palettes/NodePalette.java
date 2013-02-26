@@ -34,7 +34,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
 
 public class NodePalette implements ColorPalette {
@@ -91,9 +91,6 @@ public class NodePalette implements ColorPalette {
 	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
 		final Attributes noAtts = new AttributesImpl();
-		final AttributesImpl atts = new AttributesImpl();
-		atts.addAttribute("", "", "canonicalName", "CDATA", getClass().getCanonicalName());
-		handler.startElement("", "", "palette", atts);
 
 		handler.startElement("", "", "nodes", noAtts);
 		for (final ColorNode node : nodes) {
@@ -119,8 +116,6 @@ public class NodePalette implements ColorPalette {
 		handler.startElement("", "", "coreColor", noAtts);
 		SimplePalette.saveColor(handler, coreColor);
 		handler.endElement("", "", "coreColor");
-
-		handler.endElement("", "", "palette");
 	}
 
 	@Override
@@ -134,9 +129,9 @@ public class NodePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(final Menu colorPaletteMenu, final FractalProvider provider, final Frame owner) {
+	public void initMenu(final Menu colorPaletteMenu, final Fractal fractal, final Frame owner) {
 		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new NodePaletteMenuListener(provider, owner, this));
+		edit.addActionListener(new NodePaletteMenuListener(fractal, owner, this));
 		colorPaletteMenu.add(edit);
 	}
 
@@ -169,12 +164,12 @@ public class NodePalette implements ColorPalette {
 	}
 
 	class NodePaletteMenuListener implements ActionListener {
-		private final FractalProvider	provider;
-		private final Frame				owner;
-		private NodePalette				start;
+		private final Fractal	fractal;
+		private final Frame		owner;
+		private NodePalette		start;
 
-		public NodePaletteMenuListener(final FractalProvider provider, final Frame owner, final NodePalette start) {
-			this.provider = provider;
+		public NodePaletteMenuListener(final Fractal fractal, final Frame owner, final NodePalette start) {
+			this.fractal = fractal;
 			this.owner = owner;
 			this.start = start;
 		}
@@ -186,9 +181,9 @@ public class NodePalette implements ColorPalette {
 			final NodePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette)) {
 				start = newPalette;
-				provider.stopCalculation();
-				provider.setColorPalette(start);
-				provider.startCalculation();
+				fractal.stopCalculation();
+				fractal.setColorPalette(start);
+				fractal.startCalculation();
 			}
 		}
 	}

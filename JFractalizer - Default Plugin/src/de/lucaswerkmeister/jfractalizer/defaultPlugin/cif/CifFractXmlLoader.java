@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
@@ -18,21 +20,22 @@ import org.xml.sax.SAXException;
 
 import de.lucaswerkmeister.jfractalizer.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
-import de.lucaswerkmeister.jfractalizer.FractalProvider;
+import de.lucaswerkmeister.jfractalizer.Fractal;
 
 public class CifFractXmlLoader extends FractXmlLoader {
-	CifProvider provider;
+	CifFractal		fractal;
 
-	String currentQName = null;
-	Attributes currentAttributes = null;
-	ColorPalette palette = null;
-	CifCanvas<?> newCanvas = null;
+	String			currentQName		= null;
+	Attributes		currentAttributes	= null;
+	ColorPalette	palette				= null;
+	CifCanvas<?>	newCanvas			= null;
 
-	public CifFractXmlLoader(Class<? extends CifProvider> providerClass) {
+	public CifFractXmlLoader(Class<? extends CifFractal> fractalClass) {
 		try {
-			provider = providerClass.newInstance();
-			newCanvas = (CifCanvas<?>) provider.getCanvas();
-		} catch (InstantiationException | IllegalAccessException e) {
+			fractal = fractalClass.newInstance();
+			newCanvas = (CifCanvas<?>) fractal.getCanvas();
+		}
+		catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
@@ -56,14 +59,16 @@ public class CifFractXmlLoader extends FractXmlLoader {
 		if (asString.equals("\n"))
 			return;
 		if (currentQName.equals("width")) {
-			Dimension d = new Dimension(Integer.parseInt(asString), provider.getCanvas().getHeight());
+			Dimension d = new Dimension(Integer.parseInt(asString), fractal.getCanvas().getHeight());
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
-		} else if (currentQName.equals("height")) {
-			Dimension d = new Dimension(provider.getCanvas().getWidth(), Integer.parseInt(asString));
+		}
+		else if (currentQName.equals("height")) {
+			Dimension d = new Dimension(fractal.getCanvas().getWidth(), Integer.parseInt(asString));
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
-		} else if (currentQName.equals("minReal"))
+		}
+		else if (currentQName.equals("minReal"))
 			newCanvas.setMinReal(Double.parseDouble(asString));
 		else if (currentQName.equals("maxReal"))
 			newCanvas.setMaxReal(Double.parseDouble(asString));
@@ -79,11 +84,11 @@ public class CifFractXmlLoader extends FractXmlLoader {
 
 	@Override
 	public void endDocument() throws SAXException {
-		provider.setCanvas(newCanvas);
+		fractal.setCanvas(newCanvas);
 	}
 
 	@Override
-	public FractalProvider getProvider() {
-		return provider;
+	public Fractal getFractal() {
+		return fractal;
 	}
 }

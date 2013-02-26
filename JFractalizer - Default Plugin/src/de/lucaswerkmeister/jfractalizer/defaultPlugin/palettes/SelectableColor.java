@@ -1,13 +1,15 @@
 /*
  * JFractalizer, a Java Fractal Program. Copyright (C) 2012 Lucas Werkmeister
  * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
@@ -34,10 +36,10 @@ import javax.swing.JColorChooser;
 import de.lucaswerkmeister.jfractalizer.Core;
 
 public class SelectableColor extends Component implements MouseListener {
-	private static final long serialVersionUID = -464835931994412419L;
-	private static final Dimension size = new Dimension(25, 25);
-	private Color color = Color.black;
-	private final List<ActionListener> listeners = new LinkedList<>();
+	private static final long			serialVersionUID	= -464835931994412419L;
+	private static final Dimension		size				= new Dimension(25, 25);
+	private Color						color				= Color.black;
+	private final List<ActionListener>	listeners			= new LinkedList<>();
 
 	public SelectableColor(final Color c) {
 		color = c;
@@ -107,10 +109,10 @@ public class SelectableColor extends Component implements MouseListener {
 }
 
 class ColorDialog extends Dialog implements ActionListener {
-	private static final long serialVersionUID = 4347923773976010884L;
-	private boolean okClicked = false;
-	private final Color startColor;
-	private final JColorChooser chooser;
+	private static final long	serialVersionUID	= 4347923773976010884L;
+	private boolean				okClicked			= false;
+	private final Color			startColor;
+	private final JColorChooser	chooser;
 
 	public ColorDialog(final Frame owner, final Color c) {
 		super(owner, "Choose color", true);
