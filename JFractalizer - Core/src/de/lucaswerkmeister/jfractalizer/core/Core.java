@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.core;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -33,6 +33,13 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
+
+import de.lucaswerkmeister.jfractalizer.framework.Camera;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.Fractal;
+import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.framework.Output;
+import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 /**
  * Acts as a wrapper for all functions that plugins may wish to invoke on the core.
@@ -403,7 +410,7 @@ public final class Core {
 			gui = new MainFrame(currentFractal == null, currentColorPalette == null);
 		if (outputs.size() == 1) {
 			Output o = outputs.iterator().next();
-			switch (o.format) {
+			switch (o.getFormat()) {
 				case "raw-ARGB":
 					currentFractal.suggestImageType(BufferedImage.TYPE_INT_ARGB);
 					break;

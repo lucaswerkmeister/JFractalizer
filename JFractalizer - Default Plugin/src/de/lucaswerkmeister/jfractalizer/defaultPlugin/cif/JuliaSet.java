@@ -13,7 +13,7 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
-import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
 
 public class JuliaSet extends CifFractal {
 	private double	cReal, cImag;

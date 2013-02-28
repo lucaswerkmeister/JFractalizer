@@ -30,9 +30,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
-import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 public abstract class CifFractal implements ZoomableFractal {
 	CifCanvas<?>	canvas;

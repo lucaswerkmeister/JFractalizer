@@ -17,7 +17,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 
 /**
  * This implementation of a MandelbrotImageMaker calculates all pixels individually.

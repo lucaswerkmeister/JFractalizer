@@ -9,10 +9,10 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import de.lucaswerkmeister.jfractalizer.Camera;
-import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
-import de.lucaswerkmeister.jfractalizer.Output;
-import de.lucaswerkmeister.jfractalizer.ZoomableFractal;
+import de.lucaswerkmeister.jfractalizer.framework.Camera;
+import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.framework.Output;
+import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 public class Steadicam implements Camera {
 	private final Set<Output>	outputs	= new HashSet<>();

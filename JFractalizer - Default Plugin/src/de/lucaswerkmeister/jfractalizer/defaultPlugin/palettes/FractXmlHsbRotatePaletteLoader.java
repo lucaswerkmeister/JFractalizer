@@ -5,8 +5,8 @@ import java.awt.Color;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 
 public class FractXmlHsbRotatePaletteLoader extends FractXmlPaletteLoader {
 	private HsbRotatePalette	palette	= new HsbRotatePalette();

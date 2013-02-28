@@ -15,7 +15,7 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
 import java.awt.image.BufferedImage;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 
 /**
  * A CifImageMaker draws a snapshot of a CIF (Complex Iterative Fractal) onto a specified graphics. Different

@@ -1,4 +1,4 @@
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.framework;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -11,8 +11,9 @@ import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
+
 public abstract class Output {
-	protected final String		format;
+	private final String		format;
 	private Iterator<Integer>	numbers	= new Iterator<Integer>() {
 											private int	current	= 1;
 
@@ -46,10 +47,10 @@ public abstract class Output {
 	public abstract void writeImage(BufferedImage BufferedImage) throws IOException;
 
 	protected void write(BufferedImage image, OutputStream stream) throws IOException {
-		switch (format) {
+		switch (getFormat()) {
 			case "png":
 			case "jpg":
-				ImageIO.write(image, format, stream);
+				ImageIO.write(image, getFormat(), stream);
 				break;
 			case "raw-ARGB": {
 				BufferedImage newImage = image;
@@ -82,5 +83,13 @@ public abstract class Output {
 
 	public void setNumbers(Iterator<Integer> numbers) {
 		this.numbers = numbers;
+	}
+
+	/**
+	 * Gets the format.
+	 * @return The format.
+	 */
+	public String getFormat() {
+		return format;
 	}
 }

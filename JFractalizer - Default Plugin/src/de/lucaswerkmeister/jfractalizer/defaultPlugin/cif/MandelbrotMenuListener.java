@@ -17,7 +17,7 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import de.lucaswerkmeister.jfractalizer.Core;
+import de.lucaswerkmeister.jfractalizer.core.Core;
 
 public class MandelbrotMenuListener implements ActionListener {
 	private final CifFractal	fractal;

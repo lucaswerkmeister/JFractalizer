@@ -11,13 +11,18 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.core;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
+import de.lucaswerkmeister.jfractalizer.framework.Fractal;
 
 public class FractXmlReader extends DefaultHandler {
 	private DefaultHandler			innerLoader	= null;

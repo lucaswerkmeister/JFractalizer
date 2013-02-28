@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.core;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -30,6 +30,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JColorChooser;
+
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.Fractal;
+import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 public class MainFrame extends Frame {
 	private static final long	serialVersionUID	= 8587484082717377870L;

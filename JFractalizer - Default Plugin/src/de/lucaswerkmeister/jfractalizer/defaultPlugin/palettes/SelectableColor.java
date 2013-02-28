@@ -33,7 +33,7 @@ import java.util.List;
 
 import javax.swing.JColorChooser;
 
-import de.lucaswerkmeister.jfractalizer.Core;
+import de.lucaswerkmeister.jfractalizer.core.Core;
 
 public class SelectableColor extends Component implements MouseListener {
 	private static final long			serialVersionUID	= -464835931994412419L;

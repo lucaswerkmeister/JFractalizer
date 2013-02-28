@@ -19,7 +19,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 
 /**
  * This implementation of a MandelbrotImageMaker uses the fact that the Mandelbrot Set is <i>full</i> (i. e. has no

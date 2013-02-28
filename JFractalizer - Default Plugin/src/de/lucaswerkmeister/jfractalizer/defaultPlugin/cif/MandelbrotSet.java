@@ -4,7 +4,7 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.geom.Rectangle2D;
 
-import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
 
 public class MandelbrotSet extends CifFractal {
 	private final MandelbrotMenuListener	listener	= new MandelbrotMenuListener(this);

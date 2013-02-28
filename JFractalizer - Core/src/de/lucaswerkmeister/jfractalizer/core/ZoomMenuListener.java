@@ -11,12 +11,15 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.core;
 
 import java.awt.Canvas;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import de.lucaswerkmeister.jfractalizer.framework.Fractal;
+import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 public class ZoomMenuListener implements ActionListener {
 	public static final String	ZOOM_IN			= "Zoom in";

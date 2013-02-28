@@ -18,9 +18,9 @@ import java.awt.Dimension;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.FractXmlLoader;
-import de.lucaswerkmeister.jfractalizer.Fractal;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
+import de.lucaswerkmeister.jfractalizer.framework.Fractal;
 
 public class CifFractXmlLoader extends FractXmlLoader {
 	CifFractal		fractal;

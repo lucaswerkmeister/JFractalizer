@@ -11,9 +11,9 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.framework;
 
-import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 
 /**
  * Indicates that a command line was invalid.

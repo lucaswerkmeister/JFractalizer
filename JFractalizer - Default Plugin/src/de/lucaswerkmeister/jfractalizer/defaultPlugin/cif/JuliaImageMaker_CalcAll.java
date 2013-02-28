@@ -17,7 +17,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 
 public class JuliaImageMaker_CalcAll extends CifImageMaker {
 	private final double	cReal, cImag;

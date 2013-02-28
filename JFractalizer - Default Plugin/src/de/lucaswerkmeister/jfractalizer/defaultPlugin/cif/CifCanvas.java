@@ -29,9 +29,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.Core;
+import de.lucaswerkmeister.jfractalizer.core.Core;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.SimplePalette;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 
 public class CifCanvas<T extends CifImageMaker> extends Canvas {
 

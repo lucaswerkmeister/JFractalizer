@@ -30,9 +30,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.Fractal;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
+import de.lucaswerkmeister.jfractalizer.framework.Fractal;
 
 public class SimplePalette implements ColorPalette {
 	Color						coreColor;

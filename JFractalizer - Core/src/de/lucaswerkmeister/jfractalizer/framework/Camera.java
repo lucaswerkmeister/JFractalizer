@@ -1,4 +1,4 @@
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.framework;
 
 import java.awt.event.ActionListener;
 

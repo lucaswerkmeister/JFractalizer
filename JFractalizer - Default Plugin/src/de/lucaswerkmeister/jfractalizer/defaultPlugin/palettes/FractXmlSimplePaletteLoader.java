@@ -19,8 +19,8 @@ import java.util.LinkedList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 
 public class FractXmlSimplePaletteLoader extends FractXmlPaletteLoader {
 	LinkedList<String>	elementQNames		= new LinkedList<>();

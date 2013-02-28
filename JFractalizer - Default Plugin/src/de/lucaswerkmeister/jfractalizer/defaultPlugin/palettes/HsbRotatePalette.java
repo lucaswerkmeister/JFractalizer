@@ -10,10 +10,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.lucaswerkmeister.jfractalizer.ColorPalette;
-import de.lucaswerkmeister.jfractalizer.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.Fractal;
-import de.lucaswerkmeister.jfractalizer.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
+import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
+import de.lucaswerkmeister.jfractalizer.framework.Fractal;
+import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 
 public class HsbRotatePalette implements ColorPalette {
 	private float	hueStart	= 0;

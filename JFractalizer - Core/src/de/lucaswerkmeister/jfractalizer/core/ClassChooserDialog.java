@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package de.lucaswerkmeister.jfractalizer;
+package de.lucaswerkmeister.jfractalizer.core;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import de.lucaswerkmeister.jfractalizer.SelectableService;
+import de.lucaswerkmeister.jfractalizer.framework.SelectableService;
 
 public class ClassChooserDialog<S extends SelectableService> extends Dialog implements ActionListener, WindowListener {
 	private static final long		serialVersionUID	= -4629788833444189716L;
