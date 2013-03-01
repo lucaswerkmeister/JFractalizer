@@ -3,6 +3,11 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.MenuShortcut;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -21,6 +26,18 @@ public class HsbRotatePalette implements ColorPalette {
 	private float	saturation	= 1;
 	private float	brightness	= 1;
 	private Color	coreColor	= Color.black;
+
+	public HsbRotatePalette() {
+
+	}
+
+	public HsbRotatePalette(float hueStart, float hueFactor, float saturation, float brightness, Color coreColor) {
+		this.hueStart = hueStart;
+		this.hueFactor = hueFactor;
+		this.saturation = saturation;
+		this.brightness = brightness;
+		this.coreColor = coreColor;
+	}
 
 	@Override
 	public String getName() {
@@ -101,8 +118,9 @@ public class HsbRotatePalette implements ColorPalette {
 
 	@Override
 	public void initMenu(Menu colorPaletteMenu, Fractal fractal, Frame owner) {
-		// TODO Auto-generated method stub
-
+		MenuItem editPalette = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
+		editPalette.addActionListener(new HsbRotatePaletteMenuListener(fractal, owner, this));
+		colorPaletteMenu.add(editPalette);
 	}
 
 	public float getHueStart() {
@@ -143,5 +161,34 @@ public class HsbRotatePalette implements ColorPalette {
 
 	public void setCoreColor(Color coreColor) {
 		this.coreColor = coreColor;
+	}
+
+	class HsbRotatePaletteMenuListener implements ActionListener {
+		private final Fractal		fractal;
+		private final Frame			owner;
+		private HsbRotatePalette	palette;
+
+		public HsbRotatePaletteMenuListener(Fractal fractal, Frame owner, HsbRotatePalette palette) {
+			this.fractal = fractal;
+			this.owner = owner;
+			this.palette = palette;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			switch (e.getActionCommand()) {
+				case "Edit Color Palette...":
+					HsbRotatePaletteEditDialog d = new HsbRotatePaletteEditDialog(owner, palette);
+					d.setVisible(true);
+					final HsbRotatePalette newPalette = d.getPalette();
+					if (!palette.equals(newPalette)) {
+						palette = newPalette;
+						fractal.stopCalculation();
+						fractal.setColorPalette(palette);
+						fractal.startCalculation();
+					}
+					break;
+			}
+		}
 	}
 }
