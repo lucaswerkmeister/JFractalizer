@@ -110,6 +110,9 @@ public class MainFrame extends Frame {
 		chooseFractal.addActionListener(listener);
 		fractalMenu.add(chooseFractal);
 		fractalMenu.addSeparator();
+		Core.getCurrentFractal().initMenu(fractalMenu);
+		if (fractalMenu.getItem(fractalMenu.getItemCount() - 1).getLabel().equals("-"))
+			fractalMenu.remove(fractalMenu.getItemCount() - 1);
 		menuBar.add(fractalMenu);
 
 		colorPaletteMenu = new Menu("Color Palette");
@@ -118,10 +121,10 @@ public class MainFrame extends Frame {
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
 		colorPaletteMenu.addSeparator();
-		menuBar.add(colorPaletteMenu);
-
-		Core.getCurrentFractal().initMenu(fractalMenu);
 		Core.getCurrentColorPalette().initMenu(colorPaletteMenu, Core.getCurrentFractal(), this);
+		if (colorPaletteMenu.getItem(colorPaletteMenu.getItemCount() - 1).getLabel().equals("-"))
+			colorPaletteMenu.remove(colorPaletteMenu.getItemCount() - 1);
+		menuBar.add(colorPaletteMenu);
 
 		setMenuBar(menuBar);
 	}
