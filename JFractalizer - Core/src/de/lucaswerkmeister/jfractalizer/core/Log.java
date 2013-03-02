@@ -37,14 +37,41 @@ public abstract class Log {
 		handler.start();
 	}
 
+	/**
+	 * Registers that one id belongs to a specified plugin.
+	 * <p>
+	 * The general contract for the IDs is that the bits should be distributed as following:
+	 * <tt>vvvvvvvv&nbsp;pppppppp&nbsp;cccccccc&nbsp;llllllll</tt> , where <tt>v</tt> stands for the plugin vendor,
+	 * <tt>p</tt> for the plugin, <code>c</code> for the class in which the logging event occured, and <tt>l</tt> for
+	 * the indivitual logging event.
+	 * 
+	 * @param id
+	 *            The ID.
+	 * @param plugin
+	 *            The plugin.
+	 */
 	public static final void registerID(int id, Plugin plugin) {
 		ids.put(id, plugin);
 	}
 
+	/**
+	 * Adds a log.
+	 * 
+	 * @param log
+	 *            The log.
+	 */
 	public static final void registerLog(Log log) {
 		logs.add(log);
 	}
 
+	/**
+	 * Send an information to all registered logs.
+	 * 
+	 * @param id
+	 *            The ID of the information.
+	 * @param args
+	 *            Arguments to the information.
+	 */
 	public static final void info(int id, Object... args) {
 		try {
 			entries.put(new Entry(id, Level.INFO, args));
@@ -54,6 +81,14 @@ public abstract class Log {
 		}
 	}
 
+	/**
+	 * Send a warning to all registered logs.
+	 * 
+	 * @param id
+	 *            The ID of the warning.
+	 * @param args
+	 *            Arguments to the warning.
+	 */
 	public static final void warning(int id, Object... args) {
 		try {
 			entries.put(new Entry(id, Level.WARNING, args));
@@ -63,6 +98,14 @@ public abstract class Log {
 		}
 	}
 
+	/**
+	 * Send an error to all registered logs.
+	 * 
+	 * @param id
+	 *            The ID of the error.
+	 * @param args
+	 *            Arguments to the error.
+	 */
 	public static final void error(int id, Object... args) {
 		try {
 			entries.put(new Entry(id, Level.ERROR, args));
@@ -72,6 +115,14 @@ public abstract class Log {
 		}
 	}
 
+	/**
+	 * Send a crash to all registered logs.
+	 * 
+	 * @param id
+	 *            The ID of the crash.
+	 * @param args
+	 *            Arguments to the crash.
+	 */
 	static final void crash(int id, Object... args) {
 		try {
 			entries.put(new Entry(id, Level.CRASH, args));
