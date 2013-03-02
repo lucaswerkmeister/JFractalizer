@@ -199,12 +199,13 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 			status.append(stopTime - startTime);
 			status.append(" ms).");
 			Core.setStatus(status.toString());
+			repaint(10);
 		}
 	}
 
 	private void constructImage() {
-		for (int i = 0; i < subImages.length; i++)
-			tempImg.getGraphics().drawImage(subImages[i].subImage, subImages[i].offsetX, subImages[i].offsetY, null);
+		for (SubImage img : subImages)
+			tempImg.getGraphics().drawImage(img.subImage, img.offsetX, img.offsetY, null);
 	}
 
 	@Override
