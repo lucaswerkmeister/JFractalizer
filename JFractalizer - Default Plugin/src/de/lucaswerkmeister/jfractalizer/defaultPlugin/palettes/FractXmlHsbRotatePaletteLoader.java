@@ -24,7 +24,7 @@ public class FractXmlHsbRotatePaletteLoader extends FractXmlPaletteLoader {
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		String content = new String(ch);
+		String content = new String(ch).substring(start, start + length);
 		switch (currentQName) {
 			case "hueStart":
 				palette.setHueStart(Float.parseFloat(content));
@@ -55,5 +55,10 @@ public class FractXmlHsbRotatePaletteLoader extends FractXmlPaletteLoader {
 						palette.getCoreColor().getGreen(), Integer.parseInt(content)));
 				break;
 		}
+	}
+
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+		currentQName = "";
 	}
 }

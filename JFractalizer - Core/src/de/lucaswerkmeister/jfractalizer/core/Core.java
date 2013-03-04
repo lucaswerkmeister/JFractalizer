@@ -171,7 +171,7 @@ public final class Core {
 		return Core.currentColorPalette;
 	}
 
-	static void setCurrentColorPalette(final ColorPalette newPalette) {
+	public static void setCurrentColorPalette(final ColorPalette newPalette) {
 		currentColorPalette = newPalette;
 		if (showGui && gui != null)
 			gui.initMenu();
@@ -483,7 +483,7 @@ class MultipleFilesOutput extends Output {
 
 	@Override
 	public void writeImage(BufferedImage image) throws IOException {
-		write(image, new FileOutputStream(filename.replace("?", Integer.toString(getNumbers().next()))));
+		write(image, new FileOutputStream(filename.replace("?", String.format("%06d", getNumbers().next()))));
 	}
 }
 

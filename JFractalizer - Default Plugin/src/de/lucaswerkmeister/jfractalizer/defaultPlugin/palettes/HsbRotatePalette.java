@@ -15,6 +15,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.lucaswerkmeister.jfractalizer.core.Core;
 import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 import de.lucaswerkmeister.jfractalizer.framework.Fractal;
@@ -183,9 +184,7 @@ public class HsbRotatePalette implements ColorPalette {
 					final HsbRotatePalette newPalette = d.getPalette();
 					if (!palette.equals(newPalette)) {
 						palette = newPalette;
-						fractal.stopCalculation();
-						fractal.setColorPalette(palette);
-						fractal.startCalculation();
+						Core.setCurrentColorPalette(palette);
 					}
 					break;
 			}
