@@ -135,6 +135,12 @@ public abstract class Log {
 		running = false;
 	}
 
+	/**
+	 * Logs an entry. This method is called asynchronously and may therefore block.
+	 * 
+	 * @param entry
+	 *            The log entry.
+	 */
 	protected abstract void log(Entry entry);
 
 	public static class Entry {
@@ -146,12 +152,14 @@ public abstract class Log {
 		public final int		id;
 		public final Object[]	args;
 		public final Level		level;
+		public final Plugin		plugin;
 
 		public Entry(int id, Level level, Object[] args) {
 			this.time = System.currentTimeMillis();
 			this.id = id;
 			this.args = args;
 			this.level = level;
+			this.plugin = ids.get(id);
 		}
 	}
 }
