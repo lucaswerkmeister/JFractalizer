@@ -14,7 +14,7 @@ public abstract class Log {
 	private static final Set<Log>				logs	= new HashSet<>();
 	protected static final Map<Integer, Plugin>	ids		= new HashMap<>();
 	private static final BlockingQueue<Entry>	entries	= new LinkedBlockingQueue<>();
-	private static boolean						running	= true;
+	protected static boolean					running	= true;
 	private static final Thread					handler	= new Thread() {
 															public void run() {
 																while (running) {
