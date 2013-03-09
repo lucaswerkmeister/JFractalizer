@@ -1,7 +1,6 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
 import java.awt.Button;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -20,9 +19,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class HsbRotatePaletteEditDialog extends Dialog {
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.EditDialogPalette.PaletteEditDialog;
+
+public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 	private static final long	serialVersionUID	= 576336383691856587L;
-	private HsbRotatePalette	original;
 	private JSpinner			period;
 	private JSpinner			increment;
 	private boolean				adjusting			= false;
@@ -33,8 +33,7 @@ public class HsbRotatePaletteEditDialog extends Dialog {
 	private boolean				okClicked			= false;
 
 	public HsbRotatePaletteEditDialog(Frame owner, HsbRotatePalette palette) {
-		super(owner, "Edid Color Palette", true);
-		this.original = palette;
+		super(owner, palette);
 		setLayout(new GridLayout(5, 1));
 
 		Panel periodFrequencyPanel = new Panel(new FlowLayout());
@@ -139,7 +138,7 @@ public class HsbRotatePaletteEditDialog extends Dialog {
 		pack();
 	}
 
-	public HsbRotatePalette getPalette() {
+	public EditDialogPalette getPalette() {
 		if (okClicked)
 			return new HsbRotatePalette(hueStart.getValue() / 100f, (float) (double) (Double) increment.getValue(),
 					saturation.getValue() / 100f, brightness.getValue() / 100f, coreColor.getColor());

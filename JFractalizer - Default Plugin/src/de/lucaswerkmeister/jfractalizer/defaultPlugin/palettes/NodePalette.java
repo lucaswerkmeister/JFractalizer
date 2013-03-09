@@ -15,12 +15,6 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Menu;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -32,12 +26,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.lucaswerkmeister.jfractalizer.core.Core;
-import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 
-public class NodePalette implements ColorPalette {
+public class NodePalette extends EditDialogPalette {
 	final List<ColorNode>	nodes;
 	final List<Color>		fastColorStorage;
 	Color					coreColor;
@@ -128,13 +120,6 @@ public class NodePalette implements ColorPalette {
 		return "Node Palette";
 	}
 
-	@Override
-	public void initMenu(final Menu colorPaletteMenu, final Frame owner) {
-		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new NodePaletteMenuListener(owner, this));
-		colorPaletteMenu.add(edit);
-	}
-
 	public boolean equals(final NodePalette otherPalette) {
 		if (otherPalette.nodes.size() != nodes.size())
 			return false;
@@ -163,24 +148,8 @@ public class NodePalette implements ColorPalette {
 		makeFastStorage();
 	}
 
-	class NodePaletteMenuListener implements ActionListener {
-		private final Frame	owner;
-		private NodePalette	start;
-
-		public NodePaletteMenuListener(final Frame owner, final NodePalette start) {
-			this.owner = owner;
-			this.start = start;
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final NodePaletteEditDialog d = new NodePaletteEditDialog(owner, start);
-			d.setVisible(true);
-			final NodePalette newPalette = d.getPalette();
-			if (!start.equals(newPalette)) {
-				start = newPalette;
-				Core.setCurrentColorPalette(start);
-			}
-		}
+	@Override
+	protected PaletteEditDialog makeEditDialog(Frame owner) {
+		return new NodePaletteEditDialog(owner, this);
 	}
 }

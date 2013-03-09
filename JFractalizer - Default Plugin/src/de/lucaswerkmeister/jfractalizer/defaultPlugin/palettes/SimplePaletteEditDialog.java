@@ -14,7 +14,6 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
 import java.awt.Button;
-import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -24,20 +23,20 @@ import java.awt.event.ActionListener;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-public class SimplePaletteEditDialog extends Dialog implements ActionListener {
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.EditDialogPalette.PaletteEditDialog;
+
+public class SimplePaletteEditDialog extends PaletteEditDialog implements ActionListener {
 	private static final long	serialVersionUID	= -4693221922749333802L;
 	private final SelectableColor	coreColor, startColor, endColor;
 	private final JSpinner			colorSteps;
-	private final SimplePalette		original;
 	private boolean					userCanceled	= false;
 
-	public SimplePaletteEditDialog(final Frame owner, final SimplePalette start) {
-		super(owner, "Edit Color Palette", true);
-		original = start;
-		coreColor = new SelectableColor(start.coreColor);
-		startColor = new SelectableColor(start.startColor);
-		endColor = new SelectableColor(start.endColor);
-		colorSteps = new JSpinner(new SpinnerNumberModel(start.colorSteps, 2, null, 1));
+	public SimplePaletteEditDialog(final Frame owner, final SimplePalette original) {
+		super(owner, original);
+		coreColor = new SelectableColor(original.coreColor);
+		startColor = new SelectableColor(original.startColor);
+		endColor = new SelectableColor(original.endColor);
+		colorSteps = new JSpinner(new SpinnerNumberModel(original.colorSteps, 2, null, 1));
 		setLayout(new GridLayout(5, 2));
 		add(new Label("Core Color", Label.RIGHT));
 		add(coreColor);
@@ -56,7 +55,7 @@ public class SimplePaletteEditDialog extends Dialog implements ActionListener {
 		pack();
 	}
 
-	public SimplePalette getPalette() {
+	public EditDialogPalette getPalette() {
 		if (userCanceled)
 			return original;
 		return new SimplePalette(coreColor.getColor(), startColor.getColor(), endColor.getColor(),

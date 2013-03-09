@@ -15,7 +15,6 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -32,9 +31,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class NodePaletteEditDialog extends Dialog implements ActionListener, ChangeListener {
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.EditDialogPalette.PaletteEditDialog;
+
+public class NodePaletteEditDialog extends PaletteEditDialog implements ActionListener, ChangeListener {
 	private static final long		serialVersionUID	= -4994844391708814135L;
-	private final NodePalette		original;
 	private final Panel				nodesPanel;
 	private final List<ColorNode>	nodes;
 	private final Panel				otherPaletteStuff;
@@ -43,16 +43,15 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 	private final Panel				buttonsPanel;
 	private boolean					okClicked;
 
-	public NodePaletteEditDialog(final Frame owner, final NodePalette start) {
-		super(owner, "Edit Color Palette", true);
-		original = start;
+	public NodePaletteEditDialog(final Frame owner, final NodePalette original) {
+		super(owner, original);
 		setLayout(new BorderLayout());
 		final ScrollPane nodesPanelParent = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
 		nodesPanel = new Panel(new FlowLayout());
 		nodesPanelParent.add(nodesPanel);
-		nodes = new ArrayList<>(start.nodes.size());
+		nodes = new ArrayList<>(original.nodes.size());
 		ColorNode lastNode = null;
-		for (final ColorNode n : start.nodes) {
+		for (final ColorNode n : original.nodes) {
 			final ColorNode newNode = n.copy();
 			nodes.add(newNode);
 			if (lastNode != null)
@@ -62,10 +61,10 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 		}
 		if (nodes.size() > 1)
 			lastNode.link(nodes.get(0));
-		coreColor = new SelectableColor(start.coreColor);
+		coreColor = new SelectableColor(original.coreColor);
 		nodesPanel.add(coreColor);
 		otherPaletteStuff = new Panel();
-		nodesCount = new JSpinner(new SpinnerNumberModel(start.nodes.size(), 1, null, 1));
+		nodesCount = new JSpinner(new SpinnerNumberModel(original.nodes.size(), 1, null, 1));
 		nodesCount.addChangeListener(this);
 		otherPaletteStuff.add(new Label("Number of color nodes"));
 		otherPaletteStuff.add(nodesCount);
@@ -102,7 +101,7 @@ public class NodePaletteEditDialog extends Dialog implements ActionListener, Cha
 		setVisible(false);
 	}
 
-	public NodePalette getPalette() {
+	public EditDialogPalette getPalette() {
 		if (okClicked)
 			return new NodePalette(nodes, coreColor.getColor());
 		else

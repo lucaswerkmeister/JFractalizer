@@ -15,12 +15,6 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Menu;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +24,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.lucaswerkmeister.jfractalizer.core.Core;
-import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 
-public class SimplePalette implements ColorPalette {
+public class SimplePalette extends EditDialogPalette {
 	Color						coreColor;
 	Color						startColor;
 	Color						endColor;
@@ -134,13 +126,6 @@ public class SimplePalette implements ColorPalette {
 		return "Simple Palette";
 	}
 
-	@Override
-	public void initMenu(final Menu colorPaletteMenu, final Frame owner) {
-		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new SimplePaletteMenuListener(owner, this));
-		colorPaletteMenu.add(edit);
-	}
-
 	public boolean equals(final SimplePalette otherPalette) {
 		return colorSteps == otherPalette.colorSteps && startColor.equals(otherPalette.startColor)
 				&& endColor.equals(otherPalette.endColor) && coreColor.equals(otherPalette.coreColor);
@@ -165,24 +150,8 @@ public class SimplePalette implements ColorPalette {
 		makeFastStorage();
 	}
 
-	class SimplePaletteMenuListener implements ActionListener {
-		private final Frame		owner;
-		private SimplePalette	start;
-
-		public SimplePaletteMenuListener(final Frame owner, final SimplePalette start) {
-			this.owner = owner;
-			this.start = start;
-		}
-
-		@Override
-		public void actionPerformed(final ActionEvent e) {
-			final SimplePaletteEditDialog d = new SimplePaletteEditDialog(owner, start);
-			d.setVisible(true);
-			final SimplePalette newPalette = d.getPalette();
-			if (!start.equals(newPalette)) {
-				start = newPalette;
-				Core.setCurrentColorPalette(start);
-			}
-		}
+	@Override
+	protected PaletteEditDialog makeEditDialog(Frame owner) {
+		return new SimplePaletteEditDialog(owner, this);
 	}
 }

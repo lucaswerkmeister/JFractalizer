@@ -2,12 +2,6 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Menu;
-import java.awt.MenuItem;
-import java.awt.MenuShortcut;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -15,12 +9,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.lucaswerkmeister.jfractalizer.core.Core;
-import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 
-public class HsbRotatePalette implements ColorPalette {
+public class HsbRotatePalette extends EditDialogPalette {
 	private float	hueStart	= 0;
 	private float	hueFactor	= 1 / 16f;
 	private float	saturation	= 1;
@@ -116,13 +108,6 @@ public class HsbRotatePalette implements ColorPalette {
 		// Do nothing
 	}
 
-	@Override
-	public void initMenu(Menu colorPaletteMenu, Frame owner) {
-		MenuItem editPalette = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		editPalette.addActionListener(new HsbRotatePaletteMenuListener(owner, this));
-		colorPaletteMenu.add(editPalette);
-	}
-
 	public float getHueStart() {
 		return hueStart;
 	}
@@ -163,28 +148,8 @@ public class HsbRotatePalette implements ColorPalette {
 		this.coreColor = coreColor;
 	}
 
-	class HsbRotatePaletteMenuListener implements ActionListener {
-		private final Frame			owner;
-		private HsbRotatePalette	palette;
-
-		public HsbRotatePaletteMenuListener(Frame owner, HsbRotatePalette palette) {
-			this.owner = owner;
-			this.palette = palette;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			switch (e.getActionCommand()) {
-				case "Edit Color Palette...":
-					HsbRotatePaletteEditDialog d = new HsbRotatePaletteEditDialog(owner, palette);
-					d.setVisible(true);
-					final HsbRotatePalette newPalette = d.getPalette();
-					if (!palette.equals(newPalette)) {
-						palette = newPalette;
-						Core.setCurrentColorPalette(palette);
-					}
-					break;
-			}
-		}
+	@Override
+	protected PaletteEditDialog makeEditDialog(Frame owner) {
+		return new HsbRotatePaletteEditDialog(owner, this);
 	}
 }
