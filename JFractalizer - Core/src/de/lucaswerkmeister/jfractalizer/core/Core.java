@@ -38,6 +38,7 @@ import de.lucaswerkmeister.jfractalizer.framework.Camera;
 import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.Fractal;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.framework.Log;
 import de.lucaswerkmeister.jfractalizer.framework.Output;
 import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
@@ -48,6 +49,8 @@ import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
  * @version 1.0
  */
 public final class Core {
+	public static final boolean			DEBUG							= true;
+
 	private static Fractal				currentFractal;
 	private static ColorPalette			currentColorPalette;
 
@@ -392,6 +395,8 @@ public final class Core {
 	}
 
 	public static void main(String[] args) throws IOException {
+		if (DEBUG)
+			Log.registerLog(new DebuggingLog());
 		// Read command line args
 		String realm = "";
 		for (String arg : args)

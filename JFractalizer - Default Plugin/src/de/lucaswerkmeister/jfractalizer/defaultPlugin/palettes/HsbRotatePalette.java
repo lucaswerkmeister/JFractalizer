@@ -18,7 +18,6 @@ import org.xml.sax.helpers.AttributesImpl;
 import de.lucaswerkmeister.jfractalizer.core.Core;
 import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.framework.Fractal;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 
 public class HsbRotatePalette implements ColorPalette {
@@ -118,9 +117,9 @@ public class HsbRotatePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(Menu colorPaletteMenu, Fractal fractal, Frame owner) {
+	public void initMenu(Menu colorPaletteMenu, Frame owner) {
 		MenuItem editPalette = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		editPalette.addActionListener(new HsbRotatePaletteMenuListener(fractal, owner, this));
+		editPalette.addActionListener(new HsbRotatePaletteMenuListener(owner, this));
 		colorPaletteMenu.add(editPalette);
 	}
 
@@ -165,12 +164,10 @@ public class HsbRotatePalette implements ColorPalette {
 	}
 
 	class HsbRotatePaletteMenuListener implements ActionListener {
-		private final Fractal		fractal;
 		private final Frame			owner;
 		private HsbRotatePalette	palette;
 
-		public HsbRotatePaletteMenuListener(Fractal fractal, Frame owner, HsbRotatePalette palette) {
-			this.fractal = fractal;
+		public HsbRotatePaletteMenuListener(Frame owner, HsbRotatePalette palette) {
 			this.owner = owner;
 			this.palette = palette;
 		}

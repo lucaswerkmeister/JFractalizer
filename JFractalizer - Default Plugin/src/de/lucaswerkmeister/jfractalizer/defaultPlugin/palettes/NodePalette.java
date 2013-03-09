@@ -32,9 +32,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.lucaswerkmeister.jfractalizer.core.Core;
 import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
-import de.lucaswerkmeister.jfractalizer.framework.Fractal;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 
 public class NodePalette implements ColorPalette {
@@ -129,9 +129,9 @@ public class NodePalette implements ColorPalette {
 	}
 
 	@Override
-	public void initMenu(final Menu colorPaletteMenu, final Fractal fractal, final Frame owner) {
+	public void initMenu(final Menu colorPaletteMenu, final Frame owner) {
 		final MenuItem edit = new MenuItem("Edit Color Palette...", new MenuShortcut(KeyEvent.VK_E, true));
-		edit.addActionListener(new NodePaletteMenuListener(fractal, owner, this));
+		edit.addActionListener(new NodePaletteMenuListener(owner, this));
 		colorPaletteMenu.add(edit);
 	}
 
@@ -164,12 +164,10 @@ public class NodePalette implements ColorPalette {
 	}
 
 	class NodePaletteMenuListener implements ActionListener {
-		private final Fractal	fractal;
-		private final Frame		owner;
-		private NodePalette		start;
+		private final Frame	owner;
+		private NodePalette	start;
 
-		public NodePaletteMenuListener(final Fractal fractal, final Frame owner, final NodePalette start) {
-			this.fractal = fractal;
+		public NodePaletteMenuListener(final Frame owner, final NodePalette start) {
 			this.owner = owner;
 			this.start = start;
 		}
@@ -181,9 +179,7 @@ public class NodePalette implements ColorPalette {
 			final NodePalette newPalette = d.getPalette();
 			if (!start.equals(newPalette)) {
 				start = newPalette;
-				fractal.stopCalculation();
-				fractal.setColorPalette(start);
-				fractal.startCalculation();
+				Core.setCurrentColorPalette(start);
 			}
 		}
 	}

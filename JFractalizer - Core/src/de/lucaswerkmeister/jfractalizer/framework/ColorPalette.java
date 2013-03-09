@@ -41,5 +41,5 @@ public interface ColorPalette extends SelectableService, CommandLineConfigurable
 
 	public void makeFastStorage();
 
-	public void initMenu(Menu colorPaletteMenu, Fractal fractal, Frame owner);
+	public void initMenu(Menu colorPaletteMenu, Frame owner);
 }

@@ -121,7 +121,7 @@ public class MainFrame extends Frame {
 		chooseColorPalette.addActionListener(listener);
 		colorPaletteMenu.add(chooseColorPalette);
 		colorPaletteMenu.addSeparator();
-		Core.getCurrentColorPalette().initMenu(colorPaletteMenu, Core.getCurrentFractal(), this);
+		Core.getCurrentColorPalette().initMenu(colorPaletteMenu, this);
 		if (colorPaletteMenu.getItem(colorPaletteMenu.getItemCount() - 1).getLabel().equals("-"))
 			colorPaletteMenu.remove(colorPaletteMenu.getItemCount() - 1);
 		menuBar.add(colorPaletteMenu);
