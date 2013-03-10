@@ -13,6 +13,7 @@ import de.lucaswerkmeister.jfractalizer.framework.Log.Entry.Level;
 public abstract class Log {
 	private static final Set<Log>				logs	= new HashSet<>();
 	protected static final Map<Integer, Plugin>	ids		= new HashMap<>();
+	protected static final Map<Integer, Level>	levels	= new HashMap<>();
 	private static final BlockingQueue<Entry>	entries	= new LinkedBlockingQueue<>();
 	protected static boolean					running	= true;
 	private static final Thread					handler	= new Thread() {
@@ -21,11 +22,14 @@ public abstract class Log {
 																	try {
 																		Entry nextEntry = entries.poll(1,
 																				TimeUnit.SECONDS);
-																		if (nextEntry != null)
+																		if (nextEntry != null) {
+																			nextEntry.prepare();
 																			for (Log log : logs)
 																				log.log(nextEntry);
+																		}
 																	}
 																	catch (InterruptedException e) {
+																		// This should never happen
 																		continue;
 																	}
 																}
@@ -37,7 +41,7 @@ public abstract class Log {
 	}
 
 	/**
-	 * Registers that one id belongs to a specified plugin.
+	 * Registers that one id has a specified level and belongs to a specified plugin.
 	 * <p>
 	 * The general contract for the IDs is that the bits should be distributed as following:
 	 * <tt>vvvvvvvv&nbsp;pppppppp&nbsp;cccccccc&nbsp;llllllll</tt> , where <tt>v</tt> stands for the plugin vendor,
@@ -46,11 +50,15 @@ public abstract class Log {
 	 * 
 	 * @param id
 	 *            The ID.
+	 * @param level
+	 *            The level: {@link Level#INFO Information}, {@link Level#WARNING Warning}, {@link Level#ERROR Error} or
+	 *            {@link Level#CRASH Crash}.
 	 * @param plugin
 	 *            The plugin.
 	 */
-	public static final void registerID(int id, Plugin plugin) {
+	public static final void registerID(int id, Level level, Plugin plugin) {
 		ids.put(id, plugin);
+		levels.put(id, level);
 	}
 
 	/**
@@ -64,71 +72,18 @@ public abstract class Log {
 	}
 
 	/**
-	 * Send an information to all registered logs.
+	 * Sends a logging event to all registered logs.
+	 * <p>
+	 * The level of the event (info, warning, error, crash) has been set when {@link #registerID(int, Level, Plugin)
+	 * registering} the logging event.
 	 * 
 	 * @param id
-	 *            The ID of the information.
+	 *            The ID of the event.
 	 * @param args
-	 *            Arguments to the information.
+	 *            Arguments to the event.
 	 */
-	public static final void info(int id, Object... args) {
-		try {
-			entries.put(new Entry(id, Level.INFO, args));
-		}
-		catch (InterruptedException e) {
-			// Do nothing, will never happen
-		}
-	}
-
-	/**
-	 * Send a warning to all registered logs.
-	 * 
-	 * @param id
-	 *            The ID of the warning.
-	 * @param args
-	 *            Arguments to the warning.
-	 */
-	public static final void warning(int id, Object... args) {
-		try {
-			entries.put(new Entry(id, Level.WARNING, args));
-		}
-		catch (InterruptedException e) {
-			// Do nothing, will never happen
-		}
-	}
-
-	/**
-	 * Send an error to all registered logs.
-	 * 
-	 * @param id
-	 *            The ID of the error.
-	 * @param args
-	 *            Arguments to the error.
-	 */
-	public static final void error(int id, Object... args) {
-		try {
-			entries.put(new Entry(id, Level.ERROR, args));
-		}
-		catch (InterruptedException e) {
-			// Do nothing, will never happen
-		}
-	}
-
-	/**
-	 * Send a crash to all registered logs.
-	 * 
-	 * @param id
-	 *            The ID of the crash.
-	 * @param args
-	 *            Arguments to the crash.
-	 */
-	static final void crash(int id, Object... args) {
-		try {
-			entries.put(new Entry(id, Level.CRASH, args));
-		}
-		catch (InterruptedException e) {
-			// Do nothing, will never happen
-		}
+	public static final void log(int id, Object... args) {
+		entries.offer(new Entry(id, args));
 	}
 
 	static final void shutdown() {
@@ -151,14 +106,17 @@ public abstract class Log {
 		public final long		time;
 		public final int		id;
 		public final Object[]	args;
-		public final Level		level;
-		public final Plugin		plugin;
+		public Level			level;
+		public Plugin			plugin;
 
-		public Entry(int id, Level level, Object[] args) {
+		public Entry(int id, Object[] args) {
 			this.time = System.currentTimeMillis();
 			this.id = id;
 			this.args = args;
-			this.level = level;
+		}
+
+		public void prepare() {
+			this.level = levels.get(id);
 			this.plugin = ids.get(id);
 		}
 	}
