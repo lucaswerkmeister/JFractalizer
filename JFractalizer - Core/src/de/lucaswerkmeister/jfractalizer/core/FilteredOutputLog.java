@@ -21,7 +21,7 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 	private final Set<Integer>	loggedIDs;
 	private final Set<Integer>	allIDs;
 
-	private final Writer		output;
+	private Writer				output;
 	private DateFormat			dateFormat	= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	private byte				tabWidth	= 8;
 	private boolean				printTime	= true;
@@ -29,9 +29,12 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 	private boolean				printPlugin	= true;
 	private byte				textStart	= 64;
 
-	public FilteredOutputLog(OutputStream output) {
+	public FilteredOutputLog() {
 		allIDs = new HashSet<>(ids.keySet());
 		loggedIDs = new HashSet<>(allIDs);
+	}
+
+	public void setOutput(OutputStream output) {
 		this.output = new BufferedWriter(new OutputStreamWriter(output));
 	}
 

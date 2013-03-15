@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +59,7 @@ public final class Core {
 	private static MainFrame			gui;
 	private static boolean				running							= false;
 	private static String				currentFormat					= "raw-RGB";
+	private static FilteredOutputLog	currentLog						= null;
 	private static Set<Output>			outputs							= new HashSet<>();
 	private static Set<ActionListener>	calculationFinishedListeners	= new HashSet<>();
 	private static Camera				camera;
@@ -200,6 +202,9 @@ public final class Core {
 					}
 				});
 				break;
+			case "log":
+				currentLog = new FilteredOutputLog();
+				Log.registerLog(currentLog);
 		}
 	}
 
@@ -329,7 +334,7 @@ public final class Core {
 					warn("No camera specified, ignoring --camArgs option");
 				else
 					camera.handleCommandLineOption(option, optionName, optionContent);
-				break;
+				return;
 			case "output":
 				switch (optionName) {
 					case "format":
@@ -349,6 +354,22 @@ public final class Core {
 					case "stdout":
 						outputs.add(new StdoutOutput(currentFormat));
 						return;
+				}
+			case "log":
+				switch (optionName) {
+					case "stdout":
+						currentLog.setOutput(System.out);
+						return;
+					case "file":
+						try {
+							currentLog.setOutput(new FileOutputStream(optionContent));
+						}
+						catch (FileNotFoundException e) {
+							error("An error occured while preparing output file \"" + optionContent + "\"!", e);
+						}
+						return;
+					default:
+						currentLog.handleCommandLineOption(option, optionName, optionContent);
 				}
 		}
 	}
