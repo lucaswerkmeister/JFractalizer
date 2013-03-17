@@ -132,8 +132,10 @@ public abstract class Log {
 		log(id, new TimeSpan(System.nanoTime() - stack.pop()), stack.size() + 1, args);
 	}
 
-	static final void shutdown() {
+	public static final void shutdown() {
 		running = false;
+		for (Log log : logs)
+			log.close();
 	}
 
 	/**
@@ -143,6 +145,10 @@ public abstract class Log {
 	 *            The log entry.
 	 */
 	protected abstract void log(Entry entry);
+
+	protected void close() {
+
+	}
 
 	public static class Entry {
 		public static enum Level {

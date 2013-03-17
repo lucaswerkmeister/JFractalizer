@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import javax.swing.JColorChooser;
@@ -41,6 +42,7 @@ import de.lucaswerkmeister.jfractalizer.framework.Fractal;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 import de.lucaswerkmeister.jfractalizer.framework.Log;
 import de.lucaswerkmeister.jfractalizer.framework.Output;
+import de.lucaswerkmeister.jfractalizer.framework.Plugin;
 import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 /**
@@ -415,7 +417,13 @@ public final class Core {
 		Core.setCurrentColorPalette(reader.getPalette());
 	}
 
+	private static void initPlugins() {
+		for (Plugin plugin : ServiceLoader.load(Plugin.class))
+			plugin.registerLogIDs();
+	}
+
 	public static void main(String[] args) throws IOException {
+		initPlugins();
 		if (DEBUG)
 			Log.registerLog(new DebuggingLog());
 		// Read command line args
@@ -460,8 +468,10 @@ public final class Core {
 				currentFractal.addCalculationFinishedListener(l);
 			currentFractal.awaitCalculation();
 		}
-		if (!showGui)
+		if (!showGui) {
 			currentFractal.shutdown();
+			Log.shutdown();
+		}
 	}
 }
 

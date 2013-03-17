@@ -27,7 +27,7 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 	private boolean				printTime	= true;
 	private boolean				printVendor	= false;
 	private boolean				printPlugin	= true;
-	private byte				textStart	= 64;
+	private byte				textStart	= 48;
 
 	public FilteredOutputLog() {
 		allIDs = new HashSet<>(ids.keySet());
@@ -48,6 +48,15 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 			case "hide":
 				for (int id : parseIdRange(optionContent, loggedIDs))
 					loggedIDs.remove(id);
+				break;
+			case "printTime":
+				printTime = Boolean.parseBoolean(optionContent);
+				break;
+			case "printVendor":
+				printVendor = Boolean.parseBoolean(optionContent);
+				break;
+			case "printPlugin":
+				printPlugin = Boolean.parseBoolean(optionContent);
 				break;
 			default:
 				throw new IllegalCommandLineException("Unknown option \"" + optionName + "\" for log!");
@@ -176,10 +185,22 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 							output.write(entryStringLines[i]);
 						}
 					}
+					output.write(System.getProperty("line.separator"));
+					output.flush();
 				}
 			}
 			catch (IOException e) {
 				// TODO figure out what to do here
 			}
+	}
+
+	@Override
+	protected void close() {
+		try {
+			output.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
