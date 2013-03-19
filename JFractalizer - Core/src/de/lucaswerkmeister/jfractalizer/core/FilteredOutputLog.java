@@ -67,6 +67,8 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 		return new Iterable<Integer>() {
 			@Override
 			public Iterator<Integer> iterator() {
+				if (range.equals("all"))
+					return new HashSet<>(ids).iterator();
 				boolean filtersLevel;
 				Level level = Level.INFO;
 				int min;
@@ -119,6 +121,7 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 							int id = innerIterator.next();
 							if ((!finalFiltersLevel || finalLevel == levels.get(id)) && (id >= finalMin)
 									&& (id <= finalMax)) {
+								hasNext = true;
 								next = id;
 								return true;
 							}
