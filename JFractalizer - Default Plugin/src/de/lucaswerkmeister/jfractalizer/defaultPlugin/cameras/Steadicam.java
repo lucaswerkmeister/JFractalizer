@@ -1,5 +1,7 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cameras;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -11,15 +13,23 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import de.lucaswerkmeister.jfractalizer.framework.Camera;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
+import de.lucaswerkmeister.jfractalizer.framework.Log;
 import de.lucaswerkmeister.jfractalizer.framework.Output;
 import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 public class Steadicam implements Camera {
-	private final Set<Output>	outputs	= new HashSet<>();
-	private double				zoom	= 1.05;
-	private int					frame	= 0;
-	private int					modulus	= 1;
+	private final Set<Output>	outputs				= new HashSet<>();
+	private double				zoom				= 1.05;
+	private int					frame				= 0;
+	private int					modulus				= 1;
 	private Thread				zoomer;
+	public static final int		LOG_CLASS_PREFIX	= (0 << 24) + (1 << 16) + (((5 << 5) + (0 << 0)) << 8);
+	public static final int		LOG_ADDED_OUTPUT	= LOG_CLASS_PREFIX + 0;
+	public static final int		LOG_START_FILMING	= LOG_CLASS_PREFIX + 1;
+	public static final int		LOG_START_FRAME		= LOG_CLASS_PREFIX + 2;
+	public static final int		LOG_END_FRAME		= LOG_CLASS_PREFIX + 3;
+	public static final int		LOG_START_WRITE		= LOG_CLASS_PREFIX + 4;
+	public static final int		LOG_END_WRITE		= LOG_CLASS_PREFIX + 5;
 
 	@Override
 	public String getName() {
@@ -64,20 +74,21 @@ public class Steadicam implements Camera {
 	@Override
 	public void addOutput(Output output) {
 		outputs.add(output);
+		Log.log(LOG_ADDED_OUTPUT, output);
 	}
 
 	@Override
 	public void startFilming(final ZoomableFractal fractal) {
 		final BlockingQueue<BufferedImage> images = new LinkedBlockingQueue<>();
 		final BufferedImage lastImage = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+		final int framesCount = (int) Math.ceil(Math.log(fractal.getZoomFactor()) / Math.log(zoom));
 
 		zoomer = new Thread("zoomer") {
 			@Override
 			public void run() {
-				final int framesCount = (int) Math.ceil(Math.log(fractal.getZoomFactor()) / Math.log(zoom));
 				for (Output o : outputs)
 					o.setNumbers(getCountdown(framesCount, frame, modulus));
-				fractal.startCalculation();
+				fractal.startCalculation(); // just to get *some* image; we need the size
 				fractal.stopCalculation();
 				BufferedImage img = fractal.getImage();
 				int centerX = img.getWidth() / 2;
@@ -87,6 +98,11 @@ public class Steadicam implements Camera {
 				double myZoom = Math.pow(zoom, modulus);
 				Iterator<Integer> countdown = getCountdown(framesCount, frame, modulus);
 				while (countdown.hasNext()) {
+					int number = countdown.next();
+					log(LOG_START_FRAME, number);
+					fractal.startCalculation();
+					fractal.awaitCalculation();
+					log(LOG_END_FRAME, number);
 					try {
 						images.put(fractal.getImage());
 					}
@@ -94,9 +110,6 @@ public class Steadicam implements Camera {
 						e.printStackTrace();
 					}
 					fractal.zoomToStart(centerX, centerY, myZoom);
-					fractal.startCalculation();
-					fractal.awaitCalculation();
-					countdown.next();
 				}
 				try {
 					images.put(lastImage);
@@ -109,12 +122,15 @@ public class Steadicam implements Camera {
 		final Thread sender = new Thread("sender") {
 			@Override
 			public void run() {
+				Iterator<Integer> countdown = getCountdown(framesCount, frame, modulus);
 				while (true) {
 					BufferedImage image;
 					try {
 						image = images.take();
+						int number = countdown.next();
 						if (image == lastImage)
 							return;
+						log(LOG_START_WRITE, number);
 						for (Output o : outputs)
 							try {
 								o.writeImage(image);
@@ -122,6 +138,7 @@ public class Steadicam implements Camera {
 							catch (IOException e) {
 								e.printStackTrace();
 							}
+						log(LOG_END_WRITE, number);
 					}
 					catch (InterruptedException e1) {
 						e1.printStackTrace();
@@ -131,6 +148,7 @@ public class Steadicam implements Camera {
 		};
 
 		zoomer.start();
+		log(LOG_START_FILMING, fractal);
 		sender.start();
 	}
 

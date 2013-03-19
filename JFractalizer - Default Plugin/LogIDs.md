@@ -1,7 +1,7 @@
-Log IDs for the Default Plugin (0x00) by Lucas Werkmeister (0x00)
+Log IDs for the Default Plugin (0x01) by Lucas Werkmeister (0x00)
 =================================================================
 
-(The prefix `de.lucaswerkmeister.jfractalizer.defaultPlugin.` is implicit.)
+(The prefix package `de.lucaswerkmeister.jfractalizer.defaultPlugin` is implicit.)
 
 Bit distribution in the class byte: `0bpppccccc`, where `p` stands for the package and `c` stands for the class in the package.
 
@@ -38,4 +38,10 @@ Bit distribution in the class byte: `0bpppccccc`, where `p` stands for the packa
   * 0x0C: FractXmlHsbRotatePaletteLoader
 * 5: cameras
   * 0x00: Steadicam
+    * 0x00: Added output
+    * 0x01: Start filming
+    * 0x02: Start calculation of frame
+    * 0x03: End calculation of frame
+    * 0x04: Start write of frame
+    * 0x05: End write of frame
 * 6-7: reserved for future other components
