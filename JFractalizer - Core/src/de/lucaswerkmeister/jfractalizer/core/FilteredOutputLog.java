@@ -25,6 +25,7 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 	private DateFormat			dateFormat	= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 	private byte				tabWidth	= 8;
 	private boolean				printTime	= true;
+	private boolean				printID		= true;
 	private boolean				printVendor	= false;
 	private boolean				printPlugin	= true;
 	private byte				textStart	= 48;
@@ -160,6 +161,11 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 						initLine.append("[");
 						initLine.append(dateFormat.format(new Date(entry.time)));
 						initLine.append("] ");
+					}
+					if (printID) {
+						initLine.append("[");
+						initLine.append(Integer.toString(entry.id, 16));
+						initLine.append("h] ");
 					}
 					if (printVendor || printPlugin) {
 						initLine.append("[");

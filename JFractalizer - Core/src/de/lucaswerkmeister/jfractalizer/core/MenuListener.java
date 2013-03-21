@@ -48,8 +48,7 @@ public class MenuListener implements ActionListener {
 	}
 
 	private void initFileChooser() {
-		fileChooser = new JFileChooser(); // TODO the default directory should
-		// probably be read from a config file
+		fileChooser = new JFileChooser(); // TODO the default directory should probably be read from a config file
 	}
 
 	@Override
@@ -59,10 +58,7 @@ public class MenuListener implements ActionListener {
 				final FileNameExtensionFilter jpg = new FileNameExtensionFilter("JPEG image", "jpg", "jpeg");
 				final FileNameExtensionFilter png = new FileNameExtensionFilter("PNG image", "png");
 				final FileNameExtensionFilter gif = new FileNameExtensionFilter("GIF image", "gif");
-				fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter()); // remove
-				// the
-				// "all files"
-				// filter
+				fileChooser.removeChoosableFileFilter(fileChooser.getFileFilter()); // remove the "all files" filter
 				fileChooser.addChoosableFileFilter(jpg);
 				fileChooser.addChoosableFileFilter(png);
 				fileChooser.addChoosableFileFilter(gif);
