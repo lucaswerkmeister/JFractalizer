@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.framework.Camera;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 import de.lucaswerkmeister.jfractalizer.framework.Log;
@@ -23,7 +24,7 @@ public class Steadicam implements Camera {
 	private int					frame				= 0;
 	private int					modulus				= 1;
 	private Thread				zoomer;
-	public static final int		LOG_CLASS_PREFIX	= (0 << 24) + (1 << 16) + (((5 << 5) + (0 << 0)) << 8);
+	public static final int		LOG_CLASS_PREFIX	= DefaultPlugin.LOG_PLUGIN_PREFIX + (((5 << 5) + (0 << 0)) << 8);
 	public static final int		LOG_ADDED_OUTPUT	= LOG_CLASS_PREFIX + 0;
 	public static final int		LOG_START_FILMING	= LOG_CLASS_PREFIX + 1;
 	public static final int		LOG_START_FRAME		= LOG_CLASS_PREFIX + 2;

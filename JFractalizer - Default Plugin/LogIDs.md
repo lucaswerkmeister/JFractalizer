@@ -24,8 +24,13 @@ Bit distribution in the class byte: `0bpppccccc`, where `p` stands for the packa
 * 1-3: reserved for future fractals
 * 4: palettes
   * 0x00: EditDialogPalette
+    * 0x00: Initialized menu
+    * 0x01: Showing edit dialog
+    * 0x02: Edited palette
   * 0x01: PaletteEditDialog
   * 0x02: SelectableColor
+    * 0x00: Showing edit dialog
+    * 0x01: Edited color
   * 0x03: SimplePalette
   * 0x04: SimplePaletteEditDialog
   * 0x05: FractXmlSimplePaletteLoader

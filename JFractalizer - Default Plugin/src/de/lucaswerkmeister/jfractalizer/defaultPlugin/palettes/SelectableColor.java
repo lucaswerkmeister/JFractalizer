@@ -13,6 +13,8 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
@@ -34,12 +36,17 @@ import java.util.List;
 import javax.swing.JColorChooser;
 
 import de.lucaswerkmeister.jfractalizer.core.Core;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 
 public class SelectableColor extends Component implements MouseListener {
-	private static final long			serialVersionUID	= -464835931994412419L;
-	private static final Dimension		size				= new Dimension(25, 25);
-	private Color						color				= Color.black;
-	private final List<ActionListener>	listeners			= new LinkedList<>();
+	private static final long			serialVersionUID		= -464835931994412419L;
+	private static final Dimension		size					= new Dimension(25, 25);
+	private Color						color					= Color.black;
+	private final List<ActionListener>	listeners				= new LinkedList<>();
+	public static final int				LOG_CLASS_PREFIX		= DefaultPlugin.LOG_PLUGIN_PREFIX
+																		+ (((4 << 5) + (2 << 0)) << 8);
+	public static final int				LOG_SHOW_EDIT_DIALOG	= LOG_CLASS_PREFIX + 0;
+	public static final int				LOG_EDITED_COLOR		= LOG_CLASS_PREFIX + 1;
 
 	public SelectableColor(final Color c) {
 		color = c;
@@ -77,13 +84,17 @@ public class SelectableColor extends Component implements MouseListener {
 		while (!(parent instanceof Frame))
 			parent = parent.getParent();
 		final ColorDialog d = new ColorDialog((Frame) parent, color);
+		log(LOG_SHOW_EDIT_DIALOG, this, d);
 		d.setVisible(true);
-		color = d.getColor();
-		repaint();
-		if (!listeners.isEmpty()) {
-			final ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Color changed");
-			for (final ActionListener l : listeners)
-				l.actionPerformed(ae);
+		if (!color.equals(d.getColor())) {
+			log(LOG_EDITED_COLOR, this, color, d.getColor());
+			color = d.getColor();
+			repaint();
+			if (!listeners.isEmpty()) {
+				final ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "Color changed");
+				for (final ActionListener l : listeners)
+					l.actionPerformed(ae);
+			}
 		}
 	}
 
