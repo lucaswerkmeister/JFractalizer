@@ -15,6 +15,7 @@ public class DefaultPlugin implements Plugin {
 		Log.registerID(Steadicam.LOG_END_FRAME, Level.INFO, this);
 		Log.registerID(Steadicam.LOG_START_WRITE, Level.INFO, this);
 		Log.registerID(Steadicam.LOG_END_WRITE, Level.INFO, this);
+		Log.registerID(Steadicam.LOG_GC, Level.INFO, this);
 	}
 
 	@Override
@@ -42,6 +43,8 @@ public class DefaultPlugin implements Plugin {
 				return "Steadicam: Started writing frame #" + args[0].toString();
 			case Steadicam.LOG_END_WRITE:
 				return "Steadicam: Finished writing frame #" + args[0].toString();
+			case Steadicam.LOG_GC:
+				return "Steadicam: Triggered a Garbage Collection.";
 		}
 		throw new IllegalArgumentException("Unknown log ID!");
 	}

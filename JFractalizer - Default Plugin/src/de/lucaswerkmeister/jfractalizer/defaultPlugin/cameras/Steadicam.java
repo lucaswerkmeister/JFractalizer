@@ -30,6 +30,7 @@ public class Steadicam implements Camera {
 	public static final int		LOG_END_FRAME		= LOG_CLASS_PREFIX + 3;
 	public static final int		LOG_START_WRITE		= LOG_CLASS_PREFIX + 4;
 	public static final int		LOG_END_WRITE		= LOG_CLASS_PREFIX + 5;
+	public static final int		LOG_GC				= LOG_CLASS_PREFIX + 6;
 
 	@Override
 	public String getName() {
@@ -139,6 +140,10 @@ public class Steadicam implements Camera {
 								e.printStackTrace();
 							}
 						log(LOG_END_WRITE, number);
+						if (number % 100 == 0) {
+							System.gc();
+							log(LOG_GC);
+						}
 					}
 					catch (InterruptedException e1) {
 						e1.printStackTrace();
@@ -147,8 +152,10 @@ public class Steadicam implements Camera {
 			};
 		};
 
+		zoomer.setPriority((int) Math.round((Thread.MAX_PRIORITY - Thread.MIN_PRIORITY) * 0.75 + Thread.MIN_PRIORITY));
 		zoomer.start();
 		log(LOG_START_FILMING, fractal);
+		sender.setPriority((int) Math.round((Thread.MAX_PRIORITY - Thread.MIN_PRIORITY) * 0.1 + Thread.MIN_PRIORITY));
 		sender.start();
 	}
 
