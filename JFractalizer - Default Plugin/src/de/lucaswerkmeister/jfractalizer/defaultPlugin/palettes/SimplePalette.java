@@ -13,6 +13,8 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.Color;
 import java.awt.Frame;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 
 public class SimplePalette extends EditDialogPalette {
@@ -32,6 +35,8 @@ public class SimplePalette extends EditDialogPalette {
 	Color						endColor;
 	int							colorSteps;
 	private final List<Color>	fastColorStorage;
+	public static final int		LOG_CLASS_PREFIX	= DefaultPlugin.LOG_PLUGIN_PREFIX + (((4 << 5) + (3 << 0)) << 8);
+	public static final int		LOG_SAVING			= LOG_CLASS_PREFIX + 0;
 
 	public SimplePalette() {
 		this(Color.black, Color.red, Color.yellow, 16);
@@ -72,6 +77,8 @@ public class SimplePalette extends EditDialogPalette {
 
 	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
+		log(LOG_SAVING, this);
+
 		final Attributes noAtts = new AttributesImpl();
 
 		handler.startElement("", "", "startColor", noAtts);

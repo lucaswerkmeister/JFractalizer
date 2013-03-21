@@ -1,9 +1,11 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.registerID;
+
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.cameras.Steadicam;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.EditDialogPalette;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.SelectableColor;
-import de.lucaswerkmeister.jfractalizer.framework.Log;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.SimplePalette;
 import de.lucaswerkmeister.jfractalizer.framework.Log.Entry.Level;
 import de.lucaswerkmeister.jfractalizer.framework.Plugin;
 
@@ -12,18 +14,19 @@ public class DefaultPlugin implements Plugin {
 
 	@Override
 	public void registerLogIDs() {
-		Log.registerID(Steadicam.LOG_ADDED_OUTPUT, Level.INFO, this);
-		Log.registerID(Steadicam.LOG_START_FILMING, Level.INFO, this);
-		Log.registerID(Steadicam.LOG_START_FRAME, Level.INFO, this);
-		Log.registerID(Steadicam.LOG_END_FRAME, Level.INFO, this);
-		Log.registerID(Steadicam.LOG_START_WRITE, Level.INFO, this);
-		Log.registerID(Steadicam.LOG_END_WRITE, Level.INFO, this);
-		Log.registerID(Steadicam.LOG_GC, Level.INFO, this);
-		Log.registerID(EditDialogPalette.LOG_INIT_MENU, Level.INFO, this);
-		Log.registerID(EditDialogPalette.LOG_SHOW_EDIT_DIALOG, Level.INFO, this);
-		Log.registerID(EditDialogPalette.LOG_EDITED_PALETTE, Level.INFO, this);
-		Log.registerID(SelectableColor.LOG_SHOW_EDIT_DIALOG, Level.INFO, this);
-		Log.registerID(SelectableColor.LOG_EDITED_COLOR, Level.INFO, this);
+		registerID(Steadicam.LOG_ADDED_OUTPUT, Level.INFO, this);
+		registerID(Steadicam.LOG_START_FILMING, Level.INFO, this);
+		registerID(Steadicam.LOG_START_FRAME, Level.INFO, this);
+		registerID(Steadicam.LOG_END_FRAME, Level.INFO, this);
+		registerID(Steadicam.LOG_START_WRITE, Level.INFO, this);
+		registerID(Steadicam.LOG_END_WRITE, Level.INFO, this);
+		registerID(Steadicam.LOG_GC, Level.INFO, this);
+		registerID(EditDialogPalette.LOG_INIT_MENU, Level.INFO, this);
+		registerID(EditDialogPalette.LOG_SHOW_EDIT_DIALOG, Level.INFO, this);
+		registerID(EditDialogPalette.LOG_EDITED_PALETTE, Level.INFO, this);
+		registerID(SelectableColor.LOG_SHOW_EDIT_DIALOG, Level.INFO, this);
+		registerID(SelectableColor.LOG_EDITED_COLOR, Level.INFO, this);
+		registerID(SimplePalette.LOG_SAVING, Level.INFO, this);
 	}
 
 	@Override
@@ -64,6 +67,8 @@ public class DefaultPlugin implements Plugin {
 				return "SelectableColor: Showing edit dialog.";
 			case SelectableColor.LOG_EDITED_COLOR:
 				return "SelectableColor: Changed color from " + args[1] + " to " + args[2] + ".";
+			case SimplePalette.LOG_SAVING:
+				return "SimplePalette: Saving";
 		}
 		throw new IllegalArgumentException("Unknown log ID!");
 	}

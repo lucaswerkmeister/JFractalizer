@@ -32,6 +32,7 @@ Bit distribution in the class byte: `0bpppccccc`, where `p` stands for the packa
     * 0x00: Showing edit dialog
     * 0x01: Edited color
   * 0x03: SimplePalette
+    * 0x00: Saving
   * 0x04: SimplePaletteEditDialog
   * 0x05: FractXmlSimplePaletteLoader
   * 0x06: NodePalette
