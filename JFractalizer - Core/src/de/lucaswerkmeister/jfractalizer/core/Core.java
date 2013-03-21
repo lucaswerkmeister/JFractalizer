@@ -52,7 +52,7 @@ import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
  * @version 1.0
  */
 public final class Core {
-	public static final boolean			DEBUG							= true;
+	public static boolean				debugging						= false;
 
 	private static Fractal				currentFractal;
 	private static ColorPalette			currentColorPalette;
@@ -224,6 +224,9 @@ public final class Core {
 				switch (optionName) {
 					case "no-gui":
 						showGui = false;
+						return;
+					case "debug":
+						debugging = Boolean.parseBoolean(optionContent);
 						return;
 				}
 				throw new IllegalCommandLineException("Unknown option \"" + option + "\" in realm \"" + realm + "\"!");
@@ -424,8 +427,6 @@ public final class Core {
 
 	public static void main(String[] args) throws IOException {
 		initPlugins();
-		if (DEBUG)
-			Log.registerLog(new DebuggingLog());
 		// Read command line args
 		String realm = "";
 		for (String arg : args)
@@ -436,6 +437,8 @@ public final class Core {
 			}
 			else
 				handleOption(realm, arg);
+		if (debugging)
+			Log.registerLog(new DebuggingLog());
 		if (!showGui && (currentFractal == null || currentColorPalette == null))
 			throw new IllegalCommandLineException(
 					"If running without GUI, fractal fractal and color palette must be provided!");
