@@ -34,14 +34,23 @@ Bit distribution in the class byte: `0bpppccccc`, where `p` stands for the packa
   * 0x03: SimplePalette
     * 0x00: Saving
   * 0x04: SimplePaletteEditDialog
+    * None yet
   * 0x05: FractXmlSimplePaletteLoader
+    * None yet
   * 0x06: NodePalette
+    * 0x00: Saving
   * 0x07: NodePaletteEditDialog
+    * None yet
   * 0x08: FractXmlNodePaletteLoader
+    * None yet
   * 0x09: ColorNode
+    * 0x00: Updated
   * 0x0A: HsbRotatePalette
+    * 0x00: Saving
   * 0x0B: HsbRotatePaletteEditDialog
+    * None yet
   * 0x0C: FractXmlHsbRotatePaletteLoader
+    * None yet
 * 5: cameras
   * 0x00: Steadicam
     * 0x00: Added output

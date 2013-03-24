@@ -1,5 +1,7 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.Color;
 import java.awt.Frame;
 
@@ -9,15 +11,18 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlPaletteLoader;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 
 public class HsbRotatePalette extends EditDialogPalette {
-	private float	hueStart	= 0;
-	private float	hueFactor	= 1 / 16f;
-	private float	saturation	= 1;
-	private float	brightness	= 1;
-	private Color	coreColor	= Color.black;
+	private float			hueStart			= 0;
+	private float			hueFactor			= 1 / 16f;
+	private float			saturation			= 1;
+	private float			brightness			= 1;
+	private Color			coreColor			= Color.black;
+	public static final int	LOG_CLASS_PREFIX	= DefaultPlugin.LOG_PLUGIN_PREFIX + (((4 << 5) + (0x0A << 0)) << 8);
+	public static final int	LOG_SAVING			= LOG_CLASS_PREFIX + 0;
 
 	public HsbRotatePalette() {
 
@@ -71,6 +76,8 @@ public class HsbRotatePalette extends EditDialogPalette {
 
 	@Override
 	public void saveFractXml(TransformerHandler handler) throws SAXException {
+		log(LOG_SAVING, this);
+
 		final Attributes noAtts = new AttributesImpl();
 
 		handler.startElement("", "", "hueStart", noAtts);

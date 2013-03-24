@@ -13,6 +13,8 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -23,13 +25,18 @@ import java.awt.event.ActionListener;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
+
 public class ColorNode extends Panel implements ActionListener {
-	private static final long	serialVersionUID	= -5555238254555730578L;
-	private Color				startColor, endColor;
-	private int					length;
+	private static final long		serialVersionUID	= -5555238254555730578L;
+	private Color					startColor, endColor;
+	private int						length;
 	private final SelectableColor	startC, endC;
 	private final JSpinner			lengthC;
 	private ColorNode				linkedNode;
+	public static final int			LOG_CLASS_PREFIX	= DefaultPlugin.LOG_PLUGIN_PREFIX
+																+ (((4 << 5) + (9 << 0)) << 8);
+	public static final int			LOG_UPDATE			= LOG_CLASS_PREFIX + 0;
 
 	/**
 	 * Creates a new ColorNode with the specified parameters.
@@ -118,6 +125,7 @@ public class ColorNode extends Panel implements ActionListener {
 	}
 
 	private void update(final Color newColor) {
+		log(LOG_UPDATE, this, startC.getColor(), newColor);
 		startC.setColor(newColor);
 	}
 

@@ -169,6 +169,7 @@ public abstract class CifFractal implements ZoomableFractal {
 		Rectangle2D.Double start = getStartArea();
 		double realSize = canvas.getMaxReal() - canvas.getMinReal();
 		double imagSize = canvas.getMaxImag() - canvas.getMinImag();
+		final boolean CENTER_WHEN_BIGGER = false; // Disabled
 		if (realSize < start.width) {
 			// move horizontally
 			if (canvas.getMaxReal() > start.getMaxX()) {
@@ -182,7 +183,7 @@ public abstract class CifFractal implements ZoomableFractal {
 				canvas.setMaxReal(start.getMinX() + realSize);
 			}
 		}
-		else {
+		else if (CENTER_WHEN_BIGGER) {
 			// center horizontally
 			canvas.setMinReal(start.getCenterX() - realSize / 2);
 			canvas.setMaxReal(start.getCenterX() + realSize / 2);
@@ -200,7 +201,7 @@ public abstract class CifFractal implements ZoomableFractal {
 				canvas.setMaxImag(start.getMinY() + imagSize);
 			}
 		}
-		else {
+		else if (CENTER_WHEN_BIGGER) {
 			// center vertically
 			canvas.setMinImag(start.getCenterY() - imagSize / 2);
 			canvas.setMaxImag(start.getCenterY() + imagSize / 2);
