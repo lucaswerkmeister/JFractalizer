@@ -62,11 +62,13 @@ public class CifFractXmlLoader extends FractXmlLoader {
 			Dimension d = new Dimension(Integer.parseInt(asString), fractal.getCanvas().getHeight());
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
+			newCanvas.setImageSize(d);
 		}
 		else if (currentQName.equals("height")) {
 			Dimension d = new Dimension(fractal.getCanvas().getWidth(), Integer.parseInt(asString));
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
+			newCanvas.setImageSize(d);
 		}
 		else if (currentQName.equals("minReal"))
 			newCanvas.setMinReal(Double.parseDouble(asString));
