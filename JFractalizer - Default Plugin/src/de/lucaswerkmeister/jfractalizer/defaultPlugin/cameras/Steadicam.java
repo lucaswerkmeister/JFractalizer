@@ -88,11 +88,8 @@ public class Steadicam implements Camera {
 			public void run() {
 				for (Output o : outputs)
 					o.setNumbers(getCountdown(framesCount, frame, modulus));
-				fractal.startCalculation(); // just to get *some* image; we need the size
-				fractal.stopCalculation();
-				BufferedImage img = fractal.getImage();
-				int centerX = img.getWidth() / 2;
-				int centerY = img.getHeight() / 2;
+				int centerX = fractal.getImageSize().width / 2;
+				int centerY = fractal.getImageSize().height / 2;
 				for (int i = 0; i < frame; i++)
 					fractal.zoomToStart(centerX, centerY, zoom);
 				double myZoom = Math.pow(zoom, modulus);

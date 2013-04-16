@@ -35,7 +35,7 @@ public class TimeSpan {
 	}
 
 	public String toString() {
-		long interval = nanos / 1_000_000;
+		long interval = (nanos + 500_000) / 1_000_000;
 		final short milliseconds = (short) (interval % 1000);
 		interval -= milliseconds;
 		interval /= 1000;
@@ -85,9 +85,13 @@ public class TimeSpan {
 				ret.append('s');
 			ret.append(' ');
 		}
-		ret.append('(');
+		boolean braces = ret.length() > 0;
+		if (braces)
+			ret.append('(');
 		ret.append(nanos);
-		ret.append(" ns).");
+		ret.append(" ns");
+		if (braces)
+			ret.append(")");
 		return ret.toString();
 	}
 }

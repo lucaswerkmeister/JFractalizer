@@ -26,8 +26,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,15 +68,15 @@ public abstract class CifFractal implements ZoomableFractal {
 	private int										imageType					= BufferedImage.TYPE_INT_ARGB;
 	History<CifParams>								history;
 	private long									startTime, stopTime;
+	private final Set<ActionListener>				calculationFinishedListeners;
 
 	private static final boolean					USE_MORE_THREADS_THAN_CORES	= true;						// TODO
 																												// cc #5
 
 	protected CifFractal(Class<? extends CifImageMaker> imageMakerClass) {
 		this.imageMakerClass = imageMakerClass;
-		history = new History<>(256);
+		this.calculationFinishedListeners = new HashSet<>();
 		initDefaultValues();
-		history.add(getParams());
 	}
 
 	@Override
@@ -84,9 +86,11 @@ public abstract class CifFractal implements ZoomableFractal {
 			addCalculationFinishedListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Core.setStatus("Calculation finished in " + new TimeSpan(stopTime - startTime).toString());
+					Core.setStatus("Calculation finished in " + new TimeSpan(stopTime - startTime).toString() + ".");
 				}
 			});
+			history = new History<>(256);
+			history.add(getParams());
 		}
 		return canvas;
 	}
@@ -277,12 +281,7 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void addCalculationFinishedListener(final ActionListener listener) {
-		new Thread() {
-			public void run() {
-				awaitCalculation();
-				listener.actionPerformed(null);
-			}
-		}.start();
+		calculationFinishedListeners.add(listener);
 	}
 
 	private void initThreads() {
@@ -293,8 +292,16 @@ public abstract class CifFractal implements ZoomableFractal {
 			runningTasks = new LinkedList<>();
 		if (checkValues()) {
 			Core.setStatus("Calculating...");
-			stopTime = 0;
-			startTime = System.currentTimeMillis();
+			startTime = System.nanoTime();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					awaitCalculation();
+					stopTime = System.nanoTime();
+					for (ActionListener listener : calculationFinishedListeners)
+						listener.actionPerformed(null);
+				}
+			}).start();
 			int lessSections = (int) Math.sqrt(cpuCount);
 			int moreSections = (lessSections == 1) ? cpuCount : cpuCount / lessSections;
 			if (USE_MORE_THREADS_THAN_CORES) {
@@ -527,6 +534,7 @@ public abstract class CifFractal implements ZoomableFractal {
 		}
 	}
 
+	@Override
 	public Dimension getImageSize() {
 		return new Dimension(width, height);
 	}
@@ -546,7 +554,7 @@ public abstract class CifFractal implements ZoomableFractal {
 		maxImag = params.maxImag;
 		maxPasses = params.maxPasses;
 		superSamplingFactor = params.superSamplingFactor;
-		if (canvas != null) {
+		if (canvas != null && history != null) {
 			if (addToHistory)
 				history.add(params);
 			undoMenuItem.setEnabled(history.canUndo());
