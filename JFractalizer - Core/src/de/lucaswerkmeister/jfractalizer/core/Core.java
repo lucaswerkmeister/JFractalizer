@@ -220,7 +220,7 @@ public final class Core {
 		switch (realm) {
 			case "":
 				throw new IllegalCommandLineException("No realm specified!");
-			case "ui":
+			case "core":
 				switch (optionName) {
 					case "no-gui":
 						showGui = false;
@@ -371,6 +371,8 @@ public final class Core {
 							error("An error occured while preparing output file \"" + optionContent + "\"!", e);
 						}
 						return;
+					case "debug":
+						Log.registerLog(new DebuggingLog());
 					default:
 						currentLog.handleCommandLineOption(option, optionName, optionContent);
 				}
@@ -425,8 +427,6 @@ public final class Core {
 
 	public static void main(String[] args) throws IOException {
 		initPlugins();
-		if (DEBUG)
-			Log.registerLog(new DebuggingLog());
 		// Read command line args
 		String realm = "";
 		for (String arg : args)

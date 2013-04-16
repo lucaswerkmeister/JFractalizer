@@ -288,20 +288,10 @@ public abstract class CifFractal implements ZoomableFractal {
 		final int cpuCount = Runtime.getRuntime().availableProcessors();
 		if (executorService == null)
 			executorService = Executors.newFixedThreadPool(cpuCount);
-		if (runningTasks == null)
-			runningTasks = new LinkedList<>();
+		runningTasks = new LinkedList<>();
 		if (checkValues()) {
 			Core.setStatus("Calculating...");
 			startTime = System.nanoTime();
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					awaitCalculation();
-					stopTime = System.nanoTime();
-					for (ActionListener listener : calculationFinishedListeners)
-						listener.actionPerformed(null);
-				}
-			}).start();
 			int lessSections = (int) Math.sqrt(cpuCount);
 			int moreSections = (lessSections == 1) ? cpuCount : cpuCount / lessSections;
 			if (USE_MORE_THREADS_THAN_CORES) {
@@ -347,6 +337,15 @@ public abstract class CifFractal implements ZoomableFractal {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					awaitCalculation();
+					stopTime = System.nanoTime();
+					for (ActionListener listener : calculationFinishedListeners)
+						listener.actionPerformed(null);
+				}
+			}).start();
 		}
 		else {
 			throw new IllegalStateException("Invalid values!");
