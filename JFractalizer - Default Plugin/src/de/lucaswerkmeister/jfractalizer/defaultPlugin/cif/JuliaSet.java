@@ -23,7 +23,7 @@ public class JuliaSet extends CifFractal {
 	}
 
 	public JuliaSet(final double cReal, final double cImag) {
-		canvas = new CifCanvas<>(this, JuliaImageMaker_CalcAll.class);
+		super(JuliaImageMaker_CalcAll.class);
 		menuListener = new CifMenuListener(this, canvas);
 		this.cReal = cReal;
 		this.cImag = cImag;
