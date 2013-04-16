@@ -50,19 +50,19 @@ public class CifMenuListener implements ActionListener {
 				editBoundariesDialog = new Dialog((Frame) fractal.getCanvas().getParent(), true);
 				editBoundariesDialog.setLayout(new BorderLayout());
 				final Panel interval = new Panel(new BorderLayout());
-				final TextField maxImag = new TextField(((Double) canvas.getMaxImag()).toString());
+				final TextField maxImag = new TextField(((Double) fractal.getMaxImag()).toString());
 				Panel p = new Panel(new GridBagLayout());
 				p.add(maxImag);
 				interval.add(p, BorderLayout.NORTH);
-				final TextField minImag = new TextField(((Double) canvas.getMinImag()).toString());
+				final TextField minImag = new TextField(((Double) fractal.getMinImag()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(minImag);
 				interval.add(p, BorderLayout.SOUTH);
-				final TextField maxReal = new TextField(((Double) canvas.getMaxReal()).toString());
+				final TextField maxReal = new TextField(((Double) fractal.getMaxReal()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(maxReal);
 				interval.add(p, BorderLayout.EAST);
-				final TextField minReal = new TextField(((Double) canvas.getMinReal()).toString());
+				final TextField minReal = new TextField(((Double) fractal.getMinReal()).toString());
 				p = new Panel(new GridBagLayout());
 				p.add(minReal);
 				interval.add(p, BorderLayout.WEST);
@@ -91,14 +91,12 @@ public class CifMenuListener implements ActionListener {
 				editBoundariesDialog.pack();
 				editBoundariesDialog.setVisible(true);
 				if (okClicked) {
-					canvas.setMinImag(Double.parseDouble(minImag.getText()));
-					canvas.setMaxImag(Double.parseDouble(maxImag.getText()));
-					canvas.setMinReal(Double.parseDouble(minReal.getText()));
-					canvas.setMaxReal(Double.parseDouble(maxReal.getText()));
-					Dimension d = new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height.getText()));
-					canvas.setImageSize(d);
-					canvas.setPreferredSize(d);
-					canvas.setSize(d);
+					fractal.setMinImag(Double.parseDouble(minImag.getText()));
+					fractal.setMaxImag(Double.parseDouble(maxImag.getText()));
+					fractal.setMinReal(Double.parseDouble(minReal.getText()));
+					fractal.setMaxReal(Double.parseDouble(maxReal.getText()));
+					fractal.setImageSize(new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height
+							.getText())));
 					((Frame) canvas.getParent()).pack();
 					fractal.stopCalculation();
 					fractal.startCalculation();
@@ -129,11 +127,11 @@ public class CifMenuListener implements ActionListener {
 				additionalParamsDialog = new Dialog((Frame) fractal.getCanvas().getParent(), true);
 				additionalParamsDialog.setLayout(new GridLayout(3, 2));
 				additionalParamsDialog.add(new Label("SuperSampling Factor", Label.RIGHT));
-				final JSpinner ssf = new JSpinner(new SpinnerNumberModel(canvas.getSuperSamplingFactor(), 1,
+				final JSpinner ssf = new JSpinner(new SpinnerNumberModel(fractal.getSuperSamplingFactor(), 1,
 						Byte.MAX_VALUE, 1));
 				additionalParamsDialog.add(ssf);
 				additionalParamsDialog.add(new Label("Calculation depth", Label.RIGHT));
-				final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(canvas.getMaxPasses(), 1,
+				final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(fractal.getMaxPasses(), 1,
 						Integer.MAX_VALUE, 1));
 				additionalParamsDialog.add(maxPasses);
 				ok = new Button("OK");
@@ -145,10 +143,10 @@ public class CifMenuListener implements ActionListener {
 				additionalParamsDialog.pack();
 				additionalParamsDialog.setVisible(true);
 				if (okClicked) {
-					canvas.setSuperSamplingFactor((byte) (int) ssf.getValue()); // the
+					fractal.setSuperSamplingFactor((byte) (int) ssf.getValue()); // the
 					// additional (int) cast is necessary because casting from Integer to byte raises a
 					// ClassCastException
-					canvas.setMaxPasses((int) maxPasses.getValue());
+					fractal.setMaxPasses((int) maxPasses.getValue());
 					fractal.stopCalculation();
 					fractal.startCalculation();
 				}
@@ -158,22 +156,22 @@ public class CifMenuListener implements ActionListener {
 				fractal.startCalculation();
 				break;
 			case "Undo":
-				if (canvas.history.canUndo()) {
+				if (fractal.history.canUndo()) {
 					fractal.stopCalculation();
-					canvas.setParams((CifParams) canvas.history.undo(), false);
+					fractal.setParams((CifParams) fractal.history.undo(), false);
 					fractal.startCalculation();
 				}
-				fractal.undoMenuItem.setEnabled(canvas.history.canUndo());
-				fractal.redoMenuItem.setEnabled(canvas.history.canRedo());
+				fractal.undoMenuItem.setEnabled(fractal.history.canUndo());
+				fractal.redoMenuItem.setEnabled(fractal.history.canRedo());
 				break;
 			case "Redo":
-				if (canvas.history.canRedo()) {
+				if (fractal.history.canRedo()) {
 					fractal.stopCalculation();
-					canvas.setParams((CifParams) canvas.history.redo(), false);
+					fractal.setParams((CifParams) fractal.history.redo(), false);
 					fractal.startCalculation();
 				}
-				fractal.undoMenuItem.setEnabled(canvas.history.canUndo());
-				fractal.redoMenuItem.setEnabled(canvas.history.canRedo());
+				fractal.undoMenuItem.setEnabled(fractal.history.canUndo());
+				fractal.redoMenuItem.setEnabled(fractal.history.canRedo());
 				break;
 			default:
 				System.out
