@@ -224,6 +224,7 @@ public final class Core {
 				switch (optionName) {
 					case "no-gui":
 						showGui = false;
+						System.setProperty("java.awt.headless", "true");
 						return;
 				}
 				throw new IllegalCommandLineException("Unknown option \"" + option + "\" in realm \"" + realm + "\"!");

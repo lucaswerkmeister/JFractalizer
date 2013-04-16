@@ -10,7 +10,7 @@ public class MandelbrotSet extends CifFractal {
 	private final MandelbrotMenuListener	listener	= new MandelbrotMenuListener(this);
 
 	public MandelbrotSet() {
-		canvas = new CifCanvas<>(this, MandelbrotImageMaker_NoHoles.class);
+		super(MandelbrotImageMaker_NoHoles.class);
 		menuListener = new CifMenuListener(this, canvas);
 	}
 
