@@ -312,7 +312,20 @@ public abstract class CifFractal implements ZoomableFractal {
 			final double imagHeight = (maxImag - minImag) / verSections;
 			final int sectionWidth = width / horSections;
 			final int sectionHeight = height / verSections;
-			subImages = new SubImage[horSections * verSections];
+			boolean canRecycleSubimages = subImages != null && subImages.length == horSections * verSections;
+			if (canRecycleSubimages) {
+				outer: for (int x = 0; x < horSections; x++)
+					for (int y = 0; y < verSections; y++) {
+						SubImage img = subImages[x * verSections + y];
+						if (!(img != null && img.offsetX == x * sectionWidth && img.offsetY == (verSections - y - 1)
+								* sectionHeight)) {
+							canRecycleSubimages = false;
+							break outer;
+						}
+					}
+			}
+			if (!canRecycleSubimages)
+				subImages = new SubImage[horSections * verSections];
 			try {
 				for (int x = 0; x < horSections; x++)
 					for (int y = 0; y < verSections; y++) {
@@ -320,18 +333,24 @@ public abstract class CifFractal implements ZoomableFractal {
 						// errors due to limited computational accuracy
 						int currentWidth = x == horSections - 1 ? sectionWidth + width % horSections : sectionWidth;
 						int currentHeight = y == 0 ? sectionHeight + height % verSections : sectionHeight;
-						BufferedImage subImage = new BufferedImage(currentWidth, currentHeight, imageType);
+						SubImage subImage;
+						if (canRecycleSubimages)
+							subImage = subImages[x * verSections + y];
+						else {
+							BufferedImage image = new BufferedImage(currentWidth, currentHeight, imageType);
+							subImage = new SubImage(x * sectionWidth, (verSections - y - 1) * sectionHeight, image);
+						}
 						final CifImageMaker maker = imageMakerClass.getConstructor(int.class, int.class, double.class,
 								double.class, double.class, double.class, int.class, BufferedImage.class, int.class,
 								int.class, ColorPalette.class, byte.class, CifFractal.class).newInstance(currentWidth,
 								currentHeight, minReal + x * realWidth,
 								x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth,
 								minImag + y * imagHeight,
-								y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses, subImage,
-								0, 0, palette, superSamplingFactor, this);
+								y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses,
+								subImage.subImage, 0, 0, palette, superSamplingFactor, this);
 						runningTasks.add(executorService.submit(maker));
-						subImages[x * verSections + y] = new SubImage(x * sectionWidth, (verSections - y - 1)
-								* sectionHeight, subImage);
+						if (!canRecycleSubimages)
+							subImages[x * verSections + y] = subImage;
 					}
 			}
 			catch (Exception e) {
