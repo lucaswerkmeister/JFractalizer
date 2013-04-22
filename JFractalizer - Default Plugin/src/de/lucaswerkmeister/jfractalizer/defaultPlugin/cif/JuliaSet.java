@@ -16,7 +16,8 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
 
 public class JuliaSet extends CifFractal {
-	private double	cReal, cImag;
+	private double			cReal, cImag;
+	private CifMenuListener	menuListener;
 
 	public JuliaSet() {
 		this(0.0, 0.0);
@@ -24,9 +25,15 @@ public class JuliaSet extends CifFractal {
 
 	public JuliaSet(final double cReal, final double cImag) {
 		super(JuliaImageMaker_CalcAll.class);
-		menuListener = new CifMenuListener(this, canvas);
 		this.cReal = cReal;
 		this.cImag = cImag;
+	}
+
+	@Override
+	protected CifMenuListener getMenuListener() {
+		if (menuListener == null)
+			menuListener = new CifMenuListener(this, canvas);
+		return menuListener;
 	}
 
 	@Override

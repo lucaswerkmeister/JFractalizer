@@ -27,6 +27,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	private final CifFractal		fractal;
 	CifMouseListener				mouseListener;
 	private Rectangle				selectedArea;
+	private BufferedImage			invertedImage		= null;
 
 	private static final LookupOp	inverter;
 	// this defines how fast the maxPasses will grow with increasing zoom.
@@ -52,13 +53,25 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	@Override
 	public void paint(final Graphics g) {
 		BufferedImage image = fractal.getImage();
-		g.drawImage(image, 0, 0, null);
-		if (selectedArea != null)
-			g.drawImage(inverter.filter(image, null), selectedArea.x, selectedArea.y, selectedArea.x
-					+ selectedArea.width, selectedArea.y + selectedArea.height, selectedArea.x, selectedArea.y,
-					selectedArea.x + selectedArea.width, selectedArea.y + selectedArea.height, null);
+
+		if (invertedImage == null || invertedImage.getWidth() != image.getWidth()
+				|| invertedImage.getHeight() != image.getHeight())
+			invertedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		int[] pixels = image.getRaster().getPixels(0, 0, image.getWidth(), image.getHeight(), (int[]) null);
+		if (selectedArea != null && image.getType() == BufferedImage.TYPE_INT_ARGB)
+			for (int x = selectedArea.x; x < selectedArea.x + selectedArea.width; x++)
+				for (int y = selectedArea.y; y < selectedArea.y + selectedArea.height; y++) {
+					int index = (y * image.getWidth() + x) * 4;
+					pixels[index] = 255 - pixels[index];
+					pixels[index + 1] = 255 - pixels[index + 1];
+					pixels[index + 2] = 255 - pixels[index + 2];
+					// pixels[index + 3] = 255 - pixels[index + 3]; // don't invert the alpha channel
+				}
+		invertedImage.getRaster().setPixels(0, 0, invertedImage.getWidth(), invertedImage.getHeight(), pixels);
+		g.drawImage(invertedImage, 0, 0, null);
+
 		if (fractal.isRunning())
-			repaint(10);
+			repaint(50);
 	}
 
 	@Override

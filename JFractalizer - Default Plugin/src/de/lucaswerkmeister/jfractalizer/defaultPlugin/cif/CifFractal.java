@@ -14,9 +14,9 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
@@ -50,7 +50,6 @@ import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 public abstract class CifFractal implements ZoomableFractal {
 	CifCanvas<?>									canvas;
-	CifMenuListener									menuListener;
 	MenuItem										undoMenuItem, redoMenuItem;
 
 	public static final int							START_WIDTH					= 960;
@@ -185,25 +184,27 @@ public abstract class CifFractal implements ZoomableFractal {
 	@Override
 	public void initMenu(final Menu fractalMenu) {
 		final MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
-		recalculate.addActionListener(menuListener);
+		recalculate.addActionListener(getMenuListener());
 		fractalMenu.add(recalculate);
 		fractalMenu.addSeparator();
 		final MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
-		editBoundaries.addActionListener(menuListener);
+		editBoundaries.addActionListener(getMenuListener());
 		fractalMenu.add(editBoundaries);
 		final MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));
-		additionalParams.addActionListener(menuListener);
+		additionalParams.addActionListener(getMenuListener());
 		fractalMenu.add(additionalParams);
 		fractalMenu.addSeparator();
 		undoMenuItem = new MenuItem("Undo", new MenuShortcut(KeyEvent.VK_Z));
-		undoMenuItem.addActionListener(menuListener);
+		undoMenuItem.addActionListener(getMenuListener());
 		undoMenuItem.setEnabled(history.canUndo());
 		fractalMenu.add(undoMenuItem);
 		redoMenuItem = new MenuItem("Redo", new MenuShortcut(KeyEvent.VK_Y));
-		redoMenuItem.addActionListener(menuListener);
+		redoMenuItem.addActionListener(getMenuListener());
 		redoMenuItem.setEnabled(history.canRedo());
 		fractalMenu.add(redoMenuItem);
 	}
+
+	protected abstract CifMenuListener getMenuListener();
 
 	@Override
 	public void initContextMenu(final PopupMenu contextMenu) {
@@ -324,7 +325,14 @@ public abstract class CifFractal implements ZoomableFractal {
 						}
 					}
 			}
-			if (!canRecycleSubimages)
+			if (canRecycleSubimages)
+				// clear subImages
+				for (SubImage subImage : subImages) {
+					Graphics g = subImage.subImage.getGraphics();
+					g.setColor(Color.black);
+					g.fillRect(0, 0, subImage.subImage.getWidth(null), subImage.subImage.getHeight(null));
+				}
+			else
 				subImages = new SubImage[horSections * verSections];
 			try {
 				for (int x = 0; x < horSections; x++)
@@ -617,11 +625,11 @@ public abstract class CifFractal implements ZoomableFractal {
 }
 
 class SubImage {
-	final int	offsetX;
-	final int	offsetY;
-	final Image	subImage;
+	final int			offsetX;
+	final int			offsetY;
+	final BufferedImage	subImage;
 
-	SubImage(int offsetX, int offsetY, Image subImage) {
+	SubImage(int offsetX, int offsetY, BufferedImage subImage) {
 		super();
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
