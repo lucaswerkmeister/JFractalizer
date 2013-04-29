@@ -7,6 +7,15 @@ Bit distribution in the class byte: `0bpppccccc`, where `p` stands for the packa
 
 * 0: cif
   * 0x00: CifFractal
+    * 0x00: Changed image type
+    * 0x01: Saving
+    * 0x02: Set color palette
+    * 0x03: Start calculation
+    * 0x04: Stop calculation
+    * 0x05: Initialized menu
+    * 0x06: Zoom
+    * 0x07: Zoom to start
+    * 0x08: Shutdown
   * 0x01: CifFractXmlLoader
   * 0x02: CifImageMaker
   * 0x03: CifCanvas

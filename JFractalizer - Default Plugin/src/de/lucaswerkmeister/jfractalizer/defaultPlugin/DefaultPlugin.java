@@ -3,6 +3,7 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin;
 import static de.lucaswerkmeister.jfractalizer.framework.Log.registerID;
 
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.cameras.Steadicam;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.CifFractal;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.ColorNode;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.EditDialogPalette;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.HsbRotatePalette;
@@ -17,13 +18,15 @@ public class DefaultPlugin implements Plugin {
 
 	@Override
 	public void registerLogIDs() {
-		registerID(Steadicam.LOG_ADDED_OUTPUT, Level.INFO, this);
-		registerID(Steadicam.LOG_START_FILMING, Level.INFO, this);
-		registerID(Steadicam.LOG_START_FRAME, Level.INFO, this);
-		registerID(Steadicam.LOG_END_FRAME, Level.INFO, this);
-		registerID(Steadicam.LOG_START_WRITE, Level.INFO, this);
-		registerID(Steadicam.LOG_END_WRITE, Level.INFO, this);
-		registerID(Steadicam.LOG_GC, Level.INFO, this);
+		registerID(CifFractal.LOG_CHANGED_IMAGE_TYPE, Level.INFO, this);
+		registerID(CifFractal.LOG_SAVING, Level.INFO, this);
+		registerID(CifFractal.LOG_SET_PALETTE, Level.INFO, this);
+		registerID(CifFractal.LOG_START_CALCULATION, Level.INFO, this);
+		registerID(CifFractal.LOG_STOP_CALCULATION, Level.INFO, this);
+		registerID(CifFractal.LOG_INIT_MENU, Level.INFO, this);
+		registerID(CifFractal.LOG_ZOOM, Level.INFO, this);
+		registerID(CifFractal.LOG_ZOOM_TO_START, Level.INFO, this);
+		registerID(CifFractal.LOG_SHUTDOWN, Level.INFO, this);
 		registerID(EditDialogPalette.LOG_INIT_MENU, Level.INFO, this);
 		registerID(EditDialogPalette.LOG_SHOW_EDIT_DIALOG, Level.INFO, this);
 		registerID(EditDialogPalette.LOG_EDITED_PALETTE, Level.INFO, this);
@@ -33,6 +36,13 @@ public class DefaultPlugin implements Plugin {
 		registerID(NodePalette.LOG_SAVING, Level.INFO, this);
 		registerID(ColorNode.LOG_UPDATE, Level.INFO, this);
 		registerID(HsbRotatePalette.LOG_SAVING, Level.INFO, this);
+		registerID(Steadicam.LOG_ADDED_OUTPUT, Level.INFO, this);
+		registerID(Steadicam.LOG_START_FILMING, Level.INFO, this);
+		registerID(Steadicam.LOG_START_FRAME, Level.INFO, this);
+		registerID(Steadicam.LOG_END_FRAME, Level.INFO, this);
+		registerID(Steadicam.LOG_START_WRITE, Level.INFO, this);
+		registerID(Steadicam.LOG_END_WRITE, Level.INFO, this);
+		registerID(Steadicam.LOG_GC, Level.INFO, this);
 	}
 
 	@Override
@@ -48,20 +58,25 @@ public class DefaultPlugin implements Plugin {
 	@Override
 	public String logToString(int id, Object... args) {
 		switch (id) {
-			case Steadicam.LOG_ADDED_OUTPUT:
-				return "Steadicam: Added Output " + args[0].toString();
-			case Steadicam.LOG_START_FILMING:
-				return "Steadicam: Started filming of fractal " + args[0].toString();
-			case Steadicam.LOG_START_FRAME:
-				return "Steadicam: Started calculation of frame #" + args[0].toString();
-			case Steadicam.LOG_END_FRAME:
-				return "Steadicam: Finished calculation of frame #" + args[0].toString();
-			case Steadicam.LOG_START_WRITE:
-				return "Steadicam: Started writing frame #" + args[0].toString();
-			case Steadicam.LOG_END_WRITE:
-				return "Steadicam: Finished writing frame #" + args[0].toString();
-			case Steadicam.LOG_GC:
-				return "Steadicam: Triggered a Garbage Collection.";
+			case CifFractal.LOG_CHANGED_IMAGE_TYPE:
+				return args[0].getClass().getName() + ": Changed image type to " + args[1];
+			case CifFractal.LOG_SAVING:
+				return args[0].getClass().getName() + ": Saving";
+			case CifFractal.LOG_SET_PALETTE:
+				return args[0].getClass().getName() + ": Set color palette to " + args[1];
+			case CifFractal.LOG_START_CALCULATION:
+				return args[0].getClass().getName() + ": Starting calculation";
+			case CifFractal.LOG_STOP_CALCULATION:
+				return args[0].getClass().getName() + ": Stopping calculation";
+			case CifFractal.LOG_INIT_MENU:
+				return args[0].getClass().getName() + ": Initialized menu";
+			case CifFractal.LOG_ZOOM:
+				return args[0].getClass().getName() + ": Zooming on " + args[1] + "|" + args[2] + " by " + args[3];
+			case CifFractal.LOG_ZOOM_TO_START:
+				return args[0].getClass().getName() + ": Zooming to start on " + args[1] + "|" + args[2] + " by "
+						+ args[3];
+			case CifFractal.LOG_SHUTDOWN:
+				return args[0].getClass().getName() + ": Shutting down";
 			case EditDialogPalette.LOG_INIT_MENU:
 				return args[0].getClass().getName() + ": Initialized menu";
 			case EditDialogPalette.LOG_SHOW_EDIT_DIALOG:
@@ -80,6 +95,20 @@ public class DefaultPlugin implements Plugin {
 				return "ColorNode: Updated node " + args[0] + " from " + args[1] + " to " + args[2];
 			case HsbRotatePalette.LOG_SAVING:
 				return "HsbRotatePalette: Saving";
+			case Steadicam.LOG_ADDED_OUTPUT:
+				return "Steadicam: Added Output " + args[0].toString();
+			case Steadicam.LOG_START_FILMING:
+				return "Steadicam: Started filming of fractal " + args[0].toString();
+			case Steadicam.LOG_START_FRAME:
+				return "Steadicam: Started calculation of frame #" + args[0].toString();
+			case Steadicam.LOG_END_FRAME:
+				return "Steadicam: Finished calculation of frame #" + args[0].toString();
+			case Steadicam.LOG_START_WRITE:
+				return "Steadicam: Started writing frame #" + args[0].toString();
+			case Steadicam.LOG_END_WRITE:
+				return "Steadicam: Finished writing frame #" + args[0].toString();
+			case Steadicam.LOG_GC:
+				return "Steadicam: Triggered a Garbage Collection.";
 		}
 		throw new IllegalArgumentException("Unknown log ID!");
 	}
