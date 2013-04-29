@@ -62,24 +62,22 @@ public class CifFractXmlLoader extends FractXmlLoader {
 			Dimension d = new Dimension(Integer.parseInt(asString), fractal.getCanvas().getHeight());
 			newCanvas.setPreferredSize(d);
 			newCanvas.setSize(d);
+			fractal.setImageSize(d);
 		}
-		else if (currentQName.equals("height")) {
-			Dimension d = new Dimension(fractal.getCanvas().getWidth(), Integer.parseInt(asString));
-			newCanvas.setPreferredSize(d);
-			newCanvas.setSize(d);
-		}
+		else if (currentQName.equals("height"))
+			fractal.setImageSize(new Dimension(fractal.getCanvas().getWidth(), Integer.parseInt(asString)));
 		else if (currentQName.equals("minReal"))
-			newCanvas.setMinReal(Double.parseDouble(asString));
+			fractal.setMinReal(Double.parseDouble(asString));
 		else if (currentQName.equals("maxReal"))
-			newCanvas.setMaxReal(Double.parseDouble(asString));
+			fractal.setMaxReal(Double.parseDouble(asString));
 		else if (currentQName.equals("minImag"))
-			newCanvas.setMinImag(Double.parseDouble(asString));
+			fractal.setMinImag(Double.parseDouble(asString));
 		else if (currentQName.equals("maxImag"))
-			newCanvas.setMaxImag(Double.parseDouble(asString));
+			fractal.setMaxImag(Double.parseDouble(asString));
 		else if (currentQName.equals("maxPasses"))
-			newCanvas.setMaxPasses(Integer.parseInt(asString));
+			fractal.setMaxPasses(Integer.parseInt(asString));
 		else if (currentQName.equals("superSamplingFactor"))
-			newCanvas.setSuperSamplingFactor(Byte.parseByte(asString));
+			fractal.setSuperSamplingFactor(Byte.parseByte(asString));
 	}
 
 	@Override

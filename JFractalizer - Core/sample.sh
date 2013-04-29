@@ -1,2 +1,12 @@
 #!/bin/sh
-java -cp "bin:../JFractalizer - Default Plugin/bin" de.lucaswerkmeister.jfractalizer.core.Core --input fractal=de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.MandelbrotSet palette=de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.NodePalette --output format=raw-BGR stdout | x264 --demuxer raw --input-csp bgr --input-res 960x540 --input-depth 8 -o test.mp4 /dev/stdin 
+videofile=$1
+[ "$videofile" = "" ] && videofile="video.mp4"
+rm -Rf /tmp/jfractalizer
+mkdir /tmp/jfractalizer
+#use taskset -c 0,1 java ... to run java on two cores
+java -Xmx4096m -cp "bin:../JFractalizer - Default Plugin/bin" de.lucaswerkmeister.jfractalizer.core.Core --core no-gui --input file=tmp.fractXml --film camera=de.lucaswerkmeister.jfractalizer.defaultPlugin.cameras.Steadicam --output format=raw-BGR files=/tmp/jfractalizer/tmp?.raw --log stdout hide=all show=106499 --log file=log show=all
+find /tmp/jfractalizer/tmp*.raw -exec cat {} + > /tmp/jfractalizer/tmpfile
+x264 --demuxer raw --input-csp bgr --input-res 1920x1080 --input-depth 8 --profile high -o $videofile /tmp/jfractalizer/tmpfile
+#rm -Rf /tmp/jfractalizer
+#rm -Rf /tmp/jfractalizer/tmpfile
+read -n1 -r -p "Finished."

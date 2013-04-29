@@ -1,12 +1,14 @@
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 
 public class RGBToTGA {
-	public static int swap(int other){
+	public static int swap(int other) {
 		other &= 0xFFFF;
-		return (other>>8)&0xFF|(other<<8)&0xFF00;
+		return (other >> 8) & 0xFF | (other << 8) & 0xFF00;
 	}
+
 	public static void main(String[] args) throws IOException {
 		DataOutputStream dos = new DataOutputStream(System.out);
 		dos.writeByte(0);// IDIlen
@@ -16,24 +18,27 @@ public class RGBToTGA {
 		dos.writeShort(0);// Palette-Count
 		dos.writeByte(0);// Palette-Stride
 		dos.writeShort(0);// O-X
-		int width = 960;
-		int height = 540;
+		int width = 1920;
+		int height = 1080;
+		if (args.length == 2) {
+			width = Integer.parseInt(args[0]);
+			height = Integer.parseInt(args[1]);
+		}
 		dos.writeShort(swap(height));// O-Y
 
-		
 		dos.writeShort(swap(width));// width
 		dos.writeShort(swap(height));// height
 
-		dos.writeByte(24);// 
+		dos.writeByte(24);//
 
 		dos.writeByte(32);// Maybe 16
 		InputStream in = System.in;
-		while(true){
-			int d1 =in.read();
-			int d2 =in.read();
-			int d3 =in.read();
-			int d4 =in.read();
-			if(d4==-1){
+		while (true) {
+			int d1 = in.read();
+			int d2 = in.read();
+			int d3 = in.read();
+			int d4 = in.read();
+			if (d4 == -1) {
 				break;
 			}
 			dos.write(d4);

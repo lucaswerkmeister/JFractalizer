@@ -14,6 +14,7 @@
 package de.lucaswerkmeister.jfractalizer.framework;
 
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.Menu;
 import java.awt.PopupMenu;
 import java.awt.event.ActionListener;
@@ -45,6 +46,13 @@ public interface Fractal extends SelectableService, CommandLineConfigurable {
 	 * @return The image.
 	 */
 	public BufferedImage getImage();
+
+	/**
+	 * Gets the current image size of the fractal.
+	 * 
+	 * @return The image size.
+	 */
+	public Dimension getImageSize();
 
 	/**
 	 * Suggests that the fractal use the specified image type for future {@link BufferedImage BufferedImages}.
@@ -113,7 +121,7 @@ public interface Fractal extends SelectableService, CommandLineConfigurable {
 	public void awaitCalculation();
 
 	/**
-	 * Adds an {@link ActionListener} that will be notified when the calculation is finished.
+	 * Adds an {@link ActionListener} that will be notified each time a calculation is finished.
 	 * 
 	 * @param listener
 	 *            The action listener.

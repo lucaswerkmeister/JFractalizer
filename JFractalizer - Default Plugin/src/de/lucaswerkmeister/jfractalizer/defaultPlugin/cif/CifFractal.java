@@ -13,18 +13,27 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
-import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
-
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.PopupMenu;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.xml.transform.sax.TransformerHandler;
 
@@ -32,85 +41,117 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
+import de.lucaswerkmeister.jfractalizer.core.Core;
+import de.lucaswerkmeister.jfractalizer.core.TimeSpan;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.SimplePalette;
 import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
 import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 
 public abstract class CifFractal implements ZoomableFractal {
-	CifCanvas<?>			canvas;
-	CifMenuListener			menuListener;
-	MenuItem				undoMenuItem, redoMenuItem;
-	public static final int	LOG_CLASS_PREFIX		= DefaultPlugin.LOG_PLUGIN_PREFIX + (((0 << 5) + (0 << 0)) << 8);
-	public static final int	LOG_CHANGED_IMAGE_TYPE	= LOG_CLASS_PREFIX + 0;
-	public static final int	LOG_SAVING				= LOG_CLASS_PREFIX + 1;
-	public static final int	LOG_SET_PALETTE			= LOG_CLASS_PREFIX + 2;
-	public static final int	LOG_START_CALCULATION	= LOG_CLASS_PREFIX + 3;
-	public static final int	LOG_STOP_CALCULATION	= LOG_CLASS_PREFIX + 4;
-	public static final int	LOG_INIT_MENU			= LOG_CLASS_PREFIX + 5;
-	public static final int	LOG_ZOOM				= LOG_CLASS_PREFIX + 6;
-	public static final int	LOG_ZOOM_TO_START		= LOG_CLASS_PREFIX + 7;
-	public static final int	LOG_SHUTDOWN			= LOG_CLASS_PREFIX + 8;
+	CifCanvas<?>									canvas;
+	MenuItem										undoMenuItem, redoMenuItem;
+
+	public static final int							START_WIDTH					= 960;
+	public static final int							START_HEIGHT				= 540;
+	private int										width						= START_WIDTH;
+	private int										height						= START_HEIGHT;
+	private double									minReal, maxReal, minImag, maxImag;
+	ColorPalette									palette;
+	private byte									superSamplingFactor;
+	private ExecutorService							executorService;
+	private List<Future<?>>							runningTasks;
+	private int										maxPasses;
+	SubImage[]										subImages;
+	private final Class<? extends CifImageMaker>	imageMakerClass;
+	private int										imageType					= BufferedImage.TYPE_INT_ARGB;
+	History<CifParams>								history;
+	private long									startTime, stopTime;
+	private final Set<ActionListener>				calculationFinishedListeners;
+
+	private static final boolean					USE_MORE_THREADS_THAN_CORES	= true;						// TODO
+																												// cc #5
+
+	protected CifFractal(Class<? extends CifImageMaker> imageMakerClass) {
+		this.imageMakerClass = imageMakerClass;
+		this.calculationFinishedListeners = new HashSet<>();
+		initDefaultValues();
+	}
 
 	@Override
 	public Canvas getCanvas() {
+		if (canvas == null) {
+			canvas = new CifCanvas<>(this);
+			addCalculationFinishedListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Core.setStatus("Calculation finished in " + new TimeSpan(stopTime - startTime).toString() + ".");
+				}
+			});
+			history = new History<>(256);
+			history.add(getParams());
+		}
 		return canvas;
 	}
 
 	@Override
 	public BufferedImage getImage() {
-		return canvas.getImage();
+		BufferedImage ret = new BufferedImage(width, height, imageType);
+		Graphics g = ret.getGraphics();
+		g.setColor(palette.getColor(-1));
+		g.fillRect(0, 0, width, height);
+		if (subImages != null)
+			for (SubImage img : subImages)
+				ret.getGraphics().drawImage(img.subImage, img.offsetX, img.offsetY, null);
+		return ret;
 	}
 
 	@Override
 	public void suggestImageType(int imageType) {
-		log(LOG_CHANGED_IMAGE_TYPE, this, imageType);
-		canvas.setImageType(imageType);
+		this.imageType = imageType;
 	}
 
 	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
-		log(LOG_SAVING, this);
-
 		final Attributes noAtts = new AttributesImpl();
 
 		handler.startElement("", "", "width", noAtts);
-		final char[] width = Integer.toString(canvas.getWidth()).toCharArray();
+		final char[] width = Integer.toString(this.width).toCharArray();
 		handler.characters(width, 0, width.length);
 		handler.endElement("", "", "width");
 
 		handler.startElement("", "", "height", noAtts);
-		final char[] height = Integer.toString(canvas.getHeight()).toCharArray();
+		final char[] height = Integer.toString(this.height).toCharArray();
 		handler.characters(height, 0, height.length);
 		handler.endElement("", "", "height");
 
 		handler.startElement("", "", "minReal", noAtts);
-		final char[] minReal = Double.toString(canvas.getMinReal()).toCharArray();
+		final char[] minReal = Double.toString(this.getMinReal()).toCharArray();
 		handler.characters(minReal, 0, minReal.length);
 		handler.endElement("", "", "minReal");
 
 		handler.startElement("", "", "maxReal", noAtts);
-		final char[] maxReal = Double.toString(canvas.getMaxReal()).toCharArray();
+		final char[] maxReal = Double.toString(this.getMaxReal()).toCharArray();
 		handler.characters(maxReal, 0, maxReal.length);
 		handler.endElement("", "", "maxReal");
 
 		handler.startElement("", "", "minImag", noAtts);
-		final char[] minImag = Double.toString(canvas.getMinImag()).toCharArray();
+		final char[] minImag = Double.toString(this.getMinImag()).toCharArray();
 		handler.characters(minImag, 0, minImag.length);
 		handler.endElement("", "", "minImag");
 
 		handler.startElement("", "", "maxImag", noAtts);
-		final char[] maxImag = Double.toString(canvas.getMaxImag()).toCharArray();
+		final char[] maxImag = Double.toString(this.getMaxImag()).toCharArray();
 		handler.characters(maxImag, 0, maxImag.length);
 		handler.endElement("", "", "maxImag");
 
 		handler.startElement("", "", "maxPasses", noAtts);
-		final char[] maxPasses = Integer.toString(canvas.getMaxPasses()).toCharArray();
+		final char[] maxPasses = Integer.toString(this.getMaxPasses()).toCharArray();
 		handler.characters(maxPasses, 0, maxPasses.length);
 		handler.endElement("", "", "maxPasses");
 
 		handler.startElement("", "", "superSamplingFactor", noAtts);
-		final char[] superSamplingFactor = Byte.toString(canvas.getSuperSamplingFactor()).toCharArray();
+		final char[] superSamplingFactor = Byte.toString(this.getSuperSamplingFactor()).toCharArray();
 		handler.characters(superSamplingFactor, 0, superSamplingFactor.length);
 		handler.endElement("", "", "superSamplingFactor");
 	}
@@ -120,47 +161,50 @@ public abstract class CifFractal implements ZoomableFractal {
 	}
 
 	@Override
-	public void stopCalculation() {
-		log(LOG_STOP_CALCULATION, this);
-		canvas.stopCalculation();
-	}
-
-	@Override
 	public void setColorPalette(final ColorPalette newPalette) {
-		log(LOG_SET_PALETTE, this, canvas.palette, newPalette);
-		canvas.palette = newPalette;
+		palette = newPalette;
 	}
 
 	@Override
 	public void startCalculation() {
-		log(LOG_START_CALCULATION, this);
-		canvas.start();
+		initThreads();
+		if (canvas != null)
+			canvas.repaint();
+	}
+
+	@Override
+	public void stopCalculation() {
+		if (runningTasks != null) {
+			for (Future<?> f : runningTasks)
+				f.cancel(true);
+			runningTasks.clear();
+		}
 	}
 
 	@Override
 	public void initMenu(final Menu fractalMenu) {
-		log(LOG_INIT_MENU, this, fractalMenu);
-
 		final MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
-		recalculate.addActionListener(menuListener);
+		recalculate.addActionListener(getMenuListener());
 		fractalMenu.add(recalculate);
 		fractalMenu.addSeparator();
 		final MenuItem editBoundaries = new MenuItem("Edit boundaries...", new MenuShortcut(KeyEvent.VK_E));
-		editBoundaries.addActionListener(menuListener);
+		editBoundaries.addActionListener(getMenuListener());
 		fractalMenu.add(editBoundaries);
 		final MenuItem additionalParams = new MenuItem("Edit additional parameters...", new MenuShortcut(KeyEvent.VK_A));
-		additionalParams.addActionListener(menuListener);
+		additionalParams.addActionListener(getMenuListener());
 		fractalMenu.add(additionalParams);
 		fractalMenu.addSeparator();
 		undoMenuItem = new MenuItem("Undo", new MenuShortcut(KeyEvent.VK_Z));
-		undoMenuItem.addActionListener(menuListener);
-		undoMenuItem.setEnabled(canvas.history.canUndo());
+		undoMenuItem.addActionListener(getMenuListener());
+		undoMenuItem.setEnabled(history.canUndo());
 		fractalMenu.add(undoMenuItem);
 		redoMenuItem = new MenuItem("Redo", new MenuShortcut(KeyEvent.VK_Y));
-		redoMenuItem.addActionListener(menuListener);
-		redoMenuItem.setEnabled(canvas.history.canRedo());
+		redoMenuItem.addActionListener(getMenuListener());
+		redoMenuItem.setEnabled(history.canRedo());
 		fractalMenu.add(redoMenuItem);
 	}
+
+	protected abstract CifMenuListener getMenuListener();
 
 	@Override
 	public void initContextMenu(final PopupMenu contextMenu) {
@@ -169,102 +213,195 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void zoom(final int x, final int y, final double factor) {
-		log(LOG_ZOOM, this, x, y, factor);
-
-		final double currentWidth = (canvas.getMaxReal() - canvas.getMinReal());
-		final double currentHeight = (canvas.getMaxImag() - canvas.getMinImag());
-		final double centerR = canvas.getMinReal() + currentWidth * ((double) x / canvas.getImageSize().width);
-		final double centerI = canvas.getMinImag() + currentHeight * (1 - ((double) y / canvas.getImageSize().height));
+		final double currentWidth = (getMaxReal() - getMinReal());
+		final double currentHeight = (getMaxImag() - getMinImag());
+		final double centerR = getMinReal() + currentWidth * ((double) x / getImageSize().width);
+		final double centerI = getMinImag() + currentHeight * (1 - ((double) y / getImageSize().height));
 		final double halfSizeR = currentWidth * factor / 2;
 		final double halfSizeI = currentHeight * factor / 2;
-		canvas.setMinReal(centerR - halfSizeR);
-		canvas.setMaxReal(centerR + halfSizeR);
-		canvas.setMinImag(centerI - halfSizeI);
-		canvas.setMaxImag(centerI + halfSizeI);
+		setMinReal(centerR - halfSizeR);
+		setMaxReal(centerR + halfSizeR);
+		setMinImag(centerI - halfSizeI);
+		setMaxImag(centerI + halfSizeI);
 		double maxPassesF = 1 / factor;
 		maxPassesF = ((maxPassesF - 1) / CifCanvas.maxPassesFactor) + 1;
-		canvas.setMaxPasses((int) Math.round(canvas.getMaxPasses() * maxPassesF));
+		setMaxPasses((int) Math.round(getMaxPasses() * maxPassesF));
 	}
 
 	@Override
 	public void zoomToStart(int x, int y, double factor) {
-		log(LOG_ZOOM_TO_START, this, x, y, factor);
-
 		zoom(x, y, factor);
 		Rectangle2D.Double start = getStartArea();
-		double realSize = canvas.getMaxReal() - canvas.getMinReal();
-		double imagSize = canvas.getMaxImag() - canvas.getMinImag();
+		double realSize = getMaxReal() - getMinReal();
+		double imagSize = getMaxImag() - getMinImag();
 		final boolean CENTER_WHEN_BIGGER = false; // Disabled
 		if (realSize < start.width) {
 			// move horizontally
-			if (canvas.getMaxReal() > start.getMaxX()) {
+			if (getMaxReal() > start.getMaxX()) {
 				// clamp to east edge
-				canvas.setMaxReal(start.getMaxX());
-				canvas.setMinReal(start.getMaxX() - realSize);
+				setMaxReal(start.getMaxX());
+				setMinReal(start.getMaxX() - realSize);
 			}
-			else if (canvas.getMinReal() < start.getMinX()) {
+			else if (getMinReal() < start.getMinX()) {
 				// clamp to west edge
-				canvas.setMinReal(start.getMinX());
-				canvas.setMaxReal(start.getMinX() + realSize);
+				setMinReal(start.getMinX());
+				setMaxReal(start.getMinX() + realSize);
 			}
 		}
 		else if (CENTER_WHEN_BIGGER) {
 			// center horizontally
-			canvas.setMinReal(start.getCenterX() - realSize / 2);
-			canvas.setMaxReal(start.getCenterX() + realSize / 2);
+			setMinReal(start.getCenterX() - realSize / 2);
+			setMaxReal(start.getCenterX() + realSize / 2);
 		}
 		if (imagSize < start.height) {
 			// move vertically
-			if (canvas.getMaxImag() > start.getMaxY()) {
+			if (getMaxImag() > start.getMaxY()) {
 				// clamp to north edge
-				canvas.setMaxImag(start.getMaxY());
-				canvas.setMinImag(start.getMaxY() - imagSize);
+				setMaxImag(start.getMaxY());
+				setMinImag(start.getMaxY() - imagSize);
 			}
-			else if (canvas.getMinImag() < start.getMinY()) {
+			else if (getMinImag() < start.getMinY()) {
 				// clamp to south edge
-				canvas.setMinImag(start.getMinY());
-				canvas.setMaxImag(start.getMinY() + imagSize);
+				setMinImag(start.getMinY());
+				setMaxImag(start.getMinY() + imagSize);
 			}
 		}
 		else if (CENTER_WHEN_BIGGER) {
 			// center vertically
-			canvas.setMinImag(start.getCenterY() - imagSize / 2);
-			canvas.setMaxImag(start.getCenterY() + imagSize / 2);
+			setMinImag(start.getCenterY() - imagSize / 2);
+			setMaxImag(start.getCenterY() + imagSize / 2);
 		}
 	}
 
 	@Override
 	public double getZoomFactor() {
 		Rectangle2D.Double start = getStartArea();
-		double xZoomFactor = start.width / (canvas.getMaxReal() - canvas.getMinReal());
-		double yZoomFactor = start.height / (canvas.getMaxImag() - canvas.getMinImag());
+		double xZoomFactor = start.width / (getMaxReal() - getMinReal());
+		double yZoomFactor = start.height / (getMaxImag() - getMinImag());
 		return Math.max(xZoomFactor, yZoomFactor);
 	}
 
 	@Override
-	public void awaitCalculation() {
-		canvas.awaitCalculation();
+	public void addCalculationFinishedListener(final ActionListener listener) {
+		calculationFinishedListeners.add(listener);
 	}
 
-	@Override
-	public void addCalculationFinishedListener(final ActionListener listener) {
-		new Thread() {
-			public void run() {
-				awaitCalculation();
-				listener.actionPerformed(null);
+	private void initThreads() {
+		final int cpuCount = Runtime.getRuntime().availableProcessors();
+		if (executorService == null)
+			executorService = Executors.newFixedThreadPool(cpuCount);
+		runningTasks = new LinkedList<>();
+		if (checkValues()) {
+			Core.setStatus("Calculating...");
+			startTime = System.nanoTime();
+			int lessSections = (int) Math.sqrt(cpuCount);
+			int moreSections = (lessSections == 1) ? cpuCount : cpuCount / lessSections;
+			if (USE_MORE_THREADS_THAN_CORES) {
+				final int temp = lessSections;
+				lessSections = moreSections;
+				moreSections = 2 * temp;
 			}
-		}.start();
+			int horSections, verSections;
+			if (width >= height) {
+				horSections = moreSections;
+				verSections = lessSections;
+			}
+			else {
+				horSections = lessSections;
+				verSections = moreSections;
+			}
+			final double realWidth = (maxReal - minReal) / horSections;
+			final double imagHeight = (maxImag - minImag) / verSections;
+			final int sectionWidth = width / horSections;
+			final int sectionHeight = height / verSections;
+			boolean canRecycleSubimages = subImages != null && subImages.length == horSections * verSections;
+			if (canRecycleSubimages) {
+				outer: for (int x = 0; x < horSections; x++)
+					for (int y = 0; y < verSections; y++) {
+						SubImage img = subImages[x * verSections + y];
+						if (!(img != null && img.offsetX == x * sectionWidth && img.offsetY == (verSections - y - 1)
+								* sectionHeight)) {
+							canRecycleSubimages = false;
+							break outer;
+						}
+					}
+			}
+			if (canRecycleSubimages)
+				// clear subImages
+				for (SubImage subImage : subImages) {
+					Graphics g = subImage.subImage.getGraphics();
+					g.setColor(Color.black);
+					g.fillRect(0, 0, subImage.subImage.getWidth(null), subImage.subImage.getHeight(null));
+				}
+			else
+				subImages = new SubImage[horSections * verSections];
+			try {
+				for (int x = 0; x < horSections; x++)
+					for (int y = 0; y < verSections; y++) {
+						// TODO check if zoom settings will cause rounding
+						// errors due to limited computational accuracy
+						int currentWidth = x == horSections - 1 ? sectionWidth + width % horSections : sectionWidth;
+						int currentHeight = y == 0 ? sectionHeight + height % verSections : sectionHeight;
+						SubImage subImage;
+						if (canRecycleSubimages)
+							subImage = subImages[x * verSections + y];
+						else {
+							BufferedImage image = new BufferedImage(currentWidth, currentHeight, imageType);
+							subImage = new SubImage(x * sectionWidth, (verSections - y - 1) * sectionHeight, image);
+						}
+						final CifImageMaker maker = imageMakerClass.getConstructor(int.class, int.class, double.class,
+								double.class, double.class, double.class, int.class, BufferedImage.class, int.class,
+								int.class, ColorPalette.class, byte.class, CifFractal.class).newInstance(currentWidth,
+								currentHeight, minReal + x * realWidth,
+								x == horSections - 1 ? maxReal : minReal + (x + 1) * realWidth,
+								minImag + y * imagHeight,
+								y == verSections - 1 ? maxImag : minImag + (y + 1) * imagHeight, maxPasses,
+								subImage.subImage, 0, 0, palette, superSamplingFactor, this);
+						runningTasks.add(executorService.submit(maker));
+						if (!canRecycleSubimages)
+							subImages[x * verSections + y] = subImage;
+					}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					awaitCalculation();
+					stopTime = System.nanoTime();
+					for (ActionListener listener : calculationFinishedListeners)
+						listener.actionPerformed(null);
+				}
+			}).start();
+		}
+		else {
+			throw new IllegalStateException("Invalid values!");
+		}
+	}
+
+	boolean isRunning() {
+		if (runningTasks == null)
+			return false;
+		for (Future<?> f : runningTasks)
+			if (!f.isDone())
+				return true;
+		return false;
+	}
+
+	private boolean checkValues() {
+		return maxReal > minReal && maxImag > minImag && superSamplingFactor > 0 && palette != null && maxPasses > 0;
 	}
 
 	@Override
 	public void handleCommandLineOption(String option, String optionName, String optionContent) {
-		CifParams params = canvas.getParams();
+		CifParams params = getParams();
 		switch (optionName) {
 			case "width":
-				canvas.setImageSize(new Dimension(Integer.parseInt(optionContent), canvas.getImageSize().height));
+				setImageSize(new Dimension(Integer.parseInt(optionContent), getImageSize().height));
 				return;
 			case "height":
-				canvas.setImageSize(new Dimension(canvas.getImageSize().width, Integer.parseInt(optionContent)));
+				setImageSize(new Dimension(getImageSize().width, Integer.parseInt(optionContent)));
 				return;
 			case "minReal":
 				params = params.copyChangeMinReal(Double.parseDouble(optionContent));
@@ -292,7 +429,7 @@ public abstract class CifFractal implements ZoomableFractal {
 								+ getClass().getSimpleName()
 								+ "! Known options: width, height, minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor");
 		}
-		canvas.setParams(params, false);
+		setParams(params, false);
 	}
 
 	/**
@@ -307,7 +444,196 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void shutdown() {
-		log(LOG_SHUTDOWN, this);
-		canvas.shutdown();
+		executorService.shutdown();
+	}
+
+	/**
+	 * @return the minReal
+	 */
+	double getMinReal() {
+		return minReal;
+	}
+
+	/**
+	 * @return the maxReal
+	 */
+	double getMaxReal() {
+		return maxReal;
+	}
+
+	/**
+	 * @return the minImag
+	 */
+	double getMinImag() {
+		return minImag;
+	}
+
+	/**
+	 * @return the maxImag
+	 */
+	double getMaxImag() {
+		return maxImag;
+	}
+
+	/**
+	 * @return the palette
+	 */
+	ColorPalette getPalette() {
+		return palette;
+	}
+
+	/**
+	 * @return the superSamplingFactor
+	 */
+	byte getSuperSamplingFactor() {
+		return superSamplingFactor;
+	}
+
+	/**
+	 * @return the maxPasses
+	 */
+	int getMaxPasses() {
+		return maxPasses;
+	}
+
+	/**
+	 * @param minReal
+	 *            the minReal to set
+	 */
+	void setMinReal(final double minReal) {
+		this.minReal = minReal;
+	}
+
+	/**
+	 * @param maxReal
+	 *            the maxReal to set
+	 */
+	void setMaxReal(final double maxReal) {
+		this.maxReal = maxReal;
+	}
+
+	/**
+	 * @param minImag
+	 *            the minImag to set
+	 */
+	void setMinImag(final double minImag) {
+		this.minImag = minImag;
+	}
+
+	/**
+	 * @param maxImag
+	 *            the maxImag to set
+	 */
+	void setMaxImag(final double maxImag) {
+		this.maxImag = maxImag;
+	}
+
+	/**
+	 * @param palette
+	 *            the palette to set
+	 */
+	void setPalette(final ColorPalette palette) {
+		this.palette = palette;
+	}
+
+	/**
+	 * @param superSamplingFactor
+	 *            the superSamplingFactor to set
+	 */
+	void setSuperSamplingFactor(final byte superSamplingFactor) {
+		this.superSamplingFactor = superSamplingFactor;
+	}
+
+	/**
+	 * @param maxPasses
+	 *            the maxPasses to set
+	 */
+	void setMaxPasses(final int maxPasses) {
+		this.maxPasses = maxPasses;
+	}
+
+	public void setImageSize(Dimension d) {
+		width = d.width;
+		height = d.height;
+		if (canvas != null) {
+			canvas.setSize(d);
+			canvas.setPreferredSize(d);
+		}
+	}
+
+	@Override
+	public Dimension getImageSize() {
+		return new Dimension(width, height);
+	}
+
+	CifParams getParams() {
+		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor);
+	}
+
+	void setParams(final CifParams params) {
+		setParams(params, true);
+	}
+
+	void setParams(final CifParams params, final boolean addToHistory) {
+		minReal = params.minReal;
+		maxReal = params.maxReal;
+		minImag = params.minImag;
+		maxImag = params.maxImag;
+		maxPasses = params.maxPasses;
+		superSamplingFactor = params.superSamplingFactor;
+		if (canvas != null && history != null) {
+			if (addToHistory)
+				history.add(params);
+			undoMenuItem.setEnabled(history.canUndo());
+			redoMenuItem.setEnabled(history.canRedo());
+		}
+	}
+
+	public void awaitCalculation() {
+		try {
+			for (Future<?> f : runningTasks)
+				f.get();
+		}
+		catch (InterruptedException | ExecutionException | NullPointerException e) {
+			// do nothing
+			// a NPE indicates no running tasks, in which case returning immediately is the intended result
+		}
+	}
+
+	void initDefaultValues() {
+		Rectangle2D.Double start = getStartArea();
+		Dimension imageSize = getImageSize();
+		double startAR = start.width / start.height;
+		double targetAR = imageSize.width / (double) imageSize.height;
+		if (startAR > targetAR) {
+			double startCenter = start.y + (start.height / 2);
+			start.height = start.width / targetAR;
+			start.y = startCenter - start.height / 2;
+		}
+		else if (targetAR > startAR) {
+			double startCenter = start.x + (start.width / 2);
+			start.width = targetAR * start.height;
+			start.x = startCenter - start.width / 2;
+		}
+		minReal = start.x;
+		maxReal = start.x + start.width;
+		minImag = start.y;
+		maxImag = start.y + start.height;
+		palette = new SimplePalette();
+		superSamplingFactor = 1;
+		maxPasses = 1000;
+	}
+}
+
+class SubImage {
+	final int			offsetX;
+	final int			offsetY;
+	final BufferedImage	subImage;
+
+	SubImage(int offsetX, int offsetY, BufferedImage subImage) {
+		super();
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
+		this.subImage = subImage;
 	}
 }

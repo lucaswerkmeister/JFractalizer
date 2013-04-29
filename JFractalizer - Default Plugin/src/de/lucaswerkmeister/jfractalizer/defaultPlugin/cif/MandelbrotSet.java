@@ -7,11 +7,18 @@ import java.awt.geom.Rectangle2D;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
 
 public class MandelbrotSet extends CifFractal {
-	private final MandelbrotMenuListener	listener	= new MandelbrotMenuListener(this);
+	private final MandelbrotMenuListener	listener		= new MandelbrotMenuListener(this);
+	private CifMenuListener					menuListener	= null;
 
 	public MandelbrotSet() {
-		canvas = new CifCanvas<>(this, MandelbrotImageMaker_NoHoles.class);
-		menuListener = new CifMenuListener(this, canvas);
+		super(MandelbrotImageMaker_NoHoles.class);
+	}
+
+	@Override
+	public CifMenuListener getMenuListener() {
+		if (menuListener == null)
+			menuListener = new CifMenuListener(this, canvas);
+		return menuListener;
 	}
 
 	@Override

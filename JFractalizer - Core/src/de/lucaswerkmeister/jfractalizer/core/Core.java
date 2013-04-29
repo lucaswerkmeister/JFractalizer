@@ -220,10 +220,11 @@ public final class Core {
 		switch (realm) {
 			case "":
 				throw new IllegalCommandLineException("No realm specified!");
-			case "ui":
+			case "core":
 				switch (optionName) {
 					case "no-gui":
 						showGui = false;
+						System.setProperty("java.awt.headless", "true");
 						return;
 					case "debug":
 						debugging = Boolean.parseBoolean(optionContent);
@@ -373,6 +374,8 @@ public final class Core {
 							error("An error occured while preparing output file \"" + optionContent + "\"!", e);
 						}
 						return;
+					case "debug":
+						Log.registerLog(new DebuggingLog());
 					default:
 						currentLog.handleCommandLineOption(option, optionName, optionContent);
 				}

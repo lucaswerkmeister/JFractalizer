@@ -31,10 +31,11 @@ public class MandelbrotMenuListener implements ActionListener {
 		switch (e.getActionCommand()) {
 			case "Switch to according Julia Set": {
 				try {
-					Core.changeFractal(JuliaSet.class,
-							fractal.canvas.getMinReal() + (fractal.canvas.getMaxReal() - fractal.canvas.getMinReal())
+					Core.changeFractal(
+							JuliaSet.class,
+							fractal.getMinReal() + (fractal.getMaxReal() - fractal.getMinReal())
 									* fractal.canvas.getMousePosition().x / fractal.canvas.getWidth(),
-							fractal.canvas.getMinImag() + (fractal.canvas.getMaxImag() - fractal.canvas.getMinImag())
+							fractal.getMinImag() + (fractal.getMaxImag() - fractal.getMinImag())
 									* (fractal.canvas.getHeight() - fractal.canvas.getMousePosition().y)
 									/ fractal.canvas.getHeight());
 				}
