@@ -13,6 +13,8 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -43,6 +45,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.jfractalizer.core.Core;
 import de.lucaswerkmeister.jfractalizer.core.TimeSpan;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.SimplePalette;
 import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
 import de.lucaswerkmeister.jfractalizer.framework.IllegalCommandLineException;
@@ -51,6 +54,17 @@ import de.lucaswerkmeister.jfractalizer.framework.ZoomableFractal;
 public abstract class CifFractal implements ZoomableFractal {
 	CifCanvas<?>									canvas;
 	MenuItem										undoMenuItem, redoMenuItem;
+	public static final int							LOG_CLASS_PREFIX			= DefaultPlugin.LOG_PLUGIN_PREFIX
+																						+ (((0 << 5) + (0 << 0)) << 8);
+	public static final int							LOG_CHANGED_IMAGE_TYPE		= LOG_CLASS_PREFIX + 0;
+	public static final int							LOG_SAVING					= LOG_CLASS_PREFIX + 1;
+	public static final int							LOG_SET_PALETTE				= LOG_CLASS_PREFIX + 2;
+	public static final int							LOG_START_CALCULATION		= LOG_CLASS_PREFIX + 3;
+	public static final int							LOG_STOP_CALCULATION		= LOG_CLASS_PREFIX + 4;
+	public static final int							LOG_INIT_MENU				= LOG_CLASS_PREFIX + 5;
+	public static final int							LOG_ZOOM					= LOG_CLASS_PREFIX + 6;
+	public static final int							LOG_ZOOM_TO_START			= LOG_CLASS_PREFIX + 7;
+	public static final int							LOG_SHUTDOWN				= LOG_CLASS_PREFIX + 8;
 
 	public static final int							START_WIDTH					= 960;
 	public static final int							START_HEIGHT				= 540;
@@ -69,8 +83,9 @@ public abstract class CifFractal implements ZoomableFractal {
 	private long									startTime, stopTime;
 	private final Set<ActionListener>				calculationFinishedListeners;
 
-	private static final boolean					USE_MORE_THREADS_THAN_CORES	= true;						// TODO
-																												// cc #5
+	private static final boolean					USE_MORE_THREADS_THAN_CORES	= true;								// TODO
+																														// cc
+																														// #5
 
 	protected CifFractal(Class<? extends CifImageMaker> imageMakerClass) {
 		this.imageMakerClass = imageMakerClass;
@@ -108,11 +123,14 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void suggestImageType(int imageType) {
+		log(LOG_CHANGED_IMAGE_TYPE, this, imageType);
 		this.imageType = imageType;
 	}
 
 	@Override
 	public void saveFractXml(final TransformerHandler handler) throws SAXException {
+		log(LOG_SAVING, this);
+
 		final Attributes noAtts = new AttributesImpl();
 
 		handler.startElement("", "", "width", noAtts);
@@ -162,11 +180,13 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void setColorPalette(final ColorPalette newPalette) {
+		log(LOG_SET_PALETTE, this, palette, newPalette);
 		palette = newPalette;
 	}
 
 	@Override
 	public void startCalculation() {
+		log(LOG_START_CALCULATION, this);
 		initThreads();
 		if (canvas != null)
 			canvas.repaint();
@@ -174,6 +194,7 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void stopCalculation() {
+		log(LOG_STOP_CALCULATION, this);
 		if (runningTasks != null) {
 			for (Future<?> f : runningTasks)
 				f.cancel(true);
@@ -183,6 +204,8 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void initMenu(final Menu fractalMenu) {
+		log(LOG_INIT_MENU, this, fractalMenu);
+
 		final MenuItem recalculate = new MenuItem("Recalculate", new MenuShortcut(KeyEvent.VK_R));
 		recalculate.addActionListener(getMenuListener());
 		fractalMenu.add(recalculate);
@@ -213,6 +236,8 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void zoom(final int x, final int y, final double factor) {
+		log(LOG_ZOOM, this, x, y, factor);
+
 		final double currentWidth = (getMaxReal() - getMinReal());
 		final double currentHeight = (getMaxImag() - getMinImag());
 		final double centerR = getMinReal() + currentWidth * ((double) x / getImageSize().width);
@@ -230,6 +255,8 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void zoomToStart(int x, int y, double factor) {
+		log(LOG_ZOOM_TO_START, this, x, y, factor);
+
 		zoom(x, y, factor);
 		Rectangle2D.Double start = getStartArea();
 		double realSize = getMaxReal() - getMinReal();
@@ -444,6 +471,7 @@ public abstract class CifFractal implements ZoomableFractal {
 
 	@Override
 	public void shutdown() {
+		log(LOG_SHUTDOWN, this);
 		executorService.shutdown();
 	}
 
