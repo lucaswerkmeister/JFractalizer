@@ -52,6 +52,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 
 	@Override
 	public void paint(final Graphics g) {
+		boolean triggerRepaint = fractal.isRunning();
+
 		BufferedImage image = fractal.getImage();
 
 		if (invertedImage == null || invertedImage.getWidth() != image.getWidth()
@@ -70,7 +72,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 		invertedImage.getRaster().setPixels(0, 0, invertedImage.getWidth(), invertedImage.getHeight(), pixels);
 		g.drawImage(invertedImage, 0, 0, null);
 
-		if (fractal.isRunning())
+		if (triggerRepaint)
 			repaint(50);
 	}
 
