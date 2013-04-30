@@ -13,40 +13,39 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The <code>History</code> class provides methods to store a specific state of anything and moving back and forth
- * between different states of it. After a specified number of states, old states are either discarded or stored to the
- * hard disk.
+ * between different states of it. After a specified number of states, old states are discarded.
+ * <p>
+ * Does not support null elements.
  * 
  * @author Lucas Werkmeister
- * @version 1.0
+ * @version 2.0
  */
 public class History<T> {
-	private final List<T>	states;
-	private final int		maxStates;
-	private int				currentState;
-	private int				lastState;
+	private final int	maxLength;
+
+	private Entry		dummy	= new Entry(null);
+	private Entry		current	= dummy;
+	private int			length	= 0;
 
 	/**
-	 * Creates a <code>History</code> that will store 10 states. If more states are added, older states are discarded.
+	 * Creates a <code>History</code> that will store 16 states. If more states are added, older states are discarded.
 	 */
 	public History() {
-		this(10);
+		this(16);
 	}
 
 	/**
 	 * Creates a <code>History</code> that will store the specified amount of states.
 	 * 
 	 * @param capacity
-	 *            Specifies how many states will be stored. If more states are added, older states are discarded.
+	 *            Specifies how many states will be stored. If more states are added, older states are discarded. A
+	 *            value of -1 means "do not discard old states".
 	 */
 	public History(final int capacity) {
-		states = new ArrayList<>(capacity);
-		maxStates = capacity;
-		currentState = lastState = -1;
+		maxLength = capacity;
+		dummy.next = dummy.prev = dummy;
 	}
 
 	/**
@@ -54,21 +53,28 @@ public class History<T> {
 	 * one (i. e. if the <code>History</code> can redo), all newer states will be discarded.
 	 * 
 	 * @param newState
+	 *            The new state.
+	 * @throws IllegalArgumentException
+	 *             When newState is null.
 	 */
-	public void add(final T newState) {
-		if (currentState != lastState)
-			for (int i = currentState + 1; i <= lastState; i++)
-				states.remove(i);
-		if (currentState == maxStates) {
-			for (int i = 0; i < maxStates - 1;)
-				states.set(i, states.get(++i));
-			states.set(maxStates - 1, newState);
+	public void add(final T newState) throws IllegalArgumentException {
+		if (newState == null)
+			throw new IllegalArgumentException("Can't store null value in the history!");
+		boolean needToRecount = current.next != dummy && maxLength != -1;
+		current.append(newState);
+		current = current.next;
+		if (needToRecount) {
+			int length = 0; // shadow the instance variable and set it once below for better performance
+			Entry counter = dummy;
+			while (counter.next != dummy) {
+				counter = counter.next;
+				length++; // this only operates on the method frame stack instead of a lot of getfield/putfield action
+			}
+			this.length = length;
 		}
-		else {
-			states.add(newState);
-			currentState++;
-			if (lastState < currentState)
-				lastState = currentState;
+		while (maxLength != -1 && length > maxLength) {
+			dummy.link(dummy.next.next);
+			length--;
 		}
 	}
 
@@ -78,9 +84,7 @@ public class History<T> {
 	 * @return The current state of the <code>History</code> if it contains any states, <code>null</code> otherwise.
 	 */
 	public T getCurrentState() {
-		if (currentState <= lastState)
-			return states.get(currentState);
-		return null;
+		return current.content;
 	}
 
 	/**
@@ -90,7 +94,7 @@ public class History<T> {
 	 */
 	public T undo() {
 		if (canUndo())
-			return states.get(--currentState);
+			return (current = current.prev).content;
 		return null;
 	}
 
@@ -101,7 +105,7 @@ public class History<T> {
 	 */
 	public T redo() {
 		if (canRedo())
-			return states.get(++currentState);
+			return (current = current.next).content;
 		return null;
 	}
 
@@ -111,7 +115,7 @@ public class History<T> {
 	 * @return <code>true</code> if there are previous states, <code>false</code> otherwise.
 	 */
 	public boolean canUndo() {
-		return currentState > 0;
+		return current.prev != dummy;
 	}
 
 	/**
@@ -120,14 +124,64 @@ public class History<T> {
 	 * @return <code>true</code> if there are further states, <code>false</code> otherwise.
 	 */
 	public boolean canRedo() {
-		return currentState < lastState;
+		return current.next != dummy;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder();
-		for (final T t : states)
-			b.append(t.toString());
+		Entry pointer = dummy;
+		while (pointer.next != dummy) {
+			pointer = pointer.next;
+			b.append(pointer.content);
+		}
 		return b.toString();
+	}
+
+	/**
+	 * An entry in this little Doubly Linked List implementation.
+	 * 
+	 * @author Lucas Werkmeister
+	 * @version 1.0
+	 */
+	private class Entry {
+		Entry	prev;
+		Entry	next;
+		T		content;
+
+		/**
+		 * Creates a new {@link Entry} with the specified content.
+		 * 
+		 * @param content
+		 *            The content of the entry.
+		 */
+		Entry(T content) {
+			this.content = content;
+			next = prev = dummy;
+		}
+
+		/**
+		 * Appends a new Entry to this entry, with the specified content.
+		 * 
+		 * @param content
+		 *            The content for the new, following, entry.
+		 */
+		void append(T content) {
+			Entry newEntry = new Entry(content);
+			newEntry.prev = this;
+			newEntry.next = dummy;
+			next = newEntry;
+		}
+
+		/**
+		 * Links that Entry after this one, such that <code>other.prev = this</code> and <code>this.next = other</code>.
+		 * 
+		 * @param other
+		 *            The other Entry.
+		 */
+		void link(Entry other) {
+			next = other;
+			other.prev = this;
+		}
 	}
 }
