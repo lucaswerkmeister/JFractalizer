@@ -166,6 +166,7 @@ public final class Core {
 	 *            The new fractal.
 	 */
 	static void setCurrentFractal(final Fractal newFractal) {
+		newFractal.setColorPalette(currentColorPalette);
 		currentFractal = newFractal;
 		if (showGui && gui != null)
 			gui.reset();
