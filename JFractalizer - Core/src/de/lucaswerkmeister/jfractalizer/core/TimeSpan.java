@@ -34,6 +34,7 @@ public class TimeSpan {
 		this(nanos);
 	}
 
+	@Override
 	public String toString() {
 		long interval = (nanos + 500_000) / 1_000_000;
 		final short milliseconds = (short) (interval % 1000);

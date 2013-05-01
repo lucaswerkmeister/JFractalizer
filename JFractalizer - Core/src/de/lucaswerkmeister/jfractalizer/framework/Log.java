@@ -20,6 +20,7 @@ public abstract class Log {
 	private static final Map<Thread, LinkedList<Long>>	timers	= new HashMap<>();
 	protected static boolean							running	= true;
 	private static final Thread							handler	= new Thread() {
+																	@Override
 																	public void run() {
 																		while (running) {
 																			try {
@@ -105,7 +106,7 @@ public abstract class Log {
 		Thread currentThread = Thread.currentThread();
 		LinkedList<Long> stack;
 		if (!timers.containsKey(currentThread)) {
-			stack = new LinkedList<Long>();
+			stack = new LinkedList<>();
 			timers.put(currentThread, stack);
 		}
 		else

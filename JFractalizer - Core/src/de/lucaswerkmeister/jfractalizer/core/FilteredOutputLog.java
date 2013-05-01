@@ -64,7 +64,7 @@ public class FilteredOutputLog extends Log implements CommandLineConfigurable {
 		}
 	}
 
-	private Iterable<Integer> parseIdRange(final String range, final Set<Integer> ids) {
+	private static Iterable<Integer> parseIdRange(final String range, final Set<Integer> ids) {
 		return new Iterable<Integer>() {
 			@Override
 			public Iterator<Integer> iterator() {

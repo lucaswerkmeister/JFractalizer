@@ -14,6 +14,7 @@ import de.lucaswerkmeister.jfractalizer.framework.Log;
 public class DebuggingLog extends Log {
 	private final List<Entry>	entries	= new LinkedList<>();
 	private final Thread		runner	= new Thread() {
+											@Override
 											public void run() {
 												while (running) {
 													try {

@@ -327,8 +327,7 @@ public final class Core {
 								+ optionContent + "\"!");
 					}
 				}
-				else
-					warn("Unknown option \"" + option + "\" in realm --film!");
+				warn("Unknown option \"" + option + "\" in realm --film!");
 				break;
 			case "fractArgs":
 				Core.getCurrentFractal().handleCommandLineOption(option, optionName, optionContent);
@@ -361,6 +360,9 @@ public final class Core {
 					case "stdout":
 						outputs.add(new StdoutOutput(currentFormat));
 						return;
+					default:
+						warn("Unknown option \"" + optionName + "\" in realm --output!");
+						return;
 				}
 			case "log":
 				switch (optionName) {
@@ -377,13 +379,15 @@ public final class Core {
 						return;
 					case "debug":
 						Log.registerLog(new DebuggingLog());
+						return;
 					default:
 						currentLog.handleCommandLineOption(option, optionName, optionContent);
 				}
 		}
 	}
 
-	private static void endRealm(String name) {
+	private static void endRealm(@SuppressWarnings("unused") String name) {
+		// Currently, nothing happens here
 	}
 
 	private static void warn(String warning) {
@@ -413,7 +417,9 @@ public final class Core {
 	 *             If anything goes wrong while loading the file.
 	 */
 	static void loadFile(File file) throws SAXException, IOException, ParserConfigurationException {
-		load(new FileInputStream(file));
+		try (FileInputStream stream = new FileInputStream(file)) {
+			load(stream);
+		}
 	}
 
 	static void load(InputStream stream) throws SAXException, IOException, ParserConfigurationException {
@@ -429,7 +435,7 @@ public final class Core {
 			plugin.registerLogIDs();
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		initPlugins();
 		// Read command line args
 		String realm = "";
@@ -526,7 +532,10 @@ class MultipleFilesOutput extends Output {
 
 	@Override
 	public void writeImage(BufferedImage image) throws IOException {
-		write(image, new FileOutputStream(filename.replace("?", String.format("%06d", getNumbers().next()))));
+		try (FileOutputStream str = new FileOutputStream(filename.replace("?",
+				String.format("%06d", getNumbers().next())))) {
+			write(image, str);
+		}
 	}
 }
 
