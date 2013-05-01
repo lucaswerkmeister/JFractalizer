@@ -21,9 +21,7 @@ import java.awt.event.MouseEvent;
 public class CifMouseListener extends MouseAdapter {
 	private final CifCanvas<?>		canvas;
 	private Point					clickStart;
-	private static final boolean	keepRatio	= true; // TODO make this
-
-	// configurable
+	private static final boolean	keepRatio	= true; // TODO make this configurable
 
 	public CifMouseListener(final CifCanvas<?> canvas) {
 		this.canvas = canvas;

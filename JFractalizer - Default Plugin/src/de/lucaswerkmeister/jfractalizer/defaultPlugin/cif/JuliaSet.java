@@ -13,9 +13,15 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
 
 public class JuliaSet extends CifFractal {
+	public static final int	LOG_CLASS_PREFIX	= DefaultPlugin.LOG_PLUGIN_PREFIX + (((0 << 5) + (0xD << 0)) << 8);
+	public static final int	LOG_SWITCHED		= LOG_CLASS_PREFIX + 0;
+
 	private double			cReal, cImag;
 	private CifMenuListener	menuListener;
 
@@ -57,6 +63,7 @@ public class JuliaSet extends CifFractal {
 	@Override
 	public void onFractalChange(Object... params) {
 		if (params.length == 2 && params[0] instanceof Double && params[1] instanceof Double) {
+			log(LOG_SWITCHED, params);
 			cReal = (double) params[0];
 			cImag = (double) params[1];
 		}

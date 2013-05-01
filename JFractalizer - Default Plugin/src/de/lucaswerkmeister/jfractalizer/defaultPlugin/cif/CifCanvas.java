@@ -13,34 +13,31 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.LookupOp;
-import java.awt.image.ShortLookupTable;
+
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 
 public class CifCanvas<T extends CifImageMaker> extends Canvas {
 
-	private static final long		serialVersionUID	= -7909101981418946071L;
+	private static final long	serialVersionUID		= -7909101981418946071L;
+	public static final int		LOG_CLASS_PREFIX		= DefaultPlugin.LOG_PLUGIN_PREFIX
+																+ (((0 << 5) + (3 << 0)) << 8);
+	public static final int		LOG_GO_TO_SELECTED_AREA	= LOG_CLASS_PREFIX + 0;
 
-	private final CifFractal		fractal;
-	CifMouseListener				mouseListener;
-	private Rectangle				selectedArea;
-	private BufferedImage			invertedImage		= null;
+	private final CifFractal	fractal;
+	CifMouseListener			mouseListener;
+	private Rectangle			selectedArea;
+	private BufferedImage		invertedImage			= null;
 
-	private static final LookupOp	inverter;
 	// this defines how fast the maxPasses will grow with increasing zoom.
 	// Higher number leads to slower growth.
 	// TODO Check whether this value is ok; maybe make it configurable.
-	static final double				maxPassesFactor		= 40;
-
-	static {
-		final short[] invertTable = new short[256];
-		for (short s = 0; s < 256; s++)
-			invertTable[s] = (short) (255 - s);
-		inverter = new LookupOp(new ShortLookupTable(0, invertTable), null);
-	}
+	static final double			maxPassesFactor			= 40;
 
 	public CifCanvas(final CifFractal fractal) {
 		this.fractal = fractal;
@@ -82,6 +79,8 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 	}
 
 	public void goToSelectedArea() {
+		log(LOG_GO_TO_SELECTED_AREA, selectedArea);
+
 		final double currentWidth = fractal.getMaxReal() - fractal.getMinReal();
 		final double newWidth = currentWidth * ((double) selectedArea.width / fractal.getImageSize().width);
 		final double newMinReal = fractal.getMinReal() + ((double) selectedArea.x / fractal.getImageSize().width)

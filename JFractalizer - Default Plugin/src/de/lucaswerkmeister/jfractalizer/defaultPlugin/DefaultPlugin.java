@@ -2,8 +2,15 @@ package de.lucaswerkmeister.jfractalizer.defaultPlugin;
 
 import static de.lucaswerkmeister.jfractalizer.framework.Log.registerID;
 
+import java.awt.Rectangle;
+
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.cameras.Steadicam;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.CifCanvas;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.CifFractal;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.CifMenuListener;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.JuliaSet;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.MandelbrotMenuListener;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.MandelbrotSet;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.ColorNode;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.EditDialogPalette;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.HsbRotatePalette;
@@ -27,6 +34,15 @@ public class DefaultPlugin implements Plugin {
 		registerID(CifFractal.LOG_ZOOM, Level.INFO, this);
 		registerID(CifFractal.LOG_ZOOM_TO_START, Level.INFO, this);
 		registerID(CifFractal.LOG_SHUTDOWN, Level.INFO, this);
+		registerID(CifCanvas.LOG_GO_TO_SELECTED_AREA, Level.INFO, this);
+		registerID(CifMenuListener.LOG_EDIT_BOUNDARIES, Level.INFO, this);
+		registerID(CifMenuListener.LOG_EDIT_ADDITIONAL_PARAMETERS, Level.INFO, this);
+		registerID(CifMenuListener.LOG_RECALCULATE, Level.INFO, this);
+		registerID(CifMenuListener.LOG_UNDO, Level.INFO, this);
+		registerID(CifMenuListener.LOG_REDO, Level.INFO, this);
+		registerID(MandelbrotSet.LOG_INIT_CONTEXT_MENU, Level.INFO, this);
+		registerID(MandelbrotMenuListener.LOG_SWITCH_JULIA, Level.INFO, this);
+		registerID(JuliaSet.LOG_SWITCHED, Level.INFO, this);
 		registerID(EditDialogPalette.LOG_INIT_MENU, Level.INFO, this);
 		registerID(EditDialogPalette.LOG_SHOW_EDIT_DIALOG, Level.INFO, this);
 		registerID(EditDialogPalette.LOG_EDITED_PALETTE, Level.INFO, this);
@@ -77,6 +93,26 @@ public class DefaultPlugin implements Plugin {
 						+ args[3];
 			case CifFractal.LOG_SHUTDOWN:
 				return args[0].getClass().getName() + ": Shutting down";
+			case CifCanvas.LOG_GO_TO_SELECTED_AREA:
+				Rectangle rect = (Rectangle) args[1];
+				return "CifCanvas: Go to selected area " + rect.toString();
+			case CifMenuListener.LOG_EDIT_BOUNDARIES:
+				return "CifMenuListener: Edit boundaries (new boundaries: " + args[0] + ", " + args[1] + ")";
+			case CifMenuListener.LOG_EDIT_ADDITIONAL_PARAMETERS:
+				return "CifMenuListener: Edit additional parameters (supersampling " + args[0] + ", max passes "
+						+ args[1] + ")";
+			case CifMenuListener.LOG_RECALCULATE:
+				return "CifMenuListener: Recalculate";
+			case CifMenuListener.LOG_UNDO:
+				return "CifMenuListener: Undo";
+			case CifMenuListener.LOG_REDO:
+				return "CifMenuListener: Redo";
+			case MandelbrotSet.LOG_INIT_CONTEXT_MENU:
+				return "MandelbrotSet: Initialized context menu";
+			case MandelbrotMenuListener.LOG_SWITCH_JULIA:
+				return "MandelbrotMenuListener: Switch to Julia set";
+			case JuliaSet.LOG_SWITCHED:
+				return "JuliaSet: Switched to Julia set, adopting coordinate " + args[0] + "+" + args[1] + "i";
 			case EditDialogPalette.LOG_INIT_MENU:
 				return args[0].getClass().getName() + ": Initialized menu";
 			case EditDialogPalette.LOG_SHOW_EDIT_DIALOG:

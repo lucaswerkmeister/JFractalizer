@@ -13,13 +13,18 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
-import java.awt.HeadlessException;
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import de.lucaswerkmeister.jfractalizer.core.Core;
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 
 public class MandelbrotMenuListener implements ActionListener {
+	public static final int		LOG_CLASS_PREFIX	= DefaultPlugin.LOG_PLUGIN_PREFIX + (((0 << 5) + (0xA << 0)) << 8);
+	public static final int		LOG_SWITCH_JULIA	= LOG_CLASS_PREFIX + 0;
+
 	private final CifFractal	fractal;
 
 	public MandelbrotMenuListener(CifFractal mandelbrotFractal) {
@@ -30,6 +35,7 @@ public class MandelbrotMenuListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 			case "Switch to according Julia Set": {
+				log(LOG_SWITCH_JULIA);
 				try {
 					Core.changeFractal(
 							JuliaSet.class,
@@ -39,7 +45,7 @@ public class MandelbrotMenuListener implements ActionListener {
 									* (fractal.canvas.getHeight() - fractal.canvas.getMousePosition().y)
 									/ fractal.canvas.getHeight());
 				}
-				catch (HeadlessException | IllegalArgumentException | ReflectiveOperationException e1) {
+				catch (IllegalArgumentException | ReflectiveOperationException e1) {
 					e1.printStackTrace();
 				}
 			}

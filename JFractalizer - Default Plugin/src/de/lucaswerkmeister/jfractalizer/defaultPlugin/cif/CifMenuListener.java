@@ -13,6 +13,8 @@
  */
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
+import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Dialog;
@@ -30,13 +32,21 @@ import java.awt.event.ActionListener;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
+
 public class CifMenuListener implements ActionListener {
+	public static final int		LOG_CLASS_PREFIX				= DefaultPlugin.LOG_PLUGIN_PREFIX
+																		+ (((0 << 5) + (4 << 0)) << 8);
+	public static final int		LOG_EDIT_BOUNDARIES				= LOG_CLASS_PREFIX + 0;
+	public static final int		LOG_EDIT_ADDITIONAL_PARAMETERS	= LOG_CLASS_PREFIX + 1;
+	public static final int		LOG_RECALCULATE					= LOG_CLASS_PREFIX + 2;
+	public static final int		LOG_UNDO						= LOG_CLASS_PREFIX + 3;
+	public static final int		LOG_REDO						= LOG_CLASS_PREFIX + 4;
+
 	private final CifFractal	fractal;
 	private final CifCanvas<?>	canvas;
-	private boolean				okClicked	= false;
-	Dialog						editBoundariesDialog	= null, additionalParamsDialog = null;	// initialize
-
-	// variable so the compiler doesn't complain
+	private boolean				okClicked						= false;
+	Dialog						editBoundariesDialog			= null, additionalParamsDialog = null;
 
 	CifMenuListener(final CifFractal fractal, final CifCanvas<?> canvas) {
 		this.fractal = fractal;
@@ -91,12 +101,14 @@ public class CifMenuListener implements ActionListener {
 				editBoundariesDialog.pack();
 				editBoundariesDialog.setVisible(true);
 				if (okClicked) {
-					fractal.setMinImag(Double.parseDouble(minImag.getText()));
-					fractal.setMaxImag(Double.parseDouble(maxImag.getText()));
-					fractal.setMinReal(Double.parseDouble(minReal.getText()));
-					fractal.setMaxReal(Double.parseDouble(maxReal.getText()));
-					fractal.setImageSize(new Dimension(Integer.parseInt(width.getText()), Integer.parseInt(height
-							.getText())));
+					CifParams params = new CifParams(Double.parseDouble(minImag.getText()), Double.parseDouble(maxImag
+							.getText()), Double.parseDouble(minReal.getText()), Double.parseDouble(maxReal.getText()),
+							fractal.getMaxPasses(), fractal.getSuperSamplingFactor());
+					Dimension size = new Dimension(Integer.parseInt(width.getText()),
+							Integer.parseInt(height.getText()));
+					fractal.setParams(params);
+					fractal.setImageSize(size);
+					log(LOG_EDIT_BOUNDARIES, params, size);
 					((Frame) canvas.getParent()).pack();
 					fractal.stopCalculation();
 					fractal.startCalculation();
@@ -143,22 +155,25 @@ public class CifMenuListener implements ActionListener {
 				additionalParamsDialog.pack();
 				additionalParamsDialog.setVisible(true);
 				if (okClicked) {
-					fractal.setSuperSamplingFactor((byte) (int) ssf.getValue()); // the
-					// additional (int) cast is necessary because casting from Integer to byte raises a
-					// ClassCastException
-					fractal.setMaxPasses((int) maxPasses.getValue());
+					byte superSamplingFactor = (byte) (int) /* (Integer) */ssf.getValue();
+					int mp = (int) maxPasses.getValue();
+					log(LOG_EDIT_ADDITIONAL_PARAMETERS, superSamplingFactor, mp);
+					fractal.setSuperSamplingFactor(superSamplingFactor);
+					fractal.setMaxPasses(mp);
 					fractal.stopCalculation();
 					fractal.startCalculation();
 				}
 				break;
 			case "Recalculate":
+				log(LOG_RECALCULATE);
 				fractal.stopCalculation();
 				fractal.startCalculation();
 				break;
 			case "Undo":
 				if (fractal.history.canUndo()) {
+					log(LOG_UNDO);
 					fractal.stopCalculation();
-					fractal.setParams((CifParams) fractal.history.undo(), false);
+					fractal.setParams(fractal.history.undo(), false);
 					fractal.startCalculation();
 				}
 				fractal.undoMenuItem.setEnabled(fractal.history.canUndo());
@@ -166,18 +181,18 @@ public class CifMenuListener implements ActionListener {
 				break;
 			case "Redo":
 				if (fractal.history.canRedo()) {
+					log(LOG_REDO);
 					fractal.stopCalculation();
-					fractal.setParams((CifParams) fractal.history.redo(), false);
+					fractal.setParams(fractal.history.redo(), false);
 					fractal.startCalculation();
 				}
 				fractal.undoMenuItem.setEnabled(fractal.history.canUndo());
 				fractal.redoMenuItem.setEnabled(fractal.history.canRedo());
 				break;
 			default:
-				System.out
-						.println("Action \""
-								+ e.getActionCommand()
-								+ "\" not yet implemented. If you see this in a published version, punch the developer in the face. (No, seriously, don't do that. Just write me an e-mail.)");
+				System.out.println("Action \"" + e.getActionCommand() + "\" not yet implemented. "
+						+ "If you see this in a published version, punch the developer in the face. "
+						+ "(No, seriously, don't do that. Just write me an e-mail.)");
 		}
 	}
 }

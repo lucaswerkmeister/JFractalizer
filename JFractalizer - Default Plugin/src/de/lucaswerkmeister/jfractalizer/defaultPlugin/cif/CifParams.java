@@ -54,4 +54,10 @@ public final class CifParams {
 	public CifParams copyChangeSuperSamplingFactor(byte superSamplingFactor) {
 		return new CifParams(minReal, maxReal, minImag, maxImag, maxPasses, superSamplingFactor);
 	}
+
+	@Override
+	public String toString() {
+		return "[" + minReal + "+" + minImag + "i, " + maxReal + "+" + maxImag + "i, " + maxPasses + ", "
+				+ superSamplingFactor + "]";
+	}
 }

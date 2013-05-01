@@ -17,19 +17,36 @@ Bit distribution in the class byte: `0bpppccccc`, where `p` stands for the packa
     * 0x07: Zoom to start
     * 0x08: Shutdown
   * 0x01: CifFractXmlLoader
+    * None yet
   * 0x02: CifImageMaker
+    * None yet
   * 0x03: CifCanvas
+    * 0x00: Go to selected area
   * 0x04: CifMenuListener
+    * 0x00: Edit boundaries
+	* 0x01: Edit additional parameters
+	* 0x02: Recalculate
+	* 0x03: Undo
+	* 0x04: Redo
   * 0x05: CifMouseListener
+    * None yet
   * 0x06: CifParams
+    * None yet
   * 0x07: History
-  * 0x08: WaitForCalcThreads
+    * None yet
+  * 0x08: [Removed]
   * 0x09: MandelbrotSet
+    * 0x00: Initialized context menu
   * 0x0A: MandelbrotMenuListener
+    * 0x00: Switch to Julia set
   * 0x0B: MandelbrotImageMaker_CalcAll
+    * None yet
   * 0x0C: MandelbrotImageMaker_NoHoles
+    * None yet
   * 0x0D: JuliaSet
+    * 0x00: Switched to Julia set
   * 0x0E: JuliaImageMaker_CalcAll
+    * None yet
 * 1-3: reserved for future fractals
 * 4: palettes
   * 0x00: EditDialogPalette
