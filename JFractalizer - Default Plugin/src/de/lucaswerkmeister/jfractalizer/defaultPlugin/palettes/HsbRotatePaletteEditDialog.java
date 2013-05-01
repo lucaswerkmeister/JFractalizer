@@ -73,7 +73,7 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 
 		Panel saturationPanel = new Panel(new FlowLayout());
 		saturationPanel.add(new Label("Saturation"));
-		saturation = new JSlider(0, 100, (int) Math.round(palette.getSaturation() * 100));
+		saturation = new JSlider(0, 100, Math.round(palette.getSaturation() * 100));
 		Hashtable<Integer, JLabel> floatTable = new Hashtable<>();
 		floatTable.put(0, new JLabel("0.0"));
 		floatTable.put(50, new JLabel("0.5"));
@@ -88,7 +88,7 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 
 		Panel lightnessPanel = new Panel(new FlowLayout());
 		lightnessPanel.add(new Label("Brightness"));
-		brightness = new JSlider(0, 100, (int) Math.round(palette.getBrightness() * 100));
+		brightness = new JSlider(0, 100, Math.round(palette.getBrightness() * 100));
 		brightness.setLabelTable(floatTable);
 		brightness.setPaintLabels(true);
 		// brightness.setMajorTickSpacing(10);
@@ -99,7 +99,7 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 
 		Panel restPanel = new Panel(new FlowLayout());
 		restPanel.add(new Label("Hue start"));
-		hueStart = new JSlider(0, 100, (int) Math.round(palette.getHueStart() * 100));
+		hueStart = new JSlider(0, 100, Math.round(palette.getHueStart() * 100));
 		hueStart.setLabelTable(floatTable);
 		hueStart.setPaintLabels(true);
 		restPanel.add(hueStart);
@@ -138,6 +138,7 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 		pack();
 	}
 
+	@Override
 	public EditDialogPalette getPalette() {
 		if (okClicked)
 			return new HsbRotatePalette(hueStart.getValue() / 100f, (float) (double) (Double) increment.getValue(),

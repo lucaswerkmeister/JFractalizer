@@ -94,6 +94,11 @@ public class ColorNode extends Panel implements ActionListener {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		return Integer.valueOf(length).hashCode() ^ startColor.hashCode() ^ endColor.hashCode();
+	}
+
 	/**
 	 * @return the startColor
 	 */

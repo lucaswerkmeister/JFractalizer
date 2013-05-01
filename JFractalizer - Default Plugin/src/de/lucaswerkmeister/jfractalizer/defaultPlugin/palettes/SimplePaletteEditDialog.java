@@ -55,6 +55,7 @@ public class SimplePaletteEditDialog extends PaletteEditDialog implements Action
 		pack();
 	}
 
+	@Override
 	public EditDialogPalette getPalette() {
 		if (userCanceled)
 			return original;

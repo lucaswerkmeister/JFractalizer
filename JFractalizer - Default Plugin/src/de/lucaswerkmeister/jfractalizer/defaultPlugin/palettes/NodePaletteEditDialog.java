@@ -45,12 +45,14 @@ public class NodePaletteEditDialog extends PaletteEditDialog implements ActionLi
 
 	public NodePaletteEditDialog(final Frame owner, final NodePalette original) {
 		super(owner, original);
+		if (original.nodes.size() == 0)
+			throw new IllegalArgumentException("A NodePalette must have at least one node!");
 		setLayout(new BorderLayout());
 		final ScrollPane nodesPanelParent = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
 		nodesPanel = new Panel(new FlowLayout());
 		nodesPanelParent.add(nodesPanel);
 		nodes = new ArrayList<>(original.nodes.size());
-		ColorNode lastNode = null;
+		ColorNode lastNode = original.nodes.get(0);
 		for (final ColorNode n : original.nodes) {
 			final ColorNode newNode = n.copy();
 			nodes.add(newNode);
@@ -101,11 +103,11 @@ public class NodePaletteEditDialog extends PaletteEditDialog implements ActionLi
 		setVisible(false);
 	}
 
+	@Override
 	public EditDialogPalette getPalette() {
 		if (okClicked)
 			return new NodePalette(nodes, coreColor.getColor());
-		else
-			return original;
+		return original;
 	}
 
 	@Override

@@ -133,9 +133,20 @@ public class SimplePalette extends EditDialogPalette {
 		return "Simple Palette";
 	}
 
-	public boolean equals(final SimplePalette otherPalette) {
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof SimplePalette))
+			return false;
+		SimplePalette otherPalette = (SimplePalette) obj;
+
 		return colorSteps == otherPalette.colorSteps && startColor.equals(otherPalette.startColor)
 				&& endColor.equals(otherPalette.endColor) && coreColor.equals(otherPalette.coreColor);
+	}
+
+	@Override
+	public int hashCode() {
+		return Integer.valueOf(colorSteps).hashCode() ^ startColor.hashCode() ^ endColor.hashCode()
+				^ coreColor.hashCode();
 	}
 
 	@Override

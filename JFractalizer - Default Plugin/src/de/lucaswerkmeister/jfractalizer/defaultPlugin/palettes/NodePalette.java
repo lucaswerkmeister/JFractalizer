@@ -127,13 +127,23 @@ public class NodePalette extends EditDialogPalette {
 		return "Node Palette";
 	}
 
-	public boolean equals(final NodePalette otherPalette) {
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof NodePalette))
+			return false;
+		NodePalette otherPalette = (NodePalette) obj;
+
 		if (otherPalette.nodes.size() != nodes.size())
 			return false;
 		for (int i = 0; i < nodes.size(); i++)
 			if (!nodes.get(i).equals(otherPalette.nodes.get(i)))
 				return false;
 		return otherPalette.coreColor == coreColor;
+	}
+
+	@Override
+	public int hashCode() {
+		return nodes.hashCode() ^ coreColor.hashCode();
 	}
 
 	@Override

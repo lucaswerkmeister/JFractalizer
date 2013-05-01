@@ -65,9 +65,7 @@ public class Steadicam implements Camera {
 						throw new IllegalCommandLineException("Could not parse \"frames\" option!", e);
 					}
 				}
-				else
-					throw new IllegalCommandLineException(
-							"Wrong usage of option \"frames\", must contain a '%' character!");
+				throw new IllegalCommandLineException("Wrong usage of option \"frames\", must contain a '%' character!");
 			default:
 				throw new IllegalCommandLineException("Unknown option \"" + option + "\" for Steadicam!");
 		}

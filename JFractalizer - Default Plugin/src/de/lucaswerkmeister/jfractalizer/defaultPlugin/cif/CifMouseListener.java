@@ -76,19 +76,16 @@ public class CifMouseListener extends MouseAdapter {
 			final double yRatio = (double) dY / cHeight;
 			if (xRatio > yRatio)
 				return positiveRectangle(new Rectangle(clickStart.x, clickStart.y, (int) (cWidth * yRatio), dY));
-			else
-				return positiveRectangle(new Rectangle(clickStart.x, clickStart.y, dX, (int) (cHeight * xRatio)));
+			return positiveRectangle(new Rectangle(clickStart.x, clickStart.y, dX, (int) (cHeight * xRatio)));
 		}
-		else
-			return new Rectangle(clickStart.x, clickStart.y, dX, dY);
+		return new Rectangle(clickStart.x, clickStart.y, dX, dY);
 	}
 
-	private Rectangle positiveRectangle(final Rectangle r) {
+	private static Rectangle positiveRectangle(final Rectangle r) {
 		if (r.width > 0) {
 			if (r.height > 0)
 				return r;
-			else
-				return new Rectangle(r.x, r.y + r.height, r.width, -r.height);
+			return new Rectangle(r.x, r.y + r.height, r.width, -r.height);
 		}
 		else if (r.height > 0)
 			return new Rectangle(r.x + r.width, r.y, -r.width, r.height);

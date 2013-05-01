@@ -617,6 +617,7 @@ public abstract class CifFractal implements ZoomableFractal {
 		}
 	}
 
+	@Override
 	public void awaitCalculation() {
 		try {
 			for (Future<?> f : runningTasks)

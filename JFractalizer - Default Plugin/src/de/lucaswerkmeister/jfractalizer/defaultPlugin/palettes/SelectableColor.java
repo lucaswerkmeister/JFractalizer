@@ -153,7 +153,6 @@ class ColorDialog extends Dialog implements ActionListener {
 	public Color getColor() {
 		if (okClicked)
 			return chooser.getColor();
-		else
-			return startColor;
+		return startColor;
 	}
 }
