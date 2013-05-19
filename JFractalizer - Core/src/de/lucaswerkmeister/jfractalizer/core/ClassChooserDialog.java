@@ -21,6 +21,8 @@ import java.awt.Label;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
@@ -42,6 +44,7 @@ public class ClassChooserDialog<S extends SelectableService> extends Dialog impl
 		final Label topText = new Label("Searching for implementations...");
 		add(topText, BorderLayout.NORTH);
 		implList = new List(10);
+		implList.addActionListener(this);
 		add(implList, BorderLayout.CENTER);
 		final Button ok = new Button("OK");
 		ok.addActionListener(this);
@@ -62,15 +65,25 @@ public class ClassChooserDialog<S extends SelectableService> extends Dialog impl
 			System.out.println("No implementations for " + baseInterface.getCanonicalName() + " found, exiting.");
 			System.exit(1);
 		}
+		implList.select(0);
 		topText.setText("Choose an implementation.");
 		selectedService = services.get(implList.getItem(0));
+		implList.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+					dispose();
+				}
+			}
+		});
 		pack();
 		invalidate();
+		implList.requestFocusInWindow();
 	}
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		if (e.getActionCommand().equals("OK")) {
+		if (e.getActionCommand().equals("OK") || e.getSource() == implList) {
 			selectedService = services.get(implList.getSelectedItem());
 			if (selectedService == null)
 				selectedService = services.get(implList.getItem(0)); // in case
