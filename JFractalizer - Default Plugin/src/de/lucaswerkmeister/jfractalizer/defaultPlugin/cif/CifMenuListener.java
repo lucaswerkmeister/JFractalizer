@@ -28,6 +28,12 @@ import java.awt.Panel;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -35,18 +41,41 @@ import javax.swing.SpinnerNumberModel;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 
 public class CifMenuListener implements ActionListener {
-	public static final int		LOG_CLASS_PREFIX				= DefaultPlugin.LOG_PLUGIN_PREFIX
-																		+ (((0 << 5) + (4 << 0)) << 8);
-	public static final int		LOG_EDIT_BOUNDARIES				= LOG_CLASS_PREFIX + 0;
-	public static final int		LOG_EDIT_ADDITIONAL_PARAMETERS	= LOG_CLASS_PREFIX + 1;
-	public static final int		LOG_RECALCULATE					= LOG_CLASS_PREFIX + 2;
-	public static final int		LOG_UNDO						= LOG_CLASS_PREFIX + 3;
-	public static final int		LOG_REDO						= LOG_CLASS_PREFIX + 4;
+	public static final int			LOG_CLASS_PREFIX				= DefaultPlugin.LOG_PLUGIN_PREFIX
+																			+ (((0 << 5) + (4 << 0)) << 8);
+	public static final int			LOG_EDIT_BOUNDARIES				= LOG_CLASS_PREFIX + 0;
+	public static final int			LOG_EDIT_ADDITIONAL_PARAMETERS	= LOG_CLASS_PREFIX + 1;
+	public static final int			LOG_RECALCULATE					= LOG_CLASS_PREFIX + 2;
+	public static final int			LOG_UNDO						= LOG_CLASS_PREFIX + 3;
+	public static final int			LOG_REDO						= LOG_CLASS_PREFIX + 4;
 
-	private final CifFractal	fractal;
-	private final CifCanvas<?>	canvas;
-	private boolean				okClicked						= false;
-	Dialog						editBoundariesDialog			= null, additionalParamsDialog = null;
+	private final CifFractal		fractal;
+	private final CifCanvas<?>		canvas;
+	private boolean					okClicked						= false;
+	Dialog							editBoundariesDialog			= null, additionalParamsDialog = null;
+
+	private final KeyListener		okCancelListener				= new KeyAdapter() {
+																		@Override
+																		public void keyPressed(KeyEvent e) {
+																			switch (e.getKeyCode()) {
+																				case KeyEvent.VK_ESCAPE:
+																					actionPerformed(new ActionEvent(
+																							this, -1, "Cancel"));
+																					break;
+																				case KeyEvent.VK_ENTER:
+																					actionPerformed(new ActionEvent(
+																							this, -1, "OK"));
+																					break;
+																			}
+																		}
+																	};
+	private final WindowListener	closeCancelListener				= new WindowAdapter() {
+																		@Override
+																		public void windowClosing(WindowEvent e) {
+																			actionPerformed(new ActionEvent(this, -1,
+																					"Cancel"));
+																		}
+																	};
 
 	CifMenuListener(final CifFractal fractal, final CifCanvas<?> canvas) {
 		this.fractal = fractal;
@@ -61,21 +90,25 @@ public class CifMenuListener implements ActionListener {
 				editBoundariesDialog.setLayout(new BorderLayout());
 				final Panel interval = new Panel(new BorderLayout());
 				final TextField maxImag = new TextField(((Double) fractal.getMaxImag()).toString());
+				maxImag.addKeyListener(okCancelListener);
 				Panel p = new Panel(new GridBagLayout());
 				p.add(maxImag);
 				interval.add(p, BorderLayout.NORTH);
-				final TextField minImag = new TextField(((Double) fractal.getMinImag()).toString());
+				final TextField minReal = new TextField(((Double) fractal.getMinReal()).toString());
 				p = new Panel(new GridBagLayout());
-				p.add(minImag);
-				interval.add(p, BorderLayout.SOUTH);
+				minReal.addKeyListener(okCancelListener);
+				p.add(minReal);
+				interval.add(p, BorderLayout.WEST);
 				final TextField maxReal = new TextField(((Double) fractal.getMaxReal()).toString());
+				maxReal.addKeyListener(okCancelListener);
 				p = new Panel(new GridBagLayout());
 				p.add(maxReal);
 				interval.add(p, BorderLayout.EAST);
-				final TextField minReal = new TextField(((Double) fractal.getMinReal()).toString());
+				final TextField minImag = new TextField(((Double) fractal.getMinImag()).toString());
+				minImag.addKeyListener(okCancelListener);
 				p = new Panel(new GridBagLayout());
-				p.add(minReal);
-				interval.add(p, BorderLayout.WEST);
+				p.add(minImag);
+				interval.add(p, BorderLayout.SOUTH);
 				final Panel centerText = new Panel(new GridLayout(3, 1));
 				centerText.add(new Label("maxImag", Label.CENTER));
 				centerText.add(new Label("minReal + maxReal", Label.CENTER));
@@ -84,9 +117,11 @@ public class CifMenuListener implements ActionListener {
 				editBoundariesDialog.add(interval, BorderLayout.NORTH);
 				final Panel resolution = new Panel(new FlowLayout());
 				final TextField width = new TextField(((Integer) canvas.getWidth()).toString());
+				width.addKeyListener(okCancelListener);
 				resolution.add(width);
 				resolution.add(new Label("x"));
 				final TextField height = new TextField(((Integer) canvas.getHeight()).toString());
+				height.addKeyListener(okCancelListener);
 				resolution.add(height);
 				resolution.add(new Label("pixels"));
 				editBoundariesDialog.add(resolution, BorderLayout.CENTER);
@@ -98,6 +133,8 @@ public class CifMenuListener implements ActionListener {
 				cancel.addActionListener(this);
 				buttons.add(cancel);
 				editBoundariesDialog.add(buttons, BorderLayout.SOUTH);
+				editBoundariesDialog.addKeyListener(okCancelListener);
+				editBoundariesDialog.addWindowListener(closeCancelListener);
 				editBoundariesDialog.pack();
 				editBoundariesDialog.setVisible(true);
 				if (okClicked) {
@@ -141,18 +178,24 @@ public class CifMenuListener implements ActionListener {
 				additionalParamsDialog.add(new Label("SuperSampling Factor", Label.RIGHT));
 				final JSpinner ssf = new JSpinner(new SpinnerNumberModel(fractal.getSuperSamplingFactor(), 1,
 						Byte.MAX_VALUE, 1));
+				ssf.addKeyListener(okCancelListener);
 				additionalParamsDialog.add(ssf);
 				additionalParamsDialog.add(new Label("Calculation depth", Label.RIGHT));
 				final JSpinner maxPasses = new JSpinner(new SpinnerNumberModel(fractal.getMaxPasses(), 1,
 						Integer.MAX_VALUE, 1));
+				maxPasses.addKeyListener(okCancelListener);
 				additionalParamsDialog.add(maxPasses);
 				ok = new Button("OK");
 				ok.addActionListener(this);
+				ok.addKeyListener(okCancelListener);
 				additionalParamsDialog.add(ok);
 				cancel = new Button("Cancel");
 				cancel.addActionListener(this);
+				cancel.addKeyListener(okCancelListener);
 				additionalParamsDialog.add(cancel);
 				additionalParamsDialog.pack();
+				ssf.requestFocusInWindow();
+				additionalParamsDialog.addWindowListener(closeCancelListener);
 				additionalParamsDialog.setVisible(true);
 				if (okClicked) {
 					byte superSamplingFactor = (byte) (int) /* (Integer) */ssf.getValue();
