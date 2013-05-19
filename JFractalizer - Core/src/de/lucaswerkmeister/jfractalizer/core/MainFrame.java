@@ -56,8 +56,11 @@ public class MainFrame extends Frame {
 			final ClassChooserDialog<Fractal> fractalChooserDialog = new ClassChooserDialog<>(this, "Choose Fractal",
 					Fractal.class);
 			fractalChooserDialog.setVisible(true);
+			Fractal chosenFractal = fractalChooserDialog.getSelectedService();
+			if (chosenFractal == null)
+				System.exit(0);
 			try {
-				Core.setCurrentFractal(fractalChooserDialog.getSelectedService());
+				Core.setCurrentFractal(chosenFractal);
 			}
 			catch (final NullPointerException e) {
 				// Do nothing, currentColorPalette wasn't set
@@ -68,7 +71,10 @@ public class MainFrame extends Frame {
 			final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(this,
 					"Choose Color Palette", ColorPalette.class);
 			colorPaletteDialog.setVisible(true);
-			Core.setCurrentColorPalette(colorPaletteDialog.getSelectedService());
+			ColorPalette chosenPalette = colorPaletteDialog.getSelectedService();
+			if (chosenPalette == null)
+				System.exit(0);
+			Core.setCurrentColorPalette(chosenPalette);
 		}
 		addWindowListener(new WindowAdapter() {
 			@Override

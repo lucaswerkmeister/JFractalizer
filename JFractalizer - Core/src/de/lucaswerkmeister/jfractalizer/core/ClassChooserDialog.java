@@ -16,9 +16,11 @@ package de.lucaswerkmeister.jfractalizer.core;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Dialog;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.List;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -46,9 +48,14 @@ public class ClassChooserDialog<S extends SelectableService> extends Dialog impl
 		implList = new List(10);
 		implList.addActionListener(this);
 		add(implList, BorderLayout.CENTER);
+		final Panel buttonsPanel = new Panel(new FlowLayout());
 		final Button ok = new Button("OK");
 		ok.addActionListener(this);
-		add(ok, BorderLayout.SOUTH);
+		buttonsPanel.add(ok);
+		final Button cancel = new Button("Cancel");
+		cancel.addActionListener(this);
+		buttonsPanel.add(cancel);
+		add(buttonsPanel, BorderLayout.SOUTH);
 		pack();
 		services = new HashMap<>();
 		serviceLoader = ServiceLoader.load(baseInterface);
@@ -67,11 +74,11 @@ public class ClassChooserDialog<S extends SelectableService> extends Dialog impl
 		}
 		implList.select(0);
 		topText.setText("Choose an implementation.");
-		selectedService = services.get(implList.getItem(0));
+		selectedService = null;
 		implList.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					dispose();
 				}
 			}
@@ -83,24 +90,18 @@ public class ClassChooserDialog<S extends SelectableService> extends Dialog impl
 
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		if (e.getActionCommand().equals("OK") || e.getSource() == implList) {
+		if (e.getActionCommand().equals("OK") || e.getSource() == implList)
 			selectedService = services.get(implList.getSelectedItem());
-			if (selectedService == null)
-				selectedService = services.get(implList.getItem(0)); // in case
-			// the user
-			// didn't
-			// select
-			// any
-			// service,
-			// the
-			// first in
-			// the list
-			// will be
-			// used
-			dispose();
-		}
+		else
+			selectedService = null;
+		dispose();
 	}
 
+	/**
+	 * Gets the selected service, or <tt>null</tt> if the user canceled.
+	 * 
+	 * @return The selected service.
+	 */
 	public S getSelectedService() {
 		return selectedService;
 	}
