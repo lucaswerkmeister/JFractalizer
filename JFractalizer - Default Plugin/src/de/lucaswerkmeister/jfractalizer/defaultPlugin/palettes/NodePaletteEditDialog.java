@@ -52,7 +52,7 @@ public class NodePaletteEditDialog extends PaletteEditDialog implements ActionLi
 		nodesPanel = new Panel(new FlowLayout());
 		nodesPanelParent.add(nodesPanel);
 		nodes = new ArrayList<>(original.nodes.size());
-		ColorNode lastNode = original.nodes.get(0);
+		ColorNode lastNode = null;
 		for (final ColorNode n : original.nodes) {
 			final ColorNode newNode = n.copy();
 			nodes.add(newNode);
@@ -61,7 +61,7 @@ public class NodePaletteEditDialog extends PaletteEditDialog implements ActionLi
 			nodesPanel.add(newNode);
 			lastNode = newNode;
 		}
-		if (nodes.size() > 1)
+		if (nodes.size() > 1 && lastNode != null)
 			lastNode.link(nodes.get(0));
 		coreColor = new SelectableColor(original.coreColor);
 		nodesPanel.add(coreColor);
