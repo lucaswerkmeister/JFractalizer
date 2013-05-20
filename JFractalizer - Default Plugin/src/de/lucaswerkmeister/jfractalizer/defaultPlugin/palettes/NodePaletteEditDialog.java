@@ -23,6 +23,9 @@ import java.awt.Panel;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +46,26 @@ public class NodePaletteEditDialog extends PaletteEditDialog implements ActionLi
 	private final Panel				buttonsPanel;
 	private boolean					okClicked;
 
+	private final KeyListener		okCancelListener	= new KeyAdapter() {
+															@Override
+															public void keyPressed(java.awt.event.KeyEvent e) {
+																switch (e.getKeyCode()) {
+																	case KeyEvent.VK_ENTER:
+																		actionPerformed(new ActionEvent(this, -1, "OK"));
+																		break;
+																	case KeyEvent.VK_ESCAPE:
+																		actionPerformed(new ActionEvent(this, -1,
+																				"Cancel"));
+																		break;
+																}
+															};
+														};
+
 	public NodePaletteEditDialog(final Frame owner, final NodePalette original) {
 		super(owner, original);
 		if (original.nodes.size() == 0)
 			throw new IllegalArgumentException("A NodePalette must have at least one node!");
+		addKeyListener(okCancelListener);
 		setLayout(new BorderLayout());
 		final ScrollPane nodesPanelParent = new ScrollPane(ScrollPane.SCROLLBARS_AS_NEEDED);
 		nodesPanel = new Panel(new FlowLayout());
@@ -79,13 +98,14 @@ public class NodePaletteEditDialog extends PaletteEditDialog implements ActionLi
 		buttonsPanel = new Panel(new FlowLayout(FlowLayout.RIGHT));
 		final Button ok = new Button("OK");
 		ok.addActionListener(this);
+		ok.addKeyListener(okCancelListener);
 		buttonsPanel.add(ok);
 		final Button cancel = new Button("Cancel");
 		cancel.addActionListener(this);
+		cancel.addKeyListener(okCancelListener);
 		buttonsPanel.add(cancel);
 		add(buttonsPanel, BorderLayout.SOUTH);
 		pack();
-		setVisible(true);
 	}
 
 	@Override
