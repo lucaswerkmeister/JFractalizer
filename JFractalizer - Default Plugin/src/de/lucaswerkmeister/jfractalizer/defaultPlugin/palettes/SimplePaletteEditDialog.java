@@ -19,6 +19,9 @@ import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -26,10 +29,25 @@ import javax.swing.SpinnerNumberModel;
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.EditDialogPalette.PaletteEditDialog;
 
 public class SimplePaletteEditDialog extends PaletteEditDialog implements ActionListener {
-	private static final long	serialVersionUID	= -4693221922749333802L;
+	private static final long		serialVersionUID	= -4693221922749333802L;
 	private final SelectableColor	coreColor, startColor, endColor;
 	private final JSpinner			colorSteps;
-	private boolean					userCanceled	= false;
+	private boolean					userCanceled		= false;
+
+	private final KeyListener		okCancelListener	= new KeyAdapter() {
+															@Override
+															public void keyPressed(java.awt.event.KeyEvent e) {
+																switch (e.getKeyCode()) {
+																	case KeyEvent.VK_ENTER:
+																		actionPerformed(new ActionEvent(this, -1, "OK"));
+																		break;
+																	case KeyEvent.VK_ESCAPE:
+																		actionPerformed(new ActionEvent(this, -1,
+																				"Cancel"));
+																		break;
+																}
+															};
+														};
 
 	public SimplePaletteEditDialog(final Frame owner, final SimplePalette original) {
 		super(owner, original);
@@ -37,6 +55,8 @@ public class SimplePaletteEditDialog extends PaletteEditDialog implements Action
 		startColor = new SelectableColor(original.startColor);
 		endColor = new SelectableColor(original.endColor);
 		colorSteps = new JSpinner(new SpinnerNumberModel(original.colorSteps, 2, null, 1));
+		colorSteps.addKeyListener(okCancelListener);
+		((JSpinner.DefaultEditor) colorSteps.getEditor()).getTextField().addKeyListener(okCancelListener);
 		setLayout(new GridLayout(5, 2));
 		add(new Label("Core Color", Label.RIGHT));
 		add(coreColor);
@@ -48,11 +68,14 @@ public class SimplePaletteEditDialog extends PaletteEditDialog implements Action
 		add(colorSteps);
 		final Button ok = new Button("OK");
 		ok.addActionListener(this);
+		ok.addKeyListener(okCancelListener);
 		add(ok);
 		final Button cancel = new Button("Cancel");
 		cancel.addActionListener(this);
+		cancel.addKeyListener(okCancelListener);
 		add(cancel);
 		pack();
+		colorSteps.requestFocusInWindow();
 	}
 
 	@Override
