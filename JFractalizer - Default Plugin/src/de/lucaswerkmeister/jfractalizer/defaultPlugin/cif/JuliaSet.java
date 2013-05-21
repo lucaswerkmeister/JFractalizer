@@ -14,7 +14,6 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
 import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
-
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
 
@@ -26,7 +25,7 @@ public class JuliaSet extends CifFractal {
 	private CifMenuListener	menuListener;
 
 	public JuliaSet() {
-		this(0.0, 0.0);
+		this(-0.6299693606626819, 0.6864195472186531);
 	}
 
 	public JuliaSet(final double cReal, final double cImag) {
