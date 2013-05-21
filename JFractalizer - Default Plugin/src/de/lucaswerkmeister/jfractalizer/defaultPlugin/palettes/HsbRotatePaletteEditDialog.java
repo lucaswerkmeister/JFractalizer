@@ -8,6 +8,9 @@ import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Hashtable;
@@ -32,6 +35,22 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 	private SelectableColor		coreColor;
 	private boolean				okClicked			= false;
 
+	private final KeyListener	okCancelListener	= new KeyAdapter() {
+														@Override
+														public void keyPressed(java.awt.event.KeyEvent e) {
+															switch (e.getKeyCode()) {
+																case KeyEvent.VK_ENTER:
+																	okClicked = true;
+																	setVisible(false);
+																	break;
+																case KeyEvent.VK_ESCAPE:
+																	okClicked = false;
+																	setVisible(false);
+																	break;
+															}
+														};
+													};
+
 	public HsbRotatePaletteEditDialog(Frame owner, HsbRotatePalette palette) {
 		super(owner, palette);
 		setLayout(new GridLayout(5, 1));
@@ -52,6 +71,8 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 				}
 			}
 		});
+		period.addKeyListener(okCancelListener);
+		((JSpinner.DefaultEditor) period.getEditor()).getTextField().addKeyListener(okCancelListener);
 		periodFrequencyPanel.add(period);
 		JLabel incrementLabel = new JLabel("Hue increment");
 		incrementLabel.setToolTipText("Hue increment per step");
@@ -68,6 +89,8 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 				}
 			}
 		});
+		increment.addKeyListener(okCancelListener);
+		((JSpinner.DefaultEditor) increment.getEditor()).getTextField().addKeyListener(okCancelListener);
 		periodFrequencyPanel.add(increment);
 		add(periodFrequencyPanel);
 
@@ -83,6 +106,7 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 		// saturation.setMajorTickSpacing(10);
 		// saturation.setMinorTickSpacing(1);
 		// saturation.setPaintTicks(true);
+		saturation.addKeyListener(okCancelListener);
 		saturationPanel.add(saturation);
 		add(saturationPanel);
 
@@ -94,6 +118,7 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 		// brightness.setMajorTickSpacing(10);
 		// brightness.setMinorTickSpacing(1);
 		// brightness.setPaintTicks(true);
+		brightness.addKeyListener(okCancelListener);
 		lightnessPanel.add(brightness);
 		add(lightnessPanel);
 
@@ -102,6 +127,7 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 		hueStart = new JSlider(0, 100, Math.round(palette.getHueStart() * 100));
 		hueStart.setLabelTable(floatTable);
 		hueStart.setPaintLabels(true);
+		hueStart.addKeyListener(okCancelListener);
 		restPanel.add(hueStart);
 		restPanel.add(new Label("Core color"));
 		coreColor = new SelectableColor(palette.getCoreColor());
@@ -136,6 +162,8 @@ public class HsbRotatePaletteEditDialog extends PaletteEditDialog {
 		});
 
 		pack();
+
+		period.requestFocusInWindow();
 	}
 
 	@Override
