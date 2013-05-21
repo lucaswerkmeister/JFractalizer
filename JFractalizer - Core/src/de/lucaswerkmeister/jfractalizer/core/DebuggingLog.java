@@ -13,7 +13,7 @@ import de.lucaswerkmeister.jfractalizer.framework.Log;
  */
 public class DebuggingLog extends Log {
 	private final List<Entry>	entries	= new LinkedList<>();
-	private final Thread		runner	= new Thread() {
+	private final Thread		runner	= new Thread("DebuggingLog") {
 											@Override
 											public void run() {
 												while (running) {
