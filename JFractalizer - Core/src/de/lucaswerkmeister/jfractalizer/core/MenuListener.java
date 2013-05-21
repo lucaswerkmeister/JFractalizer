@@ -160,13 +160,17 @@ public class MenuListener implements ActionListener {
 				final ClassChooserDialog<Fractal> fractalChooserDialog = new ClassChooserDialog<>(
 						MainFrame.getInstance(), "Choose Fractal", Fractal.class);
 				fractalChooserDialog.setVisible(true);
-				Core.setCurrentFractal(fractalChooserDialog.getSelectedService());
+				Fractal f = fractalChooserDialog.getSelectedService();
+				if (f != null)
+					Core.setCurrentFractal(f);
 				break;
 			case "Choose Color Palette...":
 				final ClassChooserDialog<ColorPalette> colorPaletteDialog = new ClassChooserDialog<>(
 						MainFrame.getInstance(), "Choose Color Palette", ColorPalette.class);
 				colorPaletteDialog.setVisible(true);
-				Core.setCurrentColorPalette(colorPaletteDialog.getSelectedService());
+				ColorPalette c = colorPaletteDialog.getSelectedService();
+				if (c != null)
+					Core.setCurrentColorPalette(c);
 				break;
 			case "Exit":
 				System.exit(0);
