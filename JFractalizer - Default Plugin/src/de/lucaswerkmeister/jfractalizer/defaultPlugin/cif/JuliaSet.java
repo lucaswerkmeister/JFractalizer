@@ -14,6 +14,28 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
 import static de.lucaswerkmeister.jfractalizer.framework.Log.log;
+
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.MenuShortcut;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JOptionPane;
+
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
 
@@ -32,6 +54,101 @@ public class JuliaSet extends CifFractal {
 		super(JuliaImageMaker_CalcAll.class);
 		this.cReal = cReal;
 		this.cImag = cImag;
+	}
+
+	@Override
+	public void initMenu(Menu fractalMenu) {
+		super.initMenu(fractalMenu);
+		fractalMenu.addSeparator();
+		MenuItem editJuliaParams = new MenuItem("Change start value", new MenuShortcut(KeyEvent.VK_V, false));
+		editJuliaParams.addActionListener(new ActionListener() {
+			private boolean	okClicked	= false;
+			private boolean	closing		= false;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				final Dialog dialog = new Dialog((Frame) getCanvas().getParent(), "Change start value", true);
+				dialog.setLayout(new BorderLayout());
+				Panel content = new Panel(new FlowLayout(FlowLayout.LEFT));
+				TextField cReal = new TextField(Double.toString(getCReal()));
+				content.add(cReal);
+				content.add(new Label("+"));
+				TextField cImag = new TextField(Double.toString(getCImag()));
+				content.add(cImag);
+				content.add(new Label("i"));
+				dialog.add(content, BorderLayout.CENTER);
+				Panel buttons = new Panel(new FlowLayout(FlowLayout.CENTER));
+				Button ok = new Button("OK");
+				final ActionListener okListener = new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						okClicked = true;
+						closing = true;
+						dialog.setVisible(false);
+					}
+				};
+				ok.addActionListener(okListener);
+				buttons.add(ok);
+				Button cancel = new Button("Cancel");
+				final ActionListener cancelListener = new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						closing = true;
+						dialog.setVisible(false);
+					}
+				};
+				cancel.addActionListener(cancelListener);
+				buttons.add(cancel);
+				dialog.add(buttons, BorderLayout.SOUTH);
+				dialog.pack();
+				KeyListener keyListener = new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent e) {
+						switch (e.getKeyCode()) {
+							case KeyEvent.VK_ENTER:
+								okListener.actionPerformed(new ActionEvent(this, 0, "OK"));
+								break;
+							case KeyEvent.VK_ESCAPE:
+								cancelListener.actionPerformed(new ActionEvent(this, 1, "Cancel"));
+								break;
+						}
+					}
+				};
+				cReal.addKeyListener(keyListener);
+				cImag.addKeyListener(keyListener);
+				ok.addKeyListener(keyListener);
+				cancel.addKeyListener(keyListener);
+				dialog.addKeyListener(keyListener);
+				dialog.addWindowListener(new WindowAdapter() {
+					@Override
+					public void windowClosing(WindowEvent e) {
+						if (!closing)
+							cancelListener.actionPerformed(new ActionEvent(this, 2, "Cancel"));
+					}
+				});
+				dialog.setVisible(true);
+				if (okClicked) {
+					double newCReal;
+					double newCImag;
+					try {
+						newCReal = Double.parseDouble(cReal.getText());
+						newCImag = Double.parseDouble(cImag.getText());
+					}
+					catch (NumberFormatException e) {
+						JOptionPane.showMessageDialog(getCanvas().getParent(), "Invalid number format", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (newCReal != getCReal() || newCImag != getCImag()) {
+						stopCalculation();
+						setCReal(newCReal);
+						setCImag(newCImag);
+						startCalculation();
+					}
+				}
+			}
+		});
+		fractalMenu.add(editJuliaParams);
 	}
 
 	@Override
@@ -57,6 +174,14 @@ public class JuliaSet extends CifFractal {
 
 	public double getCImag() {
 		return cImag;
+	}
+
+	public void setCReal(double cReal) {
+		this.cReal = cReal;
+	}
+
+	public void setCImag(double cImag) {
+		this.cImag = cImag;
 	}
 
 	@Override

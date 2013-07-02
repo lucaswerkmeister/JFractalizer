@@ -86,7 +86,7 @@ public class CifMenuListener implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		switch (e.getActionCommand()) {
 			case "Edit boundaries...":
-				editBoundariesDialog = new Dialog((Frame) fractal.getCanvas().getParent(), true);
+				editBoundariesDialog = new Dialog((Frame) fractal.getCanvas().getParent(), "Edit boundaries", true);
 				editBoundariesDialog.setLayout(new BorderLayout());
 				final Panel interval = new Panel(new BorderLayout());
 				final TextField maxImag = new TextField(((Double) fractal.getMaxImag()).toString());
@@ -173,7 +173,8 @@ public class CifMenuListener implements ActionListener {
 				}
 				break;
 			case "Edit additional parameters...":
-				additionalParamsDialog = new Dialog((Frame) fractal.getCanvas().getParent(), true);
+				additionalParamsDialog = new Dialog((Frame) fractal.getCanvas().getParent(),
+						"Edit additional parameters", true);
 				additionalParamsDialog.setLayout(new GridLayout(3, 2));
 				additionalParamsDialog.add(new Label("SuperSampling Factor", Label.RIGHT));
 				final JSpinner ssf = new JSpinner(new SpinnerNumberModel(fractal.getSuperSamplingFactor(), 1,
