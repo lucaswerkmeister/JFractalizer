@@ -30,9 +30,10 @@ import de.lucaswerkmeister.jfractalizer.framework.ColorPalette;
  * 
  */
 public class MandelbrotImageMaker_NoHoles extends CifImageMaker {
-	final byte[][]	pixels;		// 0=not calculated, 1=no colored pixels, 2=has
-	// colored pixels
-	final Graphics	targetGraphics;
+	private static final byte	PIXEL_NOT_CALCULATED	= 0, NO_COLORED_PIXELS = 1, HAS_COLORED_PIXELS = 2;
+
+	final byte[][]				pixels;
+	final Graphics				targetGraphics;
 
 	/**
 	 * Creates a new instance of the MandelbrotImageMaker_NoHoles with specified bounds.
@@ -72,6 +73,7 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker {
 		super(width, height, minReal, maxReal, minImag, maxImag, maxPasses, target, targetX, targetY, palette,
 				superSamplingFactor, fractal);
 		pixels = new byte[width][height];
+		// Arrays.fill(pixels, PIXEL_NOT_CALCULATED); // currently not needed because PIXEL_NOT_CALCULATED=0
 		targetGraphics = target.createGraphics();
 	}
 
@@ -127,14 +129,14 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker {
 			for (int y = 0; y < height;) {
 				if (isInterrupted())
 					return;
-				if (pixels[x][y] == 0) {
+				if (pixels[x][y] == PIXEL_NOT_CALCULATED) {
 					averageR = averageG = averageB = averageDenominator = 0;
 					centerR = x * factorR + minReal;
 					centerI = y * factorI + maxImag;
 					borderR = centerR + rangeR;
 					borderI = centerI - rangeI;
 					// Save that the pixel is calculated
-					pixels[x][y] = 1;
+					pixels[x][y] = NO_COLORED_PIXELS;
 					// Calculate color
 					for (r = centerR - rangeR; r <= borderR; r += deltaR)
 						for (i = centerI + rangeI; i <= borderI; i -= deltaI) {
@@ -144,9 +146,9 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker {
 							averageG += c.getGreen();
 							averageB += c.getBlue();
 							averageDenominator++;
-							if (pixels[x][y] == 1 && passes != -1)
+							if (pixels[x][y] == NO_COLORED_PIXELS && passes != -1)
 								// Save that the pixel has colored pixels
-								pixels[x][y] = 2;
+								pixels[x][y] = HAS_COLORED_PIXELS;
 						}
 					// Draw pixel
 					c = new Color(averageR / averageDenominator, averageG / averageDenominator, averageB
@@ -157,16 +159,16 @@ public class MandelbrotImageMaker_NoHoles extends CifImageMaker {
 					targetGraphics.drawLine(tX, tY, tX, tY);
 				}
 				// Calculate next pixel
-				if (pixels[x][y] == 2) {
+				if (pixels[x][y] == HAS_COLORED_PIXELS) {
 					addCurrentPoint = true;
 
-					if (y > 0 && pixels[x][y - 1] == 0)
+					if (y > 0 && pixels[x][y - 1] == PIXEL_NOT_CALCULATED)
 						y--;
-					else if (x < lessWidth && pixels[x + 1][y] == 0)
+					else if (x < lessWidth && pixels[x + 1][y] == PIXEL_NOT_CALCULATED)
 						x++;
-					else if (x > 0 && pixels[x - 1][y] == 0)
+					else if (x > 0 && pixels[x - 1][y] == PIXEL_NOT_CALCULATED)
 						x--;
-					else if (y < lessHeight && pixels[x][y + 1] == 0)
+					else if (y < lessHeight && pixels[x][y + 1] == PIXEL_NOT_CALCULATED)
 						y++;
 					else {
 						addCurrentPoint = false;
