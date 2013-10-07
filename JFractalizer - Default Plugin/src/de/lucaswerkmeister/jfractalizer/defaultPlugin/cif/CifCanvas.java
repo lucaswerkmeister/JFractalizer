@@ -80,6 +80,7 @@ public class CifCanvas<T extends CifImageMaker> extends Canvas {
 
 	public void goToSelectedArea() {
 		log(LOG_GO_TO_SELECTED_AREA, selectedArea);
+		fractal.stopCalculation();
 
 		final double currentWidth = fractal.getMaxReal() - fractal.getMinReal();
 		final double newWidth = currentWidth * ((double) selectedArea.width / fractal.getImageSize().width);
