@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -395,12 +396,13 @@ public abstract class CifFractal implements ZoomableFractal {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					awaitCalculation();
-					stopTime = System.nanoTime();
-					for (ActionListener listener : calculationFinishedListeners)
-						listener.actionPerformed(null);
+					if (awaitCalculation()) {
+						stopTime = System.nanoTime();
+						for (ActionListener listener : calculationFinishedListeners)
+							listener.actionPerformed(null);
+					}
 				}
-			}).start();
+			}, "CalculationTimeSetter").start();
 		}
 		else {
 			throw new IllegalStateException("Invalid values!");
@@ -618,14 +620,16 @@ public abstract class CifFractal implements ZoomableFractal {
 	}
 
 	@Override
-	public void awaitCalculation() {
+	public boolean awaitCalculation() {
+		if (runningTasks == null)
+			return true;
 		try {
 			for (Future<?> f : runningTasks)
 				f.get();
+			return true;
 		}
-		catch (InterruptedException | ExecutionException | NullPointerException e) {
-			// do nothing
-			// a NPE indicates no running tasks, in which case returning immediately is the intended result
+		catch (InterruptedException | ExecutionException | CancellationException e) {
+			return false;
 		}
 	}
 

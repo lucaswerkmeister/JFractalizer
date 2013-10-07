@@ -117,8 +117,11 @@ public interface Fractal extends SelectableService, CommandLineConfigurable {
 
 	/**
 	 * Blocks until calculation is either stopped or finished.
+	 * 
+	 * @return <code>true</code> if calculation finished successfully, <code>false</code> if it was stopped (via
+	 *         {@link #stopCalculation()}).
 	 */
-	public void awaitCalculation();
+	public boolean awaitCalculation();
 
 	/**
 	 * Adds an {@link ActionListener} that will be notified each time a calculation is finished.
