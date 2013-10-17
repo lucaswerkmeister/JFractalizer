@@ -1,4 +1,4 @@
-The **JFractalizer** is a fractal explorer, written in Java. The inspiration, and the idea for the name, comes from the freeware [http://www.fractalizer.de/en Fractalizer], and the long-time goal is to include all of its features.
+The **JFractalizer** is a fractal explorer, written in Java. The inspiration, and the idea for the name, comes from the freeware [Fractalizer](http://www.fractalizer.de/en), and the long-time goal is to include all of its features.
 The JFractalizer is developed by me, Lucas Werkmeister, as a free-time training and for-fun project, but anyone can feel free to contribute. It is published under the GNU GPLv3.
 
 How to run
