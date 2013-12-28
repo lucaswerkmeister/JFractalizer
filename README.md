@@ -32,3 +32,11 @@ Planned features
   * AutoMovie for the Mandelbrot fractal
 * More fractals
   * Buddhabrot
+* Possibly rewrite the GUI for JavaFX once Java 8 is out
+
+Current state
+-------------
+
+This project is currently on hold; I do want to come back to it at some point, but at the moment I don’t have the time (mostly because I’m involved in other projects). I definitely want to add a GUI for the filming feature (at the moment, it’s only accessible through the CLI), and I’d love to have AutoMovie, as well more fractals.
+
+If you want to help out, feel free to do so! (For example, screenshots are “coming soon” for over two years now :) )
