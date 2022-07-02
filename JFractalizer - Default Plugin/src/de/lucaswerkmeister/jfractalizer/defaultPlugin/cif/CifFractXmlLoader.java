@@ -55,9 +55,9 @@ public class CifFractXmlLoader extends FractXmlLoader {
 
 	@Override
 	public void characters(final char[] ch, final int start, final int length) throws SAXException {
-		final String asString = new String(ch).substring(start, start + length);
-		if (asString.equals("\n"))
+		if (currentQName == null)
 			return;
+		final String asString = new String(ch).substring(start, start + length);
 		if (currentQName.equals("width")) {
 			Dimension d = new Dimension(Integer.parseInt(asString), fractal.getCanvas().getHeight());
 			newCanvas.setPreferredSize(d);
