@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -489,31 +488,23 @@ public final class Core {
 }
 
 class SingleFileOutput extends Output {
-	private OutputStream	stream;
+	private String	filename;
 
 	public SingleFileOutput(String format, String filename) throws IOException {
 		super(format);
-		File file = new File(filename);
-		file.createNewFile();
-		this.stream = new FileOutputStream(file);
+		this.filename = filename;
 	}
 
 	public SingleFileOutput(String format, String filename, Iterator<Integer> numbers) throws IOException {
 		super(format, numbers);
-		File file = new File(filename);
-		file.createNewFile();
-		this.stream = new FileOutputStream(file);
+		this.filename = filename;
 	}
 
 	@Override
 	public void writeImage(BufferedImage image) throws IOException {
-		write(image, stream);
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		stream.close();
-		super.finalize();
+		try (FileOutputStream str = new FileOutputStream(filename)) {
+			write(image, str);
+		}
 	}
 }
 
