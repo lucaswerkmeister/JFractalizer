@@ -15,8 +15,6 @@ package de.lucaswerkmeister.jfractalizer.framework;
 
 import org.xml.sax.helpers.DefaultHandler;
 
-import de.lucaswerkmeister.jfractalizer.framework.Fractal;
-
 public abstract class FractXmlLoader extends DefaultHandler {
 	public abstract Fractal getFractal();
 }
