@@ -87,22 +87,22 @@ public class FractXmlReader extends DefaultHandler {
 			innerLoader.startElement(uri, localName, qName, attributes);
 		else if (qName.equals("fractal"))
 			try {
-				innerLoader = ((Fractal) Class.forName(attributes.getValue("canonicalName")).newInstance())
+				innerLoader = ((Fractal) Class.forName(attributes.getValue("canonicalName")).getDeclaredConstructor().newInstance())
 						.getFractXmlLoader();
 				innerLoader.startElement(uri, localName, qName, attributes);
 				fractal = (FractXmlLoader) innerLoader;
 			}
-			catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			catch (IllegalArgumentException | ReflectiveOperationException | SecurityException e) {
 				e.printStackTrace();
 			}
 		else if (qName.equals("palette"))
 			try {
-				innerLoader = ((ColorPalette) Class.forName(attributes.getValue("canonicalName")).newInstance())
+				innerLoader = ((ColorPalette) Class.forName(attributes.getValue("canonicalName")).getDeclaredConstructor().newInstance())
 						.getFractXmlLoader();
 				innerLoader.startElement(uri, localName, qName, attributes);
 				palette = (FractXmlPaletteLoader) innerLoader;
 			}
-			catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			catch (IllegalArgumentException | ReflectiveOperationException | SecurityException e) {
 				e.printStackTrace();
 			}
 	}

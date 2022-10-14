@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -148,7 +149,7 @@ public final class Core {
 	public static void changeFractal(Class<? extends Fractal> fractalClass, Object... params)
 			throws ReflectiveOperationException, IllegalArgumentException {
 		stopCalculation();
-		setCurrentFractal(fractalClass.newInstance());
+		setCurrentFractal(fractalClass.getDeclaredConstructor().newInstance());
 		getCurrentFractal().onFractalChange(params);
 		startCalculation();
 	}
@@ -266,14 +267,14 @@ public final class Core {
 						if (!Fractal.class.isAssignableFrom(fractalClass))
 							throw new IllegalCommandLineException("\"" + optionContent + "\" is not a Fractal class!");
 						try {
-							Core.setCurrentFractal((Fractal) fractalClass.newInstance());
+							Core.setCurrentFractal((Fractal) fractalClass.getDeclaredConstructor().newInstance());
 							return;
 						}
-						catch (InstantiationException e) {
+						catch (InstantiationException | InvocationTargetException e) {
 							throw new IllegalCommandLineException(
 									"An error occured while creating instance of class \"" + optionContent + "\"!", e);
 						}
-						catch (IllegalAccessException e) {
+						catch (IllegalAccessException | NoSuchMethodException e) {
 							throw new IllegalCommandLineException("Can't access default constructor of class \""
 									+ optionContent + "\"!");
 						}
@@ -289,14 +290,14 @@ public final class Core {
 							throw new IllegalCommandLineException("\"" + optionContent
 									+ "\" is not a ColorPalette class!");
 						try {
-							Core.setCurrentColorPalette((ColorPalette) paletteClass.newInstance());
+							Core.setCurrentColorPalette((ColorPalette) paletteClass.getDeclaredConstructor().newInstance());
 							return;
 						}
-						catch (InstantiationException e) {
+						catch (InstantiationException | InvocationTargetException e) {
 							throw new IllegalCommandLineException(
 									"An error occured while creating instance of class \"" + optionContent + "\"!", e);
 						}
-						catch (IllegalAccessException e) {
+						catch (IllegalAccessException | NoSuchMethodException e) {
 							throw new IllegalCommandLineException("Can't access default constructor of class \""
 									+ optionContent + "\"!");
 						}
@@ -314,14 +315,14 @@ public final class Core {
 					if (!Camera.class.isAssignableFrom(cameraClass))
 						throw new IllegalCommandLineException("\"" + optionContent + "\" is not a Camera class!");
 					try {
-						camera = (Camera) cameraClass.newInstance();
+						camera = (Camera) cameraClass.getDeclaredConstructor().newInstance();
 						return;
 					}
-					catch (InstantiationException e) {
+					catch (InstantiationException | InvocationTargetException e) {
 						throw new IllegalCommandLineException("An error occured while creating instance of class \""
 								+ optionContent + "\"!", e);
 					}
-					catch (IllegalAccessException e) {
+					catch (IllegalAccessException | NoSuchMethodException e) {
 						throw new IllegalCommandLineException("Can't access default constructor of class \""
 								+ optionContent + "\"!");
 					}

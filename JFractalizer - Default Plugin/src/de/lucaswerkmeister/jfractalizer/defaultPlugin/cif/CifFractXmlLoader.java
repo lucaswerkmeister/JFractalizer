@@ -32,10 +32,10 @@ public class CifFractXmlLoader extends FractXmlLoader {
 
 	public CifFractXmlLoader(Class<? extends CifFractal> fractalClass) {
 		try {
-			fractal = fractalClass.newInstance();
+			fractal = fractalClass.getDeclaredConstructor().newInstance();
 			newCanvas = (CifCanvas<?>) fractal.getCanvas();
 		}
-		catch (InstantiationException | IllegalAccessException e) {
+		catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
 			e.printStackTrace();
 		}
 	}
