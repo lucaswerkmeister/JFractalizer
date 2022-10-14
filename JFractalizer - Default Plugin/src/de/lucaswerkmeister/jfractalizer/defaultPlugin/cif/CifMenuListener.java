@@ -138,8 +138,8 @@ public class CifMenuListener implements ActionListener {
 				editBoundariesDialog.pack();
 				editBoundariesDialog.setVisible(true);
 				if (okClicked) {
-					CifParams params = new CifParams(Double.parseDouble(minImag.getText()), Double.parseDouble(maxImag
-							.getText()), Double.parseDouble(minReal.getText()), Double.parseDouble(maxReal.getText()),
+					CifParams params = new CifParams(Double.parseDouble(minReal.getText()), Double.parseDouble(maxReal
+							.getText()), Double.parseDouble(minImag.getText()), Double.parseDouble(maxImag.getText()),
 							fractal.getMaxPasses(), fractal.getSuperSamplingFactor());
 					Dimension size = new Dimension(Integer.parseInt(width.getText()),
 							Integer.parseInt(height.getText()));
