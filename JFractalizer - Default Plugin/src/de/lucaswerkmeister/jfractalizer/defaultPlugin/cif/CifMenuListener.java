@@ -143,6 +143,7 @@ public class CifMenuListener implements ActionListener {
 							fractal.getMaxPasses(), fractal.getSuperSamplingFactor());
 					Dimension size = new Dimension(Integer.parseInt(width.getText()),
 							Integer.parseInt(height.getText()));
+					params = fixAspectRatio(fractal.getParams(),fractal.getImageSize(),  params, size);
 					fractal.setParams(params);
 					fractal.setImageSize(size);
 					log(LOG_EDIT_BOUNDARIES, params, size);
@@ -237,6 +238,46 @@ public class CifMenuListener implements ActionListener {
 				System.out.println("Action \"" + e.getActionCommand() + "\" not yet implemented. "
 						+ "If you see this in a published version, punch the developer in the face. "
 						+ "(No, seriously, don't do that. Just write me an e-mail.)");
+		}
+	}
+
+	/**
+	 * Fix the aspect ratio of the CifParams, if the image size was modified without changing the CifParams.
+	 *
+	 * @param oldParams The previous CifParams.
+	 * @param oldSize The previous image size.
+	 * @param newParams The changed CifParams. (Returned without further modification if not equal to oldParams;
+	 * in this case, any aspect ratio change is assumed to have been intended by the user.)
+	 * @param newSize The changed image size.
+	 * @return CifParams that should be used instead of newParams.
+	 */
+	private CifParams fixAspectRatio(CifParams oldParams, Dimension oldSize, CifParams newParams, Dimension newSize) {
+		if (!oldParams.equals(newParams)) {
+			return newParams;
+		}
+
+		double oldWidthPx = oldSize.getWidth();
+		double oldHeightPx = oldSize.getHeight();
+		double newWidthPx = newSize.getWidth();
+		double newHeightPx = newSize.getHeight();
+		double oldWidthReal = oldParams.maxReal - oldParams.minReal;
+		double oldHeightImag = oldParams.maxImag - oldParams.minImag;
+
+		double aspectRatioChange = (newWidthPx / newHeightPx) / (oldWidthPx / oldHeightPx);
+		if (aspectRatioChange > 1.0) {
+			// image got wider, increase newParams on the real axis
+			double middleReal = oldParams.minReal + oldWidthReal / 2.0;
+			double newWidthReal = oldWidthReal * aspectRatioChange;
+			return newParams.copyChangeMinReal(middleReal - newWidthReal / 2.0)
+					.copyChangeMaxReal(middleReal + newWidthReal / 2.0);
+		} else if (aspectRatioChange < 1.0) {
+			// image got taller, increase newParams on the imag axis
+			double middleImag = oldParams.minImag + oldHeightImag / 2.0;
+			double newHeightImag = oldHeightImag / aspectRatioChange;
+			return newParams.copyChangeMinImag(middleImag - newHeightImag / 2.0)
+					.copyChangeMaxImag(middleImag + newHeightImag / 2.0);
+		} else {
+			return newParams;
 		}
 	}
 }

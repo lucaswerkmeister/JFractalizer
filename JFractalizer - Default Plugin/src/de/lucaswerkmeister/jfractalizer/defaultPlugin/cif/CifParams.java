@@ -1,5 +1,7 @@
 package de.lucaswerkmeister.jfractalizer.defaultPlugin.cif;
 
+import java.util.Objects;
+
 public final class CifParams {
 	public final double	minReal, maxReal, minImag, maxImag;
 	public final byte	superSamplingFactor;
@@ -59,5 +61,27 @@ public final class CifParams {
 	public String toString() {
 		return "[" + minReal + "+" + minImag + "i, " + maxReal + "+" + maxImag + "i, " + maxPasses + ", "
 				+ superSamplingFactor + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(maxImag, maxPasses, maxReal, minImag, minReal, superSamplingFactor);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CifParams other = (CifParams) obj;
+		return Double.doubleToLongBits(maxImag) == Double.doubleToLongBits(other.maxImag)
+				&& maxPasses == other.maxPasses
+				&& Double.doubleToLongBits(maxReal) == Double.doubleToLongBits(other.maxReal)
+				&& Double.doubleToLongBits(minImag) == Double.doubleToLongBits(other.minImag)
+				&& Double.doubleToLongBits(minReal) == Double.doubleToLongBits(other.minReal)
+				&& superSamplingFactor == other.superSamplingFactor;
 	}
 }
