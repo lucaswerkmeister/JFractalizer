@@ -98,7 +98,7 @@ public class HsbStretchPalette extends EditDialogPalette {
 		handler.startElement("", "", "hueBaseWidth", noAtts);
 		chars = Double.toString(hueBaseWidth).toCharArray();
 		handler.characters(chars, 0, chars.length);
-		handler.endElement("", "", "hueFactor");
+		handler.endElement("", "", "hueBaseWidth");
 
 		handler.startElement("", "", "saturation", noAtts);
 		chars = Float.toString(saturation).toCharArray();
