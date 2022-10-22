@@ -35,6 +35,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JOptionPane;
+import javax.xml.transform.sax.TransformerHandler;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import de.lucaswerkmeister.jfractalizer.defaultPlugin.DefaultPlugin;
 import de.lucaswerkmeister.jfractalizer.framework.FractXmlLoader;
@@ -156,6 +161,23 @@ public class JuliaSet extends CifFractal {
 		if (menuListener == null)
 			menuListener = new CifMenuListener(this, canvas);
 		return menuListener;
+	}
+
+	@Override
+	public void saveFractXml(TransformerHandler handler) throws SAXException {
+		super.saveFractXml(handler);
+
+		final Attributes noAtts = new AttributesImpl();
+
+		handler.startElement("", "", "cReal", noAtts);
+		final char[] cReal = Double.toString(this.getCReal()).toCharArray();
+		handler.characters(cReal, 0, cReal.length);
+		handler.endElement("", "", "cReal");
+
+		handler.startElement("", "", "cImag", noAtts);
+		final char[] cImag = Double.toString(this.getCImag()).toCharArray();
+		handler.characters(cImag, 0, cImag.length);
+		handler.endElement("", "", "cImag");
 	}
 
 	@Override

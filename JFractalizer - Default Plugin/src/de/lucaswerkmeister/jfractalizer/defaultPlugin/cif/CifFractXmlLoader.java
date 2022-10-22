@@ -78,6 +78,15 @@ public class CifFractXmlLoader extends FractXmlLoader {
 			fractal.setMaxPasses(Integer.parseInt(asString));
 		else if (currentQName.equals("superSamplingFactor"))
 			fractal.setSuperSamplingFactor(Byte.parseByte(asString));
+		else if (currentQName.equals("cReal") || currentQName.equals("cImag")) {
+			if (!(fractal instanceof JuliaSet))
+				throw new IllegalArgumentException("cReal and cImag are only valid for Julia set fractals");
+			final JuliaSet juliaSet = (JuliaSet) fractal;
+			if (currentQName.equals("cReal"))
+				juliaSet.setCReal(Double.parseDouble(asString));
+			else
+				juliaSet.setCImag(Double.parseDouble(asString));
+		}
 	}
 
 	@Override
