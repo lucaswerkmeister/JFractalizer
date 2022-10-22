@@ -74,6 +74,7 @@ public class NodePalette extends EditDialogPalette {
 
 	@Override
 	public void makeFastStorage() {
+		fastColorStorage.clear();
 		for (final ColorNode node : nodes)
 			for (short s = 0; s < node.getLength(); s++) {
 				final double endFactor = (double) s / (node.getLength() - 1);

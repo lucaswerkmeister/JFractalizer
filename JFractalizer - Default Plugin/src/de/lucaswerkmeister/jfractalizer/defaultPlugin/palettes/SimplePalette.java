@@ -66,6 +66,7 @@ public class SimplePalette extends EditDialogPalette {
 
 	@Override
 	public void makeFastStorage() {
+		fastColorStorage.clear();
 		final double lessColorSteps = colorSteps - 1;
 		for (short s = 0; s < colorSteps; s++)
 			fastColorStorage.add(new Color((int) Math.round(((colorSteps - 1 - s) / lessColorSteps)
