@@ -89,6 +89,7 @@ public class FractXmlReader extends DefaultHandler {
 			try {
 				innerLoader = ((Fractal) Class.forName(attributes.getValue("canonicalName")).getDeclaredConstructor().newInstance())
 						.getFractXmlLoader();
+				innerLoader.startDocument();
 				innerLoader.startElement(uri, localName, qName, attributes);
 				fractal = (FractXmlLoader) innerLoader;
 			}
@@ -99,6 +100,7 @@ public class FractXmlReader extends DefaultHandler {
 			try {
 				innerLoader = ((ColorPalette) Class.forName(attributes.getValue("canonicalName")).getDeclaredConstructor().newInstance())
 						.getFractXmlLoader();
+				innerLoader.startDocument();
 				innerLoader.startElement(uri, localName, qName, attributes);
 				palette = (FractXmlPaletteLoader) innerLoader;
 			}
@@ -111,8 +113,10 @@ public class FractXmlReader extends DefaultHandler {
 	public void endElement(final String uri, final String localName, final String qName) throws SAXException {
 		if (innerLoader != null)
 			innerLoader.endElement(uri, localName, qName);
-		if (qName.equals("palette") || qName.equals("fractal"))
+		if (qName.equals("palette") || qName.equals("fractal")) {
+			innerLoader.endDocument();
 			innerLoader = null;
+		}
 	}
 
 	@Override
