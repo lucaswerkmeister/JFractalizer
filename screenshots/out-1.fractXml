@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><fractXML version="2">
+    <fractal canonicalName="de.lucaswerkmeister.jfractalizer.defaultPlugin.cif.MandelbrotSet">
+        <width>3840</width>
+        <height>2160</height>
+        <minReal>-0.012571199721985456</minReal>
+        <maxReal>-0.012570819621782307</maxReal>
+        <minImag>-1.0055400958778642</minImag>
+        <maxImag>-1.005539877287105</maxImag>
+        <maxPasses>10000</maxPasses>
+        <superSamplingFactor>3</superSamplingFactor>
+    </fractal>
+    <palette canonicalName="de.lucaswerkmeister.jfractalizer.defaultPlugin.palettes.HsbStretchPalette">
+        <hueStart>0.0</hueStart>
+        <hueBaseWidth>5.0</hueBaseWidth>
+        <saturation>1.0</saturation>
+        <brightness>1.0</brightness>
+        <coreColor>
+            <red>0</red>
+            <green>0</green>
+            <blue>0</blue>
+            <alpha>255</alpha>
+        </coreColor>
+    </palette>
+</fractXML>
